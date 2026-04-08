@@ -1,0 +1,28 @@
+{
+  "name": "summerscope",
+  "version": "2.1.0",
+  "description": "The complete database of summer programs and events for high school students",
+  "type": "module",
+  "scripts": {
+    "update": "node update.js",
+    "dev": "npx serve .",
+    "lint": "node --check update.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "summer programs",
+    "high school",
+    "STEM",
+    "hackathons",
+    "college prep"
+  ],
+  "license": "MIT"
+}

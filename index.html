@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SummerScope — Summer Programs & Events for High School Students</title>
+<meta name="description" content="The complete database of summer programs, hackathons, and competitions for high school students in grades 9–12. Auto-updated with verified deadlines and costs.">
+<meta name="keywords" content="summer programs high school, STEM summer programs, free summer programs, RSI, MITES, PROMYS, HCSSiM, SSP, hackathons high school, science competitions 2026">
+<meta property="og:title" content="SummerScope — Summer Programs & Events for High School Students">
+<meta property="og:description" content="Every prestigious summer program, hackathon, and competition for 9th–12th graders in one place. Auto-updated weekly.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0D1926">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F0;--card:#fff;--navy:#0D1926;--navy2:#162236;
+  --text:#111827;--muted:#6B7280;--accent:#D04B27;
+  --border:#E2DFD8;--tag-bg:#EDEBE4;
+  --green:#047857;--amber:#B45309;
+  --sw:228px;--nh:58px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.6}
+
+/* NAV */
+nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo{font-family:'Lora',serif;font-size:1.3rem;color:#fff;letter-spacing:-0.01em;display:flex;align-items:center;gap:0.45rem}
+.ldot{width:7px;height:7px;background:#E8825C;border-radius:50%;flex-shrink:0}
+.nav-tabs{display:flex;gap:2px}
+.ntab{color:rgba(255,255,255,0.5);padding:0.32rem 0.85rem;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:500;transition:all .15s;border:none;background:none;font-family:'DM Sans',sans-serif}
+.ntab:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.ntab.active{color:#fff;background:rgba(255,255,255,0.14)}
+.nbadge{background:#E8825C;color:#fff;font-size:0.62rem;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:3px;vertical-align:top;margin-top:1px;display:inline-block}
+.nav-right{font-size:0.72rem;color:rgba(255,255,255,0.28);display:flex;align-items:center;gap:0.6rem}
+.update-dot{width:5px;height:5px;background:#4ADE80;border-radius:50%}
+
+/* LOADING */
+.loading-screen{display:flex;align-items:center;justify-content:center;min-height:60vh;flex-direction:column;gap:1rem;color:var(--muted)}
+.spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HERO */
+.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff}
+.heyebrow{font-size:0.66rem;font-weight:700;letter-spacing:0.14em;color:#E8825C;text-transform:uppercase;margin-bottom:0.55rem}
+.hero h1{font-family:'Lora',serif;font-size:2.35rem;line-height:1.1;letter-spacing:-0.025em;margin-bottom:0.55rem;max-width:540px}
+.hero h1 em{font-style:italic;color:#E8825C}
+.hsub{color:rgba(255,255,255,0.48);font-size:0.86rem;margin-bottom:1.35rem;max-width:460px}
+.sbar{display:flex;max-width:520px;gap:0.6rem}
+.sbar input{flex:1;padding:0.58rem 1rem;border-radius:7px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#fff;font-size:0.84rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s,background .15s}
+.sbar input::placeholder{color:rgba(255,255,255,0.28)}
+.sbar input:focus{border-color:rgba(255,255,255,0.28);background:rgba(255,255,255,0.1)}
+.hstats{display:flex;gap:2rem;margin-top:1.35rem;flex-wrap:wrap}
+.hs{font-size:0.72rem;color:rgba(255,255,255,0.38)}
+.hs strong{display:block;font-size:1.1rem;font-weight:600;color:#fff;line-height:1.2;margin-bottom:1px}
+
+/* NOTICE BAR */
+.notice{background:#1A2A3D;border-bottom:1px solid rgba(255,255,255,0.06);padding:0.45rem 1.75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:0.72rem;color:rgba(255,255,255,0.4)}
+.notice-left{display:flex;align-items:center;gap:0.55rem}
+.ndot{width:5px;height:5px;background:#4ADE80;border-radius:50%;flex-shrink:0}
+.notice-date{font-size:.68rem;color:rgba(255,255,255,.25)}
+
+/* PAGE */
+.page{display:none}.page.active{display:block}
+.layout{display:flex;min-height:calc(100vh - var(--nh))}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);flex-shrink:0;background:var(--card);border-right:1px solid var(--border);padding:1.2rem 1rem;position:sticky;top:var(--nh);height:calc(100vh - var(--nh));overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--border)}
+.fs{margin-bottom:1.15rem}
+.fl{font-size:0.63rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.48rem}
+.fo{display:flex;align-items:center;gap:0.42rem;padding:0.2rem 0;cursor:pointer;font-size:0.8rem;color:var(--text);user-select:none}
+.fo input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+.fc{margin-left:auto;font-size:0.67rem;color:var(--muted);background:var(--tag-bg);padding:0 5px;border-radius:20px;line-height:1.55}
+.sdiv{border:none;border-top:1px solid var(--border);margin:.9rem 0}
+.clr{font-size:0.73rem;color:var(--accent);cursor:pointer;border:none;background:none;padding:.1rem 0;font-family:'DM Sans',sans-serif;display:block;margin-top:.2rem}
+.clr:hover{text-decoration:underline}
+
+/* MAIN */
+.main{flex:1;min-width:0;padding:1.2rem}
+.rbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;gap:.7rem;flex-wrap:wrap}
+.rc{font-size:0.78rem;color:var(--muted)}
+.ssel{font-size:0.76rem;padding:.28rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;outline:none}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(296px,1fr));gap:.85rem}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.05rem;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;display:flex;flex-direction:column;gap:.65rem;position:relative;overflow:hidden}
+.card:hover{border-color:#cac7be;box-shadow:0 3px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
+.cbar{position:absolute;top:0;left:0;right:0;height:3px}
+.cbar-closed{background:#FECACA}
+.cbar-open{background:#6EE7B7}
+.cbar-urgent{background:#FDE68A}
+.ctop{display:flex;gap:.58rem;align-items:flex-start}
+.clog{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;color:#fff;flex-shrink:0;letter-spacing:-0.02em}
+.ctitle{font-weight:600;font-size:0.875rem;line-height:1.3;color:var(--text)}
+.chost{font-size:0.7rem;color:var(--muted);margin-top:1px}
+.cstars{font-size:9px;color:#F59E0B;display:block;margin-top:2px;letter-spacing:1px}
+.cdesc{font-size:0.77rem;color:var(--muted);line-height:1.5}
+.tags{display:flex;flex-wrap:wrap;gap:.28rem}
+.tag{font-size:0.65rem;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap;letter-spacing:.02em}
+.tc{background:#EEF2FF;color:#3730A3}.tip{background:#ECFDF5;color:#065F46}
+.ton{background:#EFF6FF;color:#1D4ED8}.thy{background:#F5F3FF;color:#5B21B6}
+.tg{background:#FEF9C3;color:#713F12}.tf{background:#D1FAE5;color:#065F46}
+.tcl{background:#FEE2E2;color:#991B1B}.tnew{background:#FDF4FF;color:#7E22CE}
+.cmeta{display:grid;grid-template-columns:1fr 1fr;gap:.42rem}
+.mi{font-size:.73rem}.ml{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:1px}
+.mv{color:var(--text);font-weight:500}.urgent{color:#DC2626}.soon{color:#D97706}.closed-t{color:#9CA3AF}
+.cfoot{padding-top:.65rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cv{font-size:.8rem;font-weight:600}.cvf{color:var(--green)}.cvp{color:var(--text)}
+.abtn{font-size:.72rem;font-weight:500;padding:.26rem .68rem;border-radius:6px;background:var(--navy);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .12s}
+.abtn:hover{background:var(--navy2)}
+
+/* NO RESULTS */
+.nores{text-align:center;padding:3rem 2rem;color:var(--muted)}
+.nores h3{font-size:.95rem;font-weight:500;color:var(--text);margin-bottom:.35rem}
+
+/* EVENTS */
+.ehero{background:linear-gradient(135deg,#16213E 0%,#0F1926 100%);padding:2rem 1.75rem 1.6rem;color:#fff;border-bottom:1px solid rgba(255,255,255,.06)}
+.ehero h2{font-family:'Lora',serif;font-size:1.85rem;letter-spacing:-.02em;margin-bottom:.35rem}
+.ehero p{color:rgba(255,255,255,.42);font-size:.83rem}
+.ebar{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;gap:.45rem;flex-wrap:wrap;align-items:center}
+.elabel{font-size:.7rem;color:var(--muted);font-weight:500;margin-right:.2rem}
+.efbtn{font-size:.73rem;font-weight:500;padding:.26rem .72rem;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.efbtn:hover{border-color:#aaa;color:var(--text)}.efbtn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.ebody{padding:1.2rem 1.5rem}
+.esec{margin-bottom:1.8rem}
+.eslabel{font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem;padding-bottom:.38rem;border-bottom:1px solid var(--border)}
+.egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(316px,1fr));gap:.85rem}
+.ecard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.05rem;cursor:pointer;transition:all .15s}
+.ecard:hover{border-color:#cac7be;box-shadow:0 3px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
+.etype{font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:.62rem}
+.eh{background:#EEF2FF;color:#3730A3}.ec{background:#FFF7ED;color:#9A3412}
+.ea{background:#FDF4FF;color:#7E22CE}.ef2{background:#F0F9FF;color:#0369A1}
+.etitle{font-weight:600;font-size:.9rem;margin-bottom:.18rem;line-height:1.3}
+.eorg{font-size:.73rem;color:var(--muted);margin-bottom:.58rem}
+.edesc{font-size:.77rem;color:var(--muted);line-height:1.5;margin-bottom:.82rem}
+.emeta{display:flex;gap:.9rem;flex-wrap:wrap}
+.emi{font-size:.74rem}.eml{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:1px}.emv{font-weight:500}
+.efoot{display:flex;align-items:center;justify-content:space-between;margin-top:.8rem;padding-top:.65rem;border-top:1px solid var(--border)}
+.eprize{font-size:.74rem;font-weight:600;color:var(--amber)}
+.ebtn{font-size:.72rem;font-weight:500;padding:.26rem .68rem;border-radius:6px;background:var(--navy);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .12s}
+.ebtn:hover{background:var(--navy2)}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:flex-start;justify-content:center;padding:2.5rem 1rem 2rem;overflow-y:auto}
+.mbg.open{display:flex}
+.modal{background:var(--card);border-radius:13px;max-width:550px;width:100%;overflow:hidden}
+.mh{background:var(--navy);padding:1.65rem}
+.mhtop{display:flex;align-items:flex-start;gap:.9rem;margin-bottom:.9rem}
+.mlog{width:43px;height:43px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;color:#fff;flex-shrink:0}
+.mtitle{font-family:'Lora',serif;font-size:1.45rem;letter-spacing:-.02em;line-height:1.2;color:#fff}
+.mhost{color:rgba(255,255,255,.42);font-size:.78rem;margin-top:.18rem}
+.mstars{color:#F59E0B;font-size:.82rem;margin-top:.15rem}
+.mtags2{display:flex;gap:.38rem;flex-wrap:wrap}
+.mtag{background:rgba(255,255,255,.1);color:rgba(255,255,255,.82);font-size:.67rem;font-weight:500;padding:2px 9px;border-radius:20px}
+.mb{padding:1.4rem}
+.ms{margin-bottom:1.2rem}
+.msl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.38rem}
+.mdesc{font-size:.82rem;line-height:1.65;color:var(--text)}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.mbox{background:var(--bg);border-radius:7px;padding:.6rem .8rem}
+.mbl{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.18rem}
+.mbv{font-size:.82rem;font-weight:500}
+.mfooter{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.4rem;background:var(--bg);border-top:1px solid var(--border)}
+.mclose{font-size:.79rem;color:var(--muted);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;padding:.32rem 0}
+.mclose:hover{color:var(--text)}
+.mapp{padding:.52rem 1.25rem;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .12s}
+.mapp:hover{background:#b03e1e}
+.mnotice{background:#FEF2F2;border:1px solid #FECACA;border-radius:7px;padding:.58rem .82rem;font-size:.76rem;color:#991B1B;margin-bottom:.9rem}
+.mnote{background:#FFFBEB;border:1px solid #FDE68A;border-radius:7px;padding:.58rem .82rem;font-size:.76rem;color:#92400E;margin-top:.9rem}
+.murgent{background:#FFF7ED;border:1px solid #FED7AA;border-radius:7px;padding:.58rem .82rem;font-size:.76rem;color:#9A3412;margin-bottom:.9rem}
+
+/* FOOTER */
+footer{background:var(--navy);padding:1.4rem 1.75rem;margin-top:2rem;color:rgba(255,255,255,.3);font-size:.72rem;border-top:1px solid rgba(255,255,255,.05)}
+footer p{margin-bottom:.25rem}
+footer strong{color:rgba(255,255,255,.55)}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+@media(max-width:680px){
+  .hero h1{font-size:1.75rem}.sidebar{display:none}
+  .grid{grid-template-columns:1fr}.egrid{grid-template-columns:1fr}
+  .mgrid{grid-template-columns:1fr}.hstats{gap:1.1rem}
+  .ebody{padding:1rem}.nav-right{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><div class="ldot"></div>SummerScope</div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="showPage('programs',this)">Programs <span class="nbadge" id="pb">—</span></button>
+    <button class="ntab" onclick="showPage('events',this)">Events & Competitions <span class="nbadge" id="eb-count">—</span></button>
+  </div>
+  <div class="nav-right">
+    <span class="update-dot"></span>
+    <span id="nav-updated">Loading…</span>
+  </div>
+</nav>
+
+<!-- Loading state -->
+<div id="loading-screen" class="loading-screen">
+  <div class="spinner"></div>
+  <span style="font-size:.85rem">Loading program data…</span>
+</div>
+
+<!-- ══ PROGRAMS PAGE ══ -->
+<div id="page-programs" class="page" style="display:none">
+  <div class="hero">
+    <div class="heyebrow">The complete 2026 database</div>
+    <h1>Find your <em>perfect</em><br>summer program</h1>
+    <p class="hsub">Every top summer program for high schoolers — verified deadlines, real costs, direct apply links.</p>
+    <div class="sbar"><input type="text" id="si" placeholder="Search programs, universities, subjects…" oninput="renderCards()" autocomplete="off"></div>
+    <div class="hstats">
+      <div class="hs"><strong id="tc">—</strong>Programs</div>
+      <div class="hs"><strong id="free-count">—</strong>Free programs</div>
+      <div class="hs"><strong id="oc">—</strong>Still accepting</div>
+      <div class="hs"><strong>8</strong>Subject areas</div>
+    </div>
+  </div>
+  <div class="notice">
+    <div class="notice-left"><span class="ndot"></span><span>All data auto-updated weekly via the Anthropic API. Always confirm on the official site before applying.</span></div>
+    <span class="notice-date" id="notice-date"></span>
+  </div>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar-programs">
+      <div class="fs">
+        <div class="fl">Status</div>
+        <label class="fo"><input type="checkbox" name="status" value="open" onchange="renderCards()"> Still accepting <span class="fc" id="ofc">—</span></label>
+        <label class="fo"><input type="checkbox" name="status" value="closed" onchange="renderCards()"> Closed for 2026 <span class="fc" id="cfc">—</span></label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Category</div>
+        <label class="fo"><input type="checkbox" name="cat" value="STEM" onchange="renderCards()"> STEM / Engineering</label>
+        <label class="fo"><input type="checkbox" name="cat" value="Math" onchange="renderCards()"> Mathematics</label>
+        <label class="fo"><input type="checkbox" name="cat" value="CS" onchange="renderCards()"> Computer Science</label>
+        <label class="fo"><input type="checkbox" name="cat" value="Research" onchange="renderCards()"> Research</label>
+        <label class="fo"><input type="checkbox" name="cat" value="Medicine" onchange="renderCards()"> Medicine / Biology</label>
+        <label class="fo"><input type="checkbox" name="cat" value="Humanities" onchange="renderCards()"> Humanities</label>
+        <label class="fo"><input type="checkbox" name="cat" value="Business" onchange="renderCards()"> Business / Econ</label>
+        <label class="fo"><input type="checkbox" name="cat" value="Leadership" onchange="renderCards()"> Leadership</label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Format</div>
+        <label class="fo"><input type="checkbox" name="fmt" value="In-Person" onchange="renderCards()"> In-Person</label>
+        <label class="fo"><input type="checkbox" name="fmt" value="Online" onchange="renderCards()"> Online</label>
+        <label class="fo"><input type="checkbox" name="fmt" value="Hybrid" onchange="renderCards()"> Hybrid</label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Cost</div>
+        <label class="fo"><input type="checkbox" name="cost" value="Free" onchange="renderCards()"> Free / Full Aid</label>
+        <label class="fo"><input type="checkbox" name="cost" value="Under3k" onchange="renderCards()"> Under $3,000</label>
+        <label class="fo"><input type="checkbox" name="cost" value="3kTo8k" onchange="renderCards()"> $3,000 – $8,000</label>
+        <label class="fo"><input type="checkbox" name="cost" value="Over8k" onchange="renderCards()"> Over $8,000</label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Grade Eligibility</div>
+        <label class="fo"><input type="checkbox" name="grade" value="9" onchange="renderCards()"> 9th Grade</label>
+        <label class="fo"><input type="checkbox" name="grade" value="10" onchange="renderCards()"> 10th Grade</label>
+        <label class="fo"><input type="checkbox" name="grade" value="11" onchange="renderCards()"> 11th Grade</label>
+        <label class="fo"><input type="checkbox" name="grade" value="12" onchange="renderCards()"> 12th Grade</label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Prestige</div>
+        <label class="fo"><input type="checkbox" name="prestige" value="5" onchange="renderCards()"> ★★★★★ Top-tier</label>
+        <label class="fo"><input type="checkbox" name="prestige" value="4" onchange="renderCards()"> ★★★★☆ Highly selective</label>
+        <label class="fo"><input type="checkbox" name="prestige" value="3" onchange="renderCards()"> ★★★☆☆ Competitive</label>
+      </div>
+      <button class="clr" onclick="clearFilters()">Clear all filters</button>
+    </aside>
+    <div class="main">
+      <div class="rbar">
+        <div class="rc" id="rt">Loading…</div>
+        <select class="ssel" id="ss" onchange="renderCards()">
+          <option value="prestige">Most prestigious first</option>
+          <option value="open">Open programs first</option>
+          <option value="deadline">Deadline: soonest first</option>
+          <option value="cost-asc">Cost: low to high</option>
+          <option value="cost-desc">Cost: high to low</option>
+          <option value="az">A – Z</option>
+        </select>
+      </div>
+      <div class="grid" id="cg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EVENTS PAGE ══ -->
+<div id="page-events" class="page" style="display:none">
+  <div class="ehero">
+    <h2>Events, Hackathons & Competitions</h2>
+    <p>The best hackathons, science olympiads, coding contests, and awards for 9th–12th graders — all in one place.</p>
+  </div>
+  <div class="ebar">
+    <span class="elabel">Filter:</span>
+    <button class="efbtn active" data-t="All" onclick="filterE(this)">All</button>
+    <button class="efbtn" data-t="Hackathon" onclick="filterE(this)">Hackathons</button>
+    <button class="efbtn" data-t="Competition" onclick="filterE(this)">Competitions</button>
+    <button class="efbtn" data-t="Award" onclick="filterE(this)">Awards</button>
+    <button class="efbtn" data-t="Conference" onclick="filterE(this)">Conferences</button>
+  </div>
+  <div class="ebody" id="events-body"></div>
+</div>
+
+<!-- MODAL -->
+<div class="mbg" id="modal" onclick="closeMBg(event)">
+  <div class="modal" id="mi"></div>
+</div>
+
+<footer>
+  <p><strong>SummerScope</strong> — A free, open resource for high school students exploring summer opportunities. Data auto-updated weekly via the Anthropic API.</p>
+  <p>All data is sourced from official program websites. Deadlines and costs change year to year — always verify on the official site before applying.</p>
+  <p id="footer-meta" style="margin-top:.65rem"></p>
+</footer>
+
+<script>
+// ── GLOBALS ────────────────────────────────────────────────────────────────────
+let P = [];  // programs
+let E = [];  // events
+let aet = 'All';
+
+// ── LOAD DATA FROM data.json ───────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const res = await fetch('./data.json?v=' + Date.now());
+    if (!res.ok) throw new Error('Failed to fetch data.json');
+    const data = await res.json();
+
+    // Convert dlt strings to Date objects
+    P = data.programs.map(p => ({
+      ...p,
+      dlt: new Date(p.dlt + 'T00:00:00')
+    }));
+    E = data.events;
+
+    const meta = data.meta;
+    const lastUpdated = meta.lastUpdated || 'Unknown';
+
+    // Update nav and notice
+    document.getElementById('nav-updated').textContent = 'Updated ' + lastUpdated;
+    document.getElementById('notice-date').textContent = 'Last updated: ' + lastUpdated;
+    document.getElementById('footer-meta').textContent =
+      `Last updated: ${lastUpdated} · Programs: ${P.length} · Events: ${E.length} · Not affiliated with any program listed.`;
+
+    // Update badge counts
+    document.getElementById('pb').textContent = P.length;
+    document.getElementById('eb-count').textContent = E.length;
+    document.getElementById('tc').textContent = P.length;
+    document.getElementById('free-count').textContent = P.filter(p => p.costN === 0).length;
+    const openCount = P.filter(p => !p.closed).length;
+    document.getElementById('oc').textContent = openCount;
+    document.getElementById('ofc').textContent = openCount;
+    document.getElementById('cfc').textContent = P.length - openCount;
+
+    // Hide loading, show programs page
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('page-programs').style.display = 'block';
+    document.getElementById('page-programs').classList.add('active');
+
+    renderCards();
+  } catch (err) {
+    console.error('Failed to load data:', err);
+    document.getElementById('loading-screen').innerHTML =
+      '<p style="color:#DC2626;text-align:center">Failed to load program data. Please refresh the page.</p>';
+  }
+}
+
+// ── RENDER PROGRAMS ────────────────────────────────────────────────────────────
+function getF(n) { return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e => e.value); }
+
+function renderCards() {
+  if (!P.length) return;
+  const q = document.getElementById('si').value.toLowerCase().trim();
+  const cats = getF('cat'), fmts = getF('fmt'), costs = getF('cost'),
+        grades = getF('grade'), prest = getF('prestige'), stats = getF('status');
+  const sort = document.getElementById('ss').value;
+  const now = new Date();
+
+  let f = P.filter(p => {
+    if (q && !`${p.name} ${p.host} ${p.cat.join(' ')} ${p.loc} ${p.desc}`.toLowerCase().includes(q)) return false;
+    if (cats.length && !cats.some(c => p.cat.includes(c))) return false;
+    if (fmts.length && !fmts.includes(p.fmt)) return false;
+    if (costs.length && !costs.includes(p.costB)) return false;
+    if (grades.length && !grades.some(g => p.grades.includes(parseInt(g)))) return false;
+    if (prest.length && !prest.includes(String(p.prestige))) return false;
+    if (stats.length) {
+      if (stats.includes('open') && !stats.includes('closed') && p.closed) return false;
+      if (stats.includes('closed') && !stats.includes('open') && !p.closed) return false;
+    }
+    return true;
+  });
+
+  if (sort === 'prestige') f.sort((a, b) => b.prestige - a.prestige || (a.closed ? 1 : -1) || (a.dlt - b.dlt));
+  else if (sort === 'open') f.sort((a, b) => (a.closed ? 1 : -1) - (b.closed ? 1 : -1) || b.prestige - a.prestige);
+  else if (sort === 'deadline') f.sort((a, b) => ((a.closed ? 1 : 0) - (b.closed ? 1 : 0)) || a.dlt - b.dlt);
+  else if (sort === 'cost-asc') f.sort((a, b) => a.costN - b.costN);
+  else if (sort === 'cost-desc') f.sort((a, b) => b.costN - a.costN);
+  else if (sort === 'az') f.sort((a, b) => a.name.localeCompare(b.name));
+
+  document.getElementById('rt').textContent = `Showing ${f.length} of ${P.length} programs`;
+
+  const g = document.getElementById('cg');
+  if (!f.length) {
+    g.innerHTML = `<div class="nores"><h3>No programs match your filters</h3><p>Try adjusting or clearing some filters.</p></div>`;
+    return;
+  }
+
+  g.innerHTML = f.map(p => {
+    const stars = '★'.repeat(p.prestige) + '☆'.repeat(5 - p.prestige);
+    const fc = p.fmt === 'In-Person' ? 'tip' : p.fmt === 'Online' ? 'ton' : 'thy';
+    const gtags = p.grades.map(g => `<span class="tag tg">Gr ${g}</span>`).join('');
+    const days = Math.ceil((p.dlt - now) / 864e5);
+    let dlc = 'mv', dlt2 = p.dl, barClass = 'cbar-closed';
+    if (p.closed) { dlc = 'mv closed-t'; dlt2 = p.dl + ' — Closed'; barClass = 'cbar-closed'; }
+    else if (days <= 14 && days >= 0) { dlc = 'mv urgent'; dlt2 = `${p.dl} (${days}d left!)`; barClass = 'cbar-urgent'; }
+    else if (days <= 45 && days >= 0) { dlc = 'mv soon'; dlt2 = `${p.dl} (${days}d)`; barClass = 'cbar-open'; }
+    else { barClass = 'cbar-open'; }
+    const costEl = p.costN === 0
+      ? `<span class="cv cvf">Free / Full Aid</span>`
+      : `<span class="cv cvp">${p.cost}</span>`;
+    const badge = p.isNew
+      ? '<span class="tag tnew" style="flex-shrink:0;align-self:flex-start;margin-top:2px">New</span>'
+      : p.closed
+        ? '<span class="tag tcl" style="flex-shrink:0;align-self:flex-start;margin-top:2px">Closed</span>'
+        : '<span class="tag tf" style="flex-shrink:0;align-self:flex-start;margin-top:2px">Open</span>';
+    return `<div class="card" onclick="openM(${p.id})">
+      <div class="cbar ${barClass}"></div>
+      <div class="ctop">
+        <div class="clog" style="background:${p.color}">${p.logo}</div>
+        <div style="flex:1;min-width:0">
+          <div class="ctitle">${p.name}</div>
+          <div class="chost">${p.host}</div>
+          <span class="cstars">${stars}</span>
+        </div>
+        ${badge}
+      </div>
+      <div class="cdesc">${p.desc.substring(0, 130)}…</div>
+      <div class="tags">${p.cat.map(c => `<span class="tag tc">${c}</span>`).join('')}<span class="tag ${fc}">${p.fmt}</span>${gtags}</div>
+      <div class="cmeta">
+        <div class="mi"><div class="ml">Deadline</div><div class="${dlc}">${dlt2}</div></div>
+        <div class="mi"><div class="ml">Dates</div><div class="mv">${p.dates}</div></div>
+        <div class="mi"><div class="ml">Location</div><div class="mv">${p.loc}</div></div>
+        <div class="mi"><div class="ml">Grades</div><div class="mv">${p.grades.map(g => g + 'th').join(', ')}</div></div>
+      </div>
+      <div class="cfoot">${costEl}<button class="abtn" onclick="event.stopPropagation();window.open('${p.link}','_blank')">Visit Site →</button></div>
+    </div>`;
+  }).join('');
+}
+
+function openM(id) {
+  const p = P.find(x => x.id === id);
+  if (!p) return;
+  const stars = '★'.repeat(p.prestige) + '☆'.repeat(5 - p.prestige);
+  const now = new Date();
+  const days = Math.ceil((p.dlt - now) / 864e5);
+  const closedN = p.closed
+    ? `<div class="mnotice">⚠️ The 2026 application deadline for this program has passed. ${p.note || 'Check the official website for 2027 opening dates.'}</div>`
+    : '';
+  const urgentN = (!p.closed && days <= 14 && days >= 0)
+    ? `<div class="murgent">⏰ Deadline in ${days} day${days !== 1 ? 's' : ''}! Apply immediately.</div>`
+    : '';
+  const noteN = (!p.closed && p.note) ? `<div class="mnote">ℹ️ ${p.note}</div>` : '';
+  const dlColor = p.closed ? '#9CA3AF' : days <= 14 && days >= 0 ? '#DC2626' : days <= 45 && days >= 0 ? '#D97706' : 'inherit';
+  document.getElementById('mi').innerHTML = `
+    <div class="mh">
+      <div class="mhtop">
+        <div class="mlog" style="background:${p.color}">${p.logo}</div>
+        <div><div class="mtitle">${p.name}</div><div class="mhost">${p.host} · ${p.loc}</div><div class="mstars">${stars}</div></div>
+      </div>
+      <div class="mtags2">${p.cat.map(c => `<span class="mtag">${c}</span>`).join('')}<span class="mtag">${p.fmt}</span><span class="mtag">Grades ${p.grades.join(', ')}</span>${p.isNew ? '<span class="mtag" style="background:rgba(168,85,247,.25);color:#E9D5FF">New</span>' : ''}${p.closed ? '<span class="mtag" style="background:rgba(239,68,68,.2);color:#FCA5A5">Closed 2026</span>' : '<span class="mtag" style="background:rgba(52,211,153,.2);color:#6EE7B7">Still open</span>'}</div>
+    </div>
+    <div class="mb">
+      ${closedN}${urgentN}
+      <div class="ms"><div class="msl">About this program</div><div class="mdesc">${p.desc}</div></div>
+      <div class="ms"><div class="mgrid">
+        <div class="mbox"><div class="mbl">Application Deadline</div><div class="mbv" style="color:${dlColor}">${p.dl}${p.closed ? ' (closed)' : ''}</div></div>
+        <div class="mbox"><div class="mbl">Program Dates</div><div class="mbv">${p.dates}</div></div>
+        <div class="mbox"><div class="mbl">Cost</div><div class="mbv" style="color:${p.costN === 0 ? '#047857' : 'inherit'}">${p.cost}</div></div>
+        <div class="mbox"><div class="mbl">Eligible Grades</div><div class="mbv">${p.grades.map(g => g + 'th').join(', ')}</div></div>
+      </div></div>
+      ${noteN}
+    </div>
+    <div class="mfooter">
+      <button class="mclose" onclick="document.getElementById('modal').classList.remove('open')">← Back</button>
+      <button class="mapp" onclick="window.open('${p.link}','_blank')">Official Website →</button>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeMBg(e) { if (e.target.id === 'modal') document.getElementById('modal').classList.remove('open'); }
+function clearFilters() {
+  document.querySelectorAll('.sidebar input[type=checkbox]').forEach(e => e.checked = false);
+  document.getElementById('si').value = '';
+  renderCards();
+}
+
+// ── RENDER EVENTS ──────────────────────────────────────────────────────────────
+function filterE(btn) {
+  document.querySelectorAll('.efbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  aet = btn.dataset.t;
+  renderEvents();
+}
+
+function renderEvents() {
+  if (!E.length) return;
+  const secs = [
+    { label: 'Hackathons', types: ['Hackathon'] },
+    { label: 'Science & Math Competitions', types: ['Competition'] },
+    { label: 'Awards & Recognition', types: ['Award'] },
+    { label: 'Conferences & Challenges', types: ['Conference'] },
+  ];
+  let html = '';
+  secs.forEach(s => {
+    let evs = E.filter(e => s.types.includes(e.type) && (aet === 'All' || aet === e.type));
+    if (!evs.length) return;
+    html += `<div class="esec"><div class="eslabel">${s.label}</div><div class="egrid">`;
+    evs.forEach(ev => {
+      html += `<div class="ecard" onclick="window.open('${ev.link}','_blank')">
+        <div class="etype ${ev.badge}">${ev.type}</div>
+        <div class="etitle">${ev.name}</div><div class="eorg">${ev.org}</div>
+        <div class="edesc">${ev.desc}</div>
+        <div class="emeta">
+          <div class="emi"><div class="eml">When</div><div class="emv">${ev.dates}</div></div>
+          <div class="emi"><div class="eml">Deadline</div><div class="emv">${ev.dl}</div></div>
+          <div class="emi"><div class="eml">Format</div><div class="emv">${ev.fmt}</div></div>
+          <div class="emi"><div class="eml">Cost</div><div class="emv" style="color:${ev.cost === 'Free' ? '#047857' : 'inherit'}">${ev.cost}</div></div>
+        </div>
+        <div class="efoot"><div class="eprize">${ev.prize ? '🏆 ' + ev.prize : ''}</div><button class="ebtn">Learn More →</button></div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  document.getElementById('events-body').innerHTML = html;
+}
+
+// ── PAGE SWITCHING ──────────────────────────────────────────────────────────────
+function showPage(page, btn) {
+  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  el.style.display = 'block';
+  el.classList.add('active');
+  btn.classList.add('active');
+  if (page === 'events') renderEvents();
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
