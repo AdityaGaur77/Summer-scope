@@ -4,14 +4,17 @@
   "description": "The complete database of summer programs and events for high school students",
   "type": "module",
   "scripts": {
+    "build": "esbuild analytics.js --bundle --format=esm --outfile=analytics.bundle.js",
     "update": "node update.js",
     "dev": "npx serve .",
     "lint": "node --check update.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0"
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@vercel/analytics": "^2.0.1"
   },
   "devDependencies": {
+    "esbuild": "^0.28.0",
     "serve": "^14.2.0"
   },
   "engines": {
