@@ -1,4 +1,4 @@
-// node_modules/.pnpm/@vercel+analytics@2.0.1/node_modules/@vercel/analytics/dist/index.mjs
+// node_modules/@vercel/analytics/dist/index.mjs
 var initQueue = () => {
   if (window.va) return;
   window.va = function a(...params) {
