@@ -4,16 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SummerScope — Summer Programs & Events for High School Students</title>
-<meta name="description" content="The complete database of summer programs, hackathons, and competitions for high school students in grades 9–12. Auto-updated with verified deadlines and costs.">
+<meta name="description" content="The complete database of summer programs, hackathons, and competitions for high school students in grades 9–12. Verified deadlines and costs.">
 <meta name="keywords" content="summer programs high school, STEM summer programs, free summer programs, RSI, MITES, PROMYS, HCSSiM, SSP, hackathons high school, science competitions 2026">
 <meta property="og:title" content="SummerScope — Summer Programs & Events for High School Students">
-<meta property="og:description" content="Every prestigious summer program, hackathon, and competition for 9th–12th graders in one place. Auto-updated weekly.">
+<meta property="og:description" content="Every prestigious summer program, hackathon, and competition for 9th–12th graders in one place.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0D1926">
-<script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
@@ -36,8 +32,6 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .ntab:hover{color:#fff;background:rgba(255,255,255,0.08)}
 .ntab.active{color:#fff;background:rgba(255,255,255,0.14)}
 .nbadge{background:#E8825C;color:#fff;font-size:0.62rem;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:3px;vertical-align:top;margin-top:1px;display:inline-block}
-.nav-right{font-size:0.72rem;color:rgba(255,255,255,0.28);display:flex;align-items:center;gap:0.6rem}
-.update-dot{width:5px;height:5px;background:#4ADE80;border-radius:50%}
 
 /* LOADING */
 .loading-screen{display:flex;align-items:center;justify-content:center;min-height:60vh;flex-direction:column;gap:1rem;color:var(--muted)}
@@ -62,7 +56,6 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .notice{background:#1A2A3D;border-bottom:1px solid rgba(255,255,255,0.06);padding:0.45rem 1.75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:0.72rem;color:rgba(255,255,255,0.4)}
 .notice-left{display:flex;align-items:center;gap:0.55rem}
 .ndot{width:5px;height:5px;background:#4ADE80;border-radius:50%;flex-shrink:0}
-.notice-date{font-size:.68rem;color:rgba(255,255,255,.25)}
 
 /* PAGE */
 .page{display:none}.page.active{display:block}
@@ -189,7 +182,7 @@ footer strong{color:rgba(255,255,255,.55)}
   .hero h1{font-size:1.75rem}.sidebar{display:none}
   .grid{grid-template-columns:1fr}.egrid{grid-template-columns:1fr}
   .mgrid{grid-template-columns:1fr}.hstats{gap:1.1rem}
-  .ebody{padding:1rem}.nav-right{display:none}
+  .ebody{padding:1rem}
 }
 </style>
 </head>
@@ -201,9 +194,8 @@ footer strong{color:rgba(255,255,255,.55)}
     <button class="ntab active" onclick="showPage('programs',this)">Programs <span class="nbadge" id="pb">—</span></button>
     <button class="ntab" onclick="showPage('events',this)">Events & Competitions <span class="nbadge" id="eb-count">—</span></button>
   </div>
-  <div class="nav-right">
-    <span class="update-dot"></span>
-    <span id="nav-updated">Loading…</span>
+  <div class="nav-right" style="font-size:0.72rem;color:rgba(255,255,255,0.28);display:flex;align-items:center;gap:0.6rem">
+    <span id="nav-updated"></span>
   </div>
 </nav>
 
@@ -228,8 +220,8 @@ footer strong{color:rgba(255,255,255,.55)}
     </div>
   </div>
   <div class="notice">
-    <div class="notice-left"><span class="ndot"></span><span>All data auto-updated weekly via the Anthropic API. Always confirm on the official site before applying.</span></div>
-    <span class="notice-date" id="notice-date"></span>
+    <div class="notice-left"><span class="ndot"></span><span>Always confirm deadlines and costs on the official site before applying.</span></div>
+    <span style="font-size:.68rem;color:rgba(255,255,255,.25)" id="notice-date"></span>
   </div>
   <div class="layout">
     <aside class="sidebar" id="sidebar-programs">
@@ -322,7 +314,7 @@ footer strong{color:rgba(255,255,255,.55)}
 </div>
 
 <footer>
-  <p><strong>SummerScope</strong> — A free, open resource for high school students exploring summer opportunities. Data auto-updated weekly via the Anthropic API.</p>
+  <p><strong>SummerScope</strong> — A free, open resource for high school students exploring summer opportunities.</p>
   <p>All data is sourced from official program websites. Deadlines and costs change year to year — always verify on the official site before applying.</p>
   <p id="footer-meta" style="margin-top:.65rem"></p>
 </footer>
@@ -347,15 +339,6 @@ async function loadData() {
     }));
     E = data.events;
 
-    const meta = data.meta;
-    const lastUpdated = meta.lastUpdated || 'Unknown';
-
-    // Update nav and notice
-    document.getElementById('nav-updated').textContent = 'Updated ' + lastUpdated;
-    document.getElementById('notice-date').textContent = 'Last updated: ' + lastUpdated;
-    document.getElementById('footer-meta').textContent =
-      `Last updated: ${lastUpdated} · Programs: ${P.length} · Events: ${E.length} · Not affiliated with any program listed.`;
-
     // Update badge counts
     document.getElementById('pb').textContent = P.length;
     document.getElementById('eb-count').textContent = E.length;
@@ -365,6 +348,12 @@ async function loadData() {
     document.getElementById('oc').textContent = openCount;
     document.getElementById('ofc').textContent = openCount;
     document.getElementById('cfc').textContent = P.length - openCount;
+
+    const lastUpdated = (data.meta && data.meta.lastUpdated) || 'Unknown';
+    document.getElementById('nav-updated').textContent = 'Updated ' + lastUpdated;
+    document.getElementById('notice-date').textContent = 'Last updated: ' + lastUpdated;
+    document.getElementById('footer-meta').textContent =
+      `Last updated: ${lastUpdated} · Programs: ${P.length} · Events: ${E.length} · Not affiliated with any program listed.`;
 
     // Hide loading, show programs page
     document.getElementById('loading-screen').style.display = 'none';
@@ -562,6 +551,5 @@ function showPage(page, btn) {
 // ── INIT ───────────────────────────────────────────────────────────────────────
 loadData();
 </script>
-<script type="module" src="./analytics.bundle.js"></script>
 </body>
 </html>
