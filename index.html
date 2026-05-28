@@ -38,9 +38,9 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* HERO — IMPROVED AD CARD FLEX & SPACING */
-.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:2rem;flex-wrap:wrap}
-.hero-left{flex: 2 1 340px; min-width: 0}
+/* HERO */
+.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:2.5rem;flex-wrap:wrap}
+.hero-left{flex:1 1 360px;min-width:0;max-width:560px}
 .heyebrow{font-size:0.66rem;font-weight:700;letter-spacing:0.14em;color:#E8825C;text-transform:uppercase;margin-bottom:0.55rem}
 .hero h1{font-family:'Lora',serif;font-size:2.35rem;line-height:1.1;letter-spacing:-0.025em;margin-bottom:0.55rem;max-width:620px}
 .hero h1 em{font-style:italic;color:#E8825C}
@@ -53,27 +53,28 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .hs{font-size:0.72rem;color:rgba(255,255,255,0.38)}
 .hs strong{display:block;font-size:1.1rem;font-weight:600;color:#fff;line-height:1.2;margin-bottom:1px}
 
-/* AD CARD — WIDER, FLEXIBLE, TAKES EMPTY SPACE */
+/* AD CARD — SHORT, WIDE, HORIZONTAL BANNER THAT FILLS THE EMPTY SPACE */
 .ad-card{
-  flex: 1 1 480px;
-  min-width: 340px;
-  max-width: 680px;
+  flex:2 1 520px;
+  min-width:320px;
+  max-width:1000px;
   background:rgba(255,255,255,0.07);
   border:1px solid rgba(255,255,255,0.15);
   border-radius:14px;
-  padding:1.4rem 1.5rem;
+  padding:1.25rem 1.45rem;
   display:flex;
   flex-direction:column;
   gap:1rem;
   align-self:center;
-  transition: all 0.2s;
+  transition:all .2s;
 }
-.ad-label{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)}
-.ad-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:600;color:#fff;line-height:1.3}
+.ad-head{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;flex-wrap:wrap}
+.ad-label{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.3rem}
+.ad-title{font-family:'Lora',serif;font-size:1.18rem;font-weight:600;color:#fff;line-height:1.25}
 .ad-sub{font-size:.75rem;color:rgba(255,255,255,.45);margin-top:.2rem}
-.ad-tracks{display:flex;flex-direction:column;gap:.55rem}
-.ad-track{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.75rem .9rem}
-.ad-track-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.38rem;flex-wrap:wrap;gap:6px}
+.ad-tracks{display:flex;flex-direction:row;gap:.6rem;flex-wrap:wrap}
+.ad-track{flex:1 1 220px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.7rem .85rem}
+.ad-track-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;gap:6px}
 .ad-track-badge{font-size:.6rem;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;white-space:nowrap}
 .ad-py{background:#0D9373;color:#fff}
 .ad-ai{background:#4F46E5;color:#fff}
@@ -81,17 +82,21 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .ad-track-price small{font-size:.65rem;font-weight:400;color:rgba(255,255,255,.35)}
 .ad-track-name{font-size:.88rem;font-weight:600;color:#fff;line-height:1.25;margin-bottom:.2rem}
 .ad-track-age{font-size:.7rem;color:rgba(255,255,255,.4)}
-.ad-divider{border:none;border-top:1px solid rgba(255,255,255,.09);margin:0}
-.ad-meta{display:flex;flex-direction:column;gap:.35rem}
-.ad-meta-row{display:flex;align-items:baseline;gap:.5rem;font-size:.72rem;color:rgba(255,255,255,.38);line-height:1.45;flex-wrap:wrap}
+.ad-meta{display:flex;flex-direction:row;flex-wrap:wrap;gap:.35rem 1.5rem}
+.ad-meta-row{display:flex;align-items:baseline;gap:.45rem;font-size:.72rem;color:rgba(255,255,255,.38);line-height:1.45}
 .ad-meta-row span{color:rgba(255,255,255,.75);word-break:break-word}
-.ad-cta{display:block;text-align:center;background:#E8825C;color:#fff;font-size:.82rem;font-weight:600;padding:.6rem 1rem;border-radius:8px;text-decoration:none;transition:background .15s;letter-spacing:.01em}
+.ad-cta{flex-shrink:0;align-self:center;white-space:nowrap;text-align:center;background:#E8825C;color:#fff;font-size:.82rem;font-weight:600;padding:.62rem 1.5rem;border-radius:8px;text-decoration:none;transition:background .15s;letter-spacing:.01em}
 .ad-cta:hover{background:#d0703e}
 
 @media(max-width:1060px){
-  .hero{flex-direction:column}
-  .ad-card{width:100%;min-width:0;max-width:100%;align-self:flex-start}
-  .hero-left{flex:auto}
+  .hero{flex-direction:column;align-items:stretch}
+  .ad-card{width:100%;min-width:0;max-width:100%;align-self:stretch}
+  .hero-left{flex:auto;max-width:100%}
+}
+@media(max-width:540px){
+  .ad-head{align-items:flex-start}
+  .ad-cta{align-self:stretch}
+  .ad-track{flex:1 1 100%}
 }
 
 /* NOTICE BAR */
@@ -267,10 +272,13 @@ footer strong{color:rgba(255,255,255,.55)}
       </div>
     </div>
     <div class="ad-card">
-      <div class="ad-label">Featured · Summer 2026</div>
-      <div>
-        <div class="ad-title">Kids build real games &amp; AI projects</div>
-        <div class="ad-sub">Live online classes · June 2 – 25</div>
+      <div class="ad-head">
+        <div>
+          <div class="ad-label">Featured · Summer 2026</div>
+          <div class="ad-title">Kids build real games &amp; AI projects</div>
+          <div class="ad-sub">Live online classes · June 2 – 25</div>
+        </div>
+        <a class="ad-cta" href="https://codekids-academy.vercel.app/" target="_blank" rel="noopener">Reserve a Spot →</a>
       </div>
       <div class="ad-tracks">
         <div class="ad-track">
@@ -290,13 +298,11 @@ footer strong{color:rgba(255,255,255,.55)}
           <div class="ad-track-age">Ages 10+ · No coding needed</div>
         </div>
       </div>
-      <hr class="ad-divider">
       <div class="ad-meta">
         <div class="ad-meta-row">📅 <span>Tue, Wed, Thu · 2:00 – 3:30 PM PST</span></div>
         <div class="ad-meta-row">🎥 <span>Live on Zoom · Recordings included</span></div>
         <div class="ad-meta-row">🏆 <span>Taught by Aditya Gaur — USACO Gold, NASA Space Apps winner</span></div>
       </div>
-      <a class="ad-cta" href="https://codekids-academy.vercel.app/" target="_blank" rel="noopener">Reserve a Spot →</a>
     </div>
   </div>
   <div class="notice">
