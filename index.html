@@ -39,7 +39,8 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* HERO */
-.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff}
+.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:2rem}
+.hero-left{flex:1;min-width:0}
 .heyebrow{font-size:0.66rem;font-weight:700;letter-spacing:0.14em;color:#E8825C;text-transform:uppercase;margin-bottom:0.55rem}
 .hero h1{font-family:'Lora',serif;font-size:2.35rem;line-height:1.1;letter-spacing:-0.025em;margin-bottom:0.55rem;max-width:540px}
 .hero h1 em{font-style:italic;color:#E8825C}
@@ -51,6 +52,28 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .hstats{display:flex;gap:2rem;margin-top:1.35rem;flex-wrap:wrap}
 .hs{font-size:0.72rem;color:rgba(255,255,255,0.38)}
 .hs strong{display:block;font-size:1.1rem;font-weight:600;color:#fff;line-height:1.2;margin-bottom:1px}
+
+/* AD CARD */
+.ad-card{flex-shrink:0;width:290px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:13px;padding:1.15rem;display:flex;flex-direction:column;gap:.85rem}
+.ad-label{font-size:.57rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-bottom:-.3rem}
+.ad-title{font-family:'Lora',serif;font-size:1rem;font-weight:600;color:#fff;line-height:1.3}
+.ad-sub{font-size:.73rem;color:rgba(255,255,255,.45);margin-top:-.4rem}
+.ad-tracks{display:flex;flex-direction:column;gap:.5rem}
+.ad-track{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.6rem .75rem;display:flex;align-items:flex-start;gap:.55rem}
+.ad-track-badge{font-size:.58rem;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.ad-py{background:#0D9373;color:#fff}
+.ad-ai{background:#4F46E5;color:#fff}
+.ad-track-info{flex:1;min-width:0}
+.ad-track-name{font-size:.8rem;font-weight:600;color:#fff;line-height:1.25}
+.ad-track-age{font-size:.67rem;color:rgba(255,255,255,.4);margin-top:1px}
+.ad-track-price{font-size:.82rem;font-weight:700;color:#E8825C;flex-shrink:0;margin-top:1px}
+.ad-meta{display:flex;flex-direction:column;gap:.28rem}
+.ad-meta-row{display:flex;align-items:center;gap:.42rem;font-size:.7rem;color:rgba(255,255,255,.4)}
+.ad-meta-row span{color:rgba(255,255,255,.7)}
+.ad-cta{display:block;text-align:center;background:#E8825C;color:#fff;font-size:.78rem;font-weight:600;padding:.5rem 1rem;border-radius:7px;text-decoration:none;transition:background .15s;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.ad-cta:hover{background:#d0703e}
+
+@media(max-width:900px){.hero{flex-direction:column}.ad-card{width:100%;max-width:480px}}
 
 /* NOTICE BAR */
 .notice{background:#1A2A3D;border-bottom:1px solid rgba(255,255,255,0.06);padding:0.45rem 1.75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:0.72rem;color:rgba(255,255,255,0.4)}
@@ -212,15 +235,48 @@ footer strong{color:rgba(255,255,255,.55)}
 <!-- ══ PROGRAMS PAGE ══ -->
 <div id="page-programs" class="page" style="display:none">
   <div class="hero">
-    <div class="heyebrow">The complete 2026 database</div>
-    <h1>Find your <em>perfect</em><br>summer program</h1>
-    <p class="hsub">Every top summer program for high schoolers — verified deadlines, real costs, direct apply links.</p>
-    <div class="sbar"><input type="text" id="si" placeholder="Search programs, universities, subjects…" oninput="renderCards()" autocomplete="off"></div>
-    <div class="hstats">
-      <div class="hs"><strong id="tc">—</strong>Programs</div>
-      <div class="hs"><strong id="free-count">—</strong>Free programs</div>
-      <div class="hs"><strong id="oc">—</strong>Still accepting</div>
-      <div class="hs"><strong>8</strong>Subject areas</div>
+    <div class="hero-left">
+      <div class="heyebrow">The complete 2026 database</div>
+      <h1>Find your <em>perfect</em><br>summer program</h1>
+      <p class="hsub">Every top summer program for high schoolers — verified deadlines, real costs, direct apply links.</p>
+      <div class="sbar"><input type="text" id="si" placeholder="Search programs, universities, subjects…" oninput="renderCards()" autocomplete="off"></div>
+      <div class="hstats">
+        <div class="hs"><strong id="tc">—</strong>Programs</div>
+        <div class="hs"><strong id="free-count">—</strong>Free programs</div>
+        <div class="hs"><strong id="oc">—</strong>Still accepting</div>
+        <div class="hs"><strong>8</strong>Subject areas</div>
+      </div>
+    </div>
+    <div class="ad-card">
+      <div class="ad-label">Featured · Summer 2026</div>
+      <div>
+        <div class="ad-title">Kids build real games &amp; AI projects</div>
+        <div class="ad-sub">Live online classes · June 2 – 25</div>
+      </div>
+      <div class="ad-tracks">
+        <div class="ad-track">
+          <span class="ad-track-badge ad-py">PYTHON</span>
+          <div class="ad-track-info">
+            <div class="ad-track-name">Games with Python</div>
+            <div class="ad-track-age">Ages 8+ · No experience needed</div>
+          </div>
+          <div class="ad-track-price">$25<span style="font-size:.62rem;font-weight:400;color:rgba(255,255,255,.4)">/wk</span></div>
+        </div>
+        <div class="ad-track">
+          <span class="ad-track-badge ad-ai">ML/AI</span>
+          <div class="ad-track-info">
+            <div class="ad-track-name">AI + Image Recognition</div>
+            <div class="ad-track-age">Ages 10+ · No coding needed</div>
+          </div>
+          <div class="ad-track-price">$25<span style="font-size:.62rem;font-weight:400;color:rgba(255,255,255,.4)">/wk</span></div>
+        </div>
+      </div>
+      <div class="ad-meta">
+        <div class="ad-meta-row">📅 <span>Tue, Wed, Thu · 2:00 – 3:30 PM PST</span></div>
+        <div class="ad-meta-row">🎥 <span>Live on Zoom · Recordings included</span></div>
+        <div class="ad-meta-row">👨‍🏫 <span>Taught by Aditya Gaur — USACO Gold, NASA Space Apps winner</span></div>
+      </div>
+      <a class="ad-cta" href="https://codekids-academy.vercel.app/" target="_blank" rel="noopener">Reserve a Spot →</a>
     </div>
   </div>
   <div class="notice">
