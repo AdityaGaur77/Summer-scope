@@ -38,14 +38,14 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* HERO */
-.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:2rem}
-.hero-left{flex:1;min-width:0}
+/* HERO — IMPROVED AD CARD FLEX & SPACING */
+.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+.hero-left{flex: 2 1 340px; min-width: 0}
 .heyebrow{font-size:0.66rem;font-weight:700;letter-spacing:0.14em;color:#E8825C;text-transform:uppercase;margin-bottom:0.55rem}
-.hero h1{font-family:'Lora',serif;font-size:2.35rem;line-height:1.1;letter-spacing:-0.025em;margin-bottom:0.55rem;max-width:540px}
+.hero h1{font-family:'Lora',serif;font-size:2.35rem;line-height:1.1;letter-spacing:-0.025em;margin-bottom:0.55rem;max-width:620px}
 .hero h1 em{font-style:italic;color:#E8825C}
-.hsub{color:rgba(255,255,255,0.48);font-size:0.86rem;margin-bottom:1.35rem;max-width:460px}
-.sbar{display:flex;max-width:520px;gap:0.6rem}
+.hsub{color:rgba(255,255,255,0.48);font-size:0.86rem;margin-bottom:1.35rem;max-width:520px}
+.sbar{display:flex;max-width:560px;gap:0.6rem}
 .sbar input{flex:1;padding:0.58rem 1rem;border-radius:7px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#fff;font-size:0.84rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s,background .15s}
 .sbar input::placeholder{color:rgba(255,255,255,0.28)}
 .sbar input:focus{border-color:rgba(255,255,255,0.28);background:rgba(255,255,255,0.1)}
@@ -53,29 +53,46 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .hs{font-size:0.72rem;color:rgba(255,255,255,0.38)}
 .hs strong{display:block;font-size:1.1rem;font-weight:600;color:#fff;line-height:1.2;margin-bottom:1px}
 
-/* AD CARD */
-.ad-card{flex-shrink:0;width:400px;min-width:400px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem;align-self:center}
+/* AD CARD — WIDER, FLEXIBLE, TAKES EMPTY SPACE */
+.ad-card{
+  flex: 1 1 480px;
+  min-width: 340px;
+  max-width: 680px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:14px;
+  padding:1.4rem 1.5rem;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  align-self:center;
+  transition: all 0.2s;
+}
 .ad-label{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)}
 .ad-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:600;color:#fff;line-height:1.3}
 .ad-sub{font-size:.75rem;color:rgba(255,255,255,.45);margin-top:.2rem}
 .ad-tracks{display:flex;flex-direction:column;gap:.55rem}
 .ad-track{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.75rem .9rem}
-.ad-track-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.38rem}
+.ad-track-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.38rem;flex-wrap:wrap;gap:6px}
 .ad-track-badge{font-size:.6rem;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:20px;white-space:nowrap}
 .ad-py{background:#0D9373;color:#fff}
 .ad-ai{background:#4F46E5;color:#fff}
-.ad-track-price{font-size:.92rem;font-weight:700;color:#E8825C}
+.ad-track-price{font-size:.92rem;font-weight:700;color:#E8825C;white-space:nowrap}
 .ad-track-price small{font-size:.65rem;font-weight:400;color:rgba(255,255,255,.35)}
 .ad-track-name{font-size:.88rem;font-weight:600;color:#fff;line-height:1.25;margin-bottom:.2rem}
 .ad-track-age{font-size:.7rem;color:rgba(255,255,255,.4)}
 .ad-divider{border:none;border-top:1px solid rgba(255,255,255,.09);margin:0}
 .ad-meta{display:flex;flex-direction:column;gap:.35rem}
-.ad-meta-row{display:flex;align-items:baseline;gap:.5rem;font-size:.72rem;color:rgba(255,255,255,.38);line-height:1.45}
-.ad-meta-row span{color:rgba(255,255,255,.75)}
+.ad-meta-row{display:flex;align-items:baseline;gap:.5rem;font-size:.72rem;color:rgba(255,255,255,.38);line-height:1.45;flex-wrap:wrap}
+.ad-meta-row span{color:rgba(255,255,255,.75);word-break:break-word}
 .ad-cta{display:block;text-align:center;background:#E8825C;color:#fff;font-size:.82rem;font-weight:600;padding:.6rem 1rem;border-radius:8px;text-decoration:none;transition:background .15s;letter-spacing:.01em}
 .ad-cta:hover{background:#d0703e}
 
-@media(max-width:1060px){.hero{flex-direction:column}.ad-card{width:100%;min-width:0;max-width:560px;align-self:flex-start}}
+@media(max-width:1060px){
+  .hero{flex-direction:column}
+  .ad-card{width:100%;min-width:0;max-width:100%;align-self:flex-start}
+  .hero-left{flex:auto}
+}
 
 /* NOTICE BAR */
 .notice{background:#1A2A3D;border-bottom:1px solid rgba(255,255,255,0.06);padding:0.45rem 1.75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:0.72rem;color:rgba(255,255,255,0.4)}
@@ -394,15 +411,11 @@ async function loadData() {
     const res = await fetch('./data.json?v=' + Date.now());
     if (!res.ok) throw new Error('Failed to fetch data.json');
     const data = await res.json();
-
-    // Convert dlt strings to Date objects
     P = data.programs.map(p => ({
       ...p,
       dlt: new Date(p.dlt + 'T00:00:00')
     }));
     E = data.events;
-
-    // Update badge counts
     document.getElementById('pb').textContent = P.length;
     document.getElementById('eb-count').textContent = E.length;
     document.getElementById('tc').textContent = P.length;
@@ -411,18 +424,14 @@ async function loadData() {
     document.getElementById('oc').textContent = openCount;
     document.getElementById('ofc').textContent = openCount;
     document.getElementById('cfc').textContent = P.length - openCount;
-
     const lastUpdated = (data.meta && data.meta.lastUpdated) || 'Unknown';
     document.getElementById('nav-updated').textContent = 'Updated ' + lastUpdated;
     document.getElementById('notice-date').textContent = 'Last updated: ' + lastUpdated;
     document.getElementById('footer-meta').textContent =
       `Last updated: ${lastUpdated} · Programs: ${P.length} · Events: ${E.length} · Not affiliated with any program listed.`;
-
-    // Hide loading, show programs page
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('page-programs').style.display = 'block';
     document.getElementById('page-programs').classList.add('active');
-
     renderCards();
   } catch (err) {
     console.error('Failed to load data:', err);
@@ -431,7 +440,6 @@ async function loadData() {
   }
 }
 
-// ── RENDER PROGRAMS ────────────────────────────────────────────────────────────
 function getF(n) { return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e => e.value); }
 
 function renderCards() {
@@ -441,7 +449,6 @@ function renderCards() {
         grades = getF('grade'), prest = getF('prestige'), stats = getF('status');
   const sort = document.getElementById('ss').value;
   const now = new Date();
-
   let f = P.filter(p => {
     if (q && !`${p.name} ${p.host} ${p.cat.join(' ')} ${p.loc} ${p.desc}`.toLowerCase().includes(q)) return false;
     if (cats.length && !cats.some(c => p.cat.includes(c))) return false;
@@ -455,22 +462,18 @@ function renderCards() {
     }
     return true;
   });
-
   if (sort === 'prestige') f.sort((a, b) => b.prestige - a.prestige || (a.closed ? 1 : -1) || (a.dlt - b.dlt));
   else if (sort === 'open') f.sort((a, b) => (a.closed ? 1 : -1) - (b.closed ? 1 : -1) || b.prestige - a.prestige);
   else if (sort === 'deadline') f.sort((a, b) => ((a.closed ? 1 : 0) - (b.closed ? 1 : 0)) || a.dlt - b.dlt);
   else if (sort === 'cost-asc') f.sort((a, b) => a.costN - b.costN);
   else if (sort === 'cost-desc') f.sort((a, b) => b.costN - a.costN);
   else if (sort === 'az') f.sort((a, b) => a.name.localeCompare(b.name));
-
   document.getElementById('rt').textContent = `Showing ${f.length} of ${P.length} programs`;
-
   const g = document.getElementById('cg');
   if (!f.length) {
     g.innerHTML = `<div class="nores"><h3>No programs match your filters</h3><p>Try adjusting or clearing some filters.</p></div>`;
     return;
   }
-
   g.innerHTML = f.map(p => {
     const stars = '★'.repeat(p.prestige) + '☆'.repeat(5 - p.prestige);
     const fc = p.fmt === 'In-Person' ? 'tip' : p.fmt === 'Online' ? 'ton' : 'thy';
@@ -559,15 +562,12 @@ function clearFilters() {
   document.getElementById('si').value = '';
   renderCards();
 }
-
-// ── RENDER EVENTS ──────────────────────────────────────────────────────────────
 function filterE(btn) {
   document.querySelectorAll('.efbtn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   aet = btn.dataset.t;
   renderEvents();
 }
-
 function renderEvents() {
   if (!E.length) return;
   const secs = [
@@ -599,8 +599,6 @@ function renderEvents() {
   });
   document.getElementById('events-body').innerHTML = html;
 }
-
-// ── PAGE SWITCHING ──────────────────────────────────────────────────────────────
 function showPage(page, btn) {
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
   document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
@@ -610,8 +608,6 @@ function showPage(page, btn) {
   btn.classList.add('active');
   if (page === 'events') renderEvents();
 }
-
-// ── INIT ───────────────────────────────────────────────────────────────────────
 loadData();
 </script>
 </body>
