@@ -560,72 +560,74 @@ loadData();
 </script>
 <script type="module" src="./analytics.bundle.js"></script>
 
-<!-- Secret dashboard: click the logo 5 times -->
-<div id="dash-modal" sts:center;justify-content:center">
-  <div style="background:#162236;border:1px solid #243548;border-radius:14px;padding:2rem 1.8rem;width:310px;text-align:center;font-family:'DM Sans',sans-serif">
-    <div style="font-family:'Lora',serif;font-size:1.05rem;color:#F0EEE8;margin-bottom:.25rem">Analytics Access</div>
-    <div style="color:#8A9BB0;font-size:.76rem;margin-bottom:1.4rem">Enter your dashboard password</div>
-    <input id="dash-pw" type="password" placeholder="Password"
-      style="width:100%;padding:.62rem .9rem;border-radius:8px;border:1.5px solid #243548;background:#0D1926;color:#F0EEE8;font-size:.86rem;outline:none;margin-bottom:.7rem;font-family:inherit;transition:border-color .15s"
-      onfocus="this.style.borderColor='#E8825C'" onblur="this.style.borderColor='#243548'">
-    <button onclick="submitDashPw()"
-      style="width:100%;padding:.62rem;border-radius:8px;border:none;background:#E8825C;color:#fff;font-size:.86rem;font-weight:600;cursor:pointer;font-family:inherit">
-      Open Dashboard
-    </button>
-    <div id="dash-err"     style="color:#f87171;font-size:.74rem;margin-top:.55rem;display:none">Incorrect password</div>
-    <div id="dash-loading" style="color:#8A9BB0;font-size:.74rem;margin-top:.55rem;display:none">Checking...</div>
-    <button onclick="closeDashModal()"
-      style="background:none;border:none;color:#8A9BB0;font-size:.74rem;cursor:pointer;margin-top:.85rem;font-family:inherit">
-      Cancel
-    </button>
+
+<!-- Secret dashboard: click logo 5x -->
+<div id="dash-modal" onclick="if(event.target===this)closeDashModal()" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.55);z-index:9999;align-items:center;justify-content:center;padding:20px;box-sizing:border-box">
+  <div onclick="event.stopPropagation()" style="width:100%;max-width:390px;background:#fff;border:1px solid #E2E8F0;border-radius:20px;padding:28px;box-shadow:0 25px 50px rgba(0,0,0,.22);font-family:'DM Sans',sans-serif">
+    <div style="font-size:.63rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#E8825C;margin-bottom:7px">Admin</div>
+    <h2 style="font-family:'Lora',serif;font-size:1.75rem;color:#0D1926;margin-bottom:6px;font-weight:600;line-height:1.2">Enter password</h2>
+    <p style="color:#64748B;font-size:.84rem;margin-bottom:22px;line-height:1.55">Enter the admin password to open the analytics dashboard.</p>
+    <label style="display:block;font-size:.71rem;font-weight:700;color:#334155;margin-bottom:7px;letter-spacing:.03em">Password</label>
+    <input id="dash-pw" type="password" placeholder="Admin password" autocomplete="current-password"
+      style="width:100%;border:1.5px solid #CBD5E1;border-radius:11px;padding:11px 14px;font-size:.9rem;outline:none;font-family:inherit;box-sizing:border-box;color:#0D1926;transition:border-color .15s,box-shadow .15s"
+      onfocus="this.style.borderColor='#0D1926';this.style.boxShadow='0 0 0 3px rgba(13,25,38,.1)'"
+      onblur="this.style.borderColor='#CBD5E1';this.style.boxShadow='none'">
+    <div id="dash-err" style="display:none;margin-top:11px;padding:10px 14px;background:#FEF2F2;border:1px solid #FECACA;border-radius:11px;color:#B91C1C;font-size:.82rem">Incorrect password. Try again.</div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button onclick="submitDashPw()"
+        style="flex:1;background:#0D1926;color:#fff;border:none;border-radius:11px;padding:13px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit"
+        onmouseover="this.style.background='#162236'" onmouseout="this.style.background='#0D1926'">
+        Open Dashboard
+      </button>
+      <button onclick="closeDashModal()"
+        style="background:#F1F5F9;color:#475569;border:none;border-radius:11px;padding:13px 18px;font-size:.875rem;font-weight:700;cursor:pointer;font-family:inherit"
+        onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'">
+        Close
+      </button>
+    </div>
+    <div id="dash-checking" style="display:none;text-align:center;margin-top:13px;color:#94A3B8;font-size:.79rem">Verifying...</div>
   </div>
 </div>
 <script>
 (function () {
-  var clicks = 0, timer;
+  var n = 0, t;
   var logo = document.querySelector('nav .logo, .logo');
   if (!logo) return;
-  logo.style.cursor = 'default';
   logo.addEventListener('click', function (e) {
     e.stopPropagation();
-    clicks++;
-    clearTimeout(timer);
-    timer = setTimeout(function () { clicks = 0; }, 2500);
-    if (clicks >= 5) {
-      clicks = 0;
-      clearTimeout(timer);
+    n++; clearTimeout(t);
+    t = setTimeout(function () { n = 0; }, 2500);
+    if (n >= 5) {
+      n = 0; clearTimeout(t);
       var m = document.getElementById('dash-modal');
       m.style.display = 'flex';
-      setTimeout(function () { document.getElementById('dash-pw').focus(); }, 60);
+      setTimeout(function () { document.getElementById('dash-pw').focus(); }, 50);
     }
   });
   window.closeDashModal = function () {
     document.getElementById('dash-modal').style.display = 'none';
     document.getElementById('dash-pw').value = '';
     document.getElementById('dash-err').style.display = 'none';
-    document.getElementById('dash-loading').style.display = 'none';
+    document.getElementById('dash-checking').style.display = 'none';
   };
-  document.getElementById('dash-modal').addEventListener('click', function (e) {
-    if (e.target === this) closeDashModal();
-  });
   document.getElementById('dash-pw').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter')  submitDashPw();
+    if (e.key === 'Enter') submitDashPw();
     if (e.key === 'Escape') closeDashModal();
   });
   window.submitDashPw = async function () {
     var pw = document.getElementById('dash-pw').value.trim();
     if (!pw) return;
-    document.getElementById('dash-err').style.display    = 'none';
-    document.getElementById('dash-loading').style.display = 'block';
+    document.getElementById('dash-err').style.display = 'none';
+    document.getElementById('dash-checking').style.display = 'block';
     try {
       var r = await fetch('/api/analytics', { headers: { Authorization: 'Bearer ' + pw } });
-      document.getElementById('dash-loading').style.display = 'none';
+      document.getElementById('dash-checking').style.display = 'none';
       if (r.status === 401) { document.getElementById('dash-err').style.display = 'block'; return; }
       sessionStorage.setItem('_ss_dash_pw', pw);
       window.location.href = '/dashboard.html';
     } catch (err) {
-      document.getElementById('dash-loading').style.display = 'none';
-      document.getElementById('dash-err').textContent = 'Connection error';
+      document.getElementById('dash-checking').style.display = 'none';
+      document.getElementById('dash-err').textContent = 'Connection error. Try again.';
       document.getElementById('dash-err').style.display = 'block';
     }
   };
