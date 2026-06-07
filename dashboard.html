@@ -4,371 +4,278 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SummerScope — Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0D1926;--surface:#162236;--card:#1C2D42;--border:#243548;
-  --text:#F0EEE8;--muted:#8A9BB0;--accent:#E8825C;--green:#4ADE80;
-  --navy:#0D1926;--blue:#3B82F6;
-}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Lora:wght@600&display=swap');
+body{font-family:'DM Sans',system-ui,sans-serif;background:#F5F4F0;color:#111827;font-size:14px;min-height:100vh}
 
-/* ── AUTH SCREEN ── */
-#auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
-.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center}
-.auth-logo{font-family:'Lora',serif;font-size:1.4rem;color:var(--text);margin-bottom:.3rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
-.ldot{width:7px;height:7px;background:var(--accent);border-radius:50%}
-.auth-sub{color:var(--muted);font-size:.8rem;margin-bottom:2rem}
-.auth-box input{width:100%;padding:.7rem 1rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:.9rem;font-family:inherit;outline:none;margin-bottom:.8rem;transition:border-color .15s}
-.auth-box input:focus{border-color:var(--accent)}
-.auth-box button{width:100%;padding:.7rem;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .15s}
-.auth-box button:hover{opacity:.88}
-.auth-err{color:#f87171;font-size:.78rem;margin-top:.5rem;display:none}
+/* NAV */
+nav{background:#0D1926;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06)}
+.logo{font-family:'Lora',serif;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:.4rem}
+.ldot{width:7px;height:7px;background:#E8825C;border-radius:50%}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.range-tabs{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px}
+.rtab{padding:.25rem .7rem;border-radius:6px;border:none;background:none;color:rgba(255,255,255,.5);font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.rtab.active{background:rgba(255,255,255,.18);color:#fff}
+.refresh-btn{padding:.3rem .9rem;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s}
+.refresh-btn:hover{border-color:rgba(255,255,255,.35);color:#fff}
+.updated{font-size:.7rem;color:rgba(255,255,255,.3)}
 
-/* ── DASHBOARD ── */
-#dashboard{display:none}
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:.9rem 1.75rem;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Lora',serif;font-size:1.15rem;display:flex;align-items:center;gap:.4rem}
-.header-right{display:flex;align-items:center;gap:1rem}
-.range-select{padding:.3rem .7rem;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-size:.78rem;cursor:pointer;outline:none}
-.refresh-btn{padding:.3rem .85rem;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:.78rem;cursor:pointer;transition:all .15s}
-.refresh-btn:hover{border-color:var(--accent);color:var(--accent)}
-.last-updated{font-size:.72rem;color:var(--muted)}
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
 
-main{padding:1.5rem 1.75rem;max-width:1280px;margin:0 auto}
-
-/* ── LOADING ── */
-#loading{display:flex;align-items:center;justify-content:center;min-height:50vh;color:var(--muted);flex-direction:column;gap:.8rem}
-.spinner{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+/* LOADING / EMPTY */
+.center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;gap:1rem;color:#9CA3AF;text-align:center}
+.spinner{width:30px;height:30px;border:2.5px solid #E2DFD8;border-top-color:#E8825C;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.empty-icon{font-size:2rem;margin-bottom:.25rem}
+.empty-title{font-size:1rem;font-weight:600;color:#6B7280}
+.empty-sub{font-size:.82rem;color:#9CA3AF;max-width:320px;line-height:1.5}
 
-/* ── STAT CARDS ── */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.9rem;margin-bottom:1.5rem}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.1rem 1.2rem}
-.stat-label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
-.stat-value{font-size:1.9rem;font-weight:600;line-height:1;color:var(--text)}
-.stat-sub{font-size:.72rem;color:var(--muted);margin-top:.3rem}
-.stat-accent{color:var(--accent)}
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:1.1rem}
+@media(max-width:760px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat{background:#fff;border:1px solid #E2DFD8;border-radius:13px;padding:1.1rem 1.25rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,#E8825C)}
+.stat-label{font-size:.67rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9CA3AF;margin-bottom:.4rem}
+.stat-val{font-size:1.85rem;font-weight:600;color:#0D1926;line-height:1}
+.stat-sub{font-size:.72rem;color:#9CA3AF;margin-top:.35rem}
 
-/* ── SECTION ── */
-.section-title{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin-bottom:.9rem}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
+/* SECTION LABEL */
+.section-label{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9CA3AF;margin:1.4rem 0 .75rem}
 
-/* ── CHART CARDS ── */
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.2rem}
-.chart-card h3{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:1rem}
-.chart-wrap{position:relative}
-.chart-wrap canvas{max-height:220px}
-.chart-wrap-tall canvas{max-height:280px}
+/* CARDS */
+.card{background:#fff;border:1px solid #E2DFD8;border-radius:13px;padding:1.25rem}
+.card-title{font-size:.82rem;font-weight:600;color:#0D1926;margin-bottom:1rem}
+.card canvas{display:block}
 
-/* ── TABLE CARDS ── */
-.table-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.2rem;overflow:hidden}
-.table-card h3{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.9rem}
-.trow{display:flex;align-items:center;gap:.7rem;padding:.45rem 0;border-bottom:1px solid var(--border)}
-.trow:last-child{border-bottom:none}
-.trow-rank{font-size:.68rem;color:var(--muted);width:16px;text-align:right;flex-shrink:0}
-.trow-label{flex:1;font-size:.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.trow-bar-wrap{width:80px;height:5px;background:var(--border);border-radius:3px;flex-shrink:0}
-.trow-bar{height:100%;border-radius:3px;background:var(--accent)}
-.trow-count{font-size:.75rem;font-weight:600;color:var(--accent);width:28px;text-align:right;flex-shrink:0}
-.empty{color:var(--muted);font-size:.8rem;padding:.5rem 0}
+/* GRID LAYOUTS */
+.g1{margin-bottom:.85rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:.85rem}
+@media(max-width:860px){.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
 
-.mb{margin-bottom:.9rem}
+/* TABLE LIST */
+.t-row{display:flex;align-items:center;gap:.65rem;padding:.42rem 0;border-bottom:1px solid #F3F4F6}
+.t-row:last-child{border-bottom:none}
+.t-num{font-size:.68rem;color:#D1D5DB;width:16px;text-align:right;flex-shrink:0}
+.t-label{flex:1;font-size:.8rem;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-bar-wrap{width:64px;height:4px;background:#F3F4F6;border-radius:2px;flex-shrink:0}
+.t-bar{height:100%;border-radius:2px;background:#E8825C}
+.t-count{font-size:.75rem;font-weight:600;color:#6B7280;width:26px;text-align:right;flex-shrink:0}
+.t-empty{font-size:.8rem;color:#D1D5DB;padding:.5rem 0}
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
-<div id="auth-screen">
-  <div class="auth-box">
-    <div class="auth-logo"><div class="ldot"></div>SummerScope</div>
-    <p class="auth-sub">Analytics Dashboard</p>
-    <input type="password" id="pw-input" placeholder="Enter dashboard password" />
-    <button onclick="login()">View Analytics</button>
-    <p class="auth-err" id="auth-err">Incorrect password</p>
+<nav>
+  <div class="logo"><div class="ldot"></div>SummerScope <span style="font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:400;color:rgba(255,255,255,.35);margin-left:.3rem">Analytics</span></div>
+  <div class="nav-right">
+    <div class="range-tabs">
+      <button class="rtab active" onclick="setRange(7,this)">7d</button>
+      <button class="rtab" onclick="setRange(30,this)">30d</button>
+      <button class="rtab" onclick="setRange(90,this)">90d</button>
+    </div>
+    <span class="updated" id="updated"></span>
+    <button class="refresh-btn" onclick="load()">↻ Refresh</button>
   </div>
-</div>
+</nav>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <header>
-    <div class="logo"><div class="ldot"></div>SummerScope Analytics</div>
-    <div class="header-right">
-      <span class="last-updated" id="last-updated"></span>
-      <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+<main>
+  <div id="loading" class="center-state"><div class="spinner"></div><span>Loading analytics…</span></div>
+  <div id="error"  class="center-state" style="display:none">
+    <div class="empty-icon">⚠️</div>
+    <div class="empty-title">Could not load data</div>
+    <div class="empty-sub" id="error-msg"></div>
+  </div>
+  <div id="content" style="display:none">
+
+    <!-- STAT CARDS -->
+    <div class="stats-row" id="stats"></div>
+
+    <!-- VISITS OVER TIME -->
+    <div class="section-label">Visits over time</div>
+    <div class="card g1" style="padding:1.25rem 1.25rem 1rem">
+      <canvas id="chart-line" height="90"></canvas>
     </div>
-  </header>
 
-  <main>
-    <div id="loading"><div class="spinner"></div><span>Loading analytics…</span></div>
-    <div id="content" style="display:none">
-
-      <!-- STAT CARDS -->
-      <div class="stats-grid mb" id="stat-cards"></div>
-
-      <!-- VISITS OVER TIME -->
-      <div class="chart-card mb">
-        <h3>Visits over last 30 days</h3>
-        <div class="chart-wrap chart-wrap-tall"><canvas id="chart-visits"></canvas></div>
-      </div>
-
-      <!-- ROW: DEVICE + BROWSER + PAGE -->
-      <div class="grid-3 mb">
-        <div class="chart-card">
-          <h3>Device type</h3>
-          <div class="chart-wrap"><canvas id="chart-device"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Browser</h3>
-          <div class="chart-wrap"><canvas id="chart-browser"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Page</h3>
-          <div class="chart-wrap"><canvas id="chart-page"></canvas></div>
-        </div>
-      </div>
-
-      <!-- SCROLL DEPTH -->
-      <div class="chart-card mb">
-        <h3>Scroll depth — how far visitors scroll</h3>
-        <div class="chart-wrap"><canvas id="chart-scroll"></canvas></div>
-      </div>
-
-      <!-- TABLES ROW 1 -->
-      <div class="grid-2 mb">
-        <div class="table-card" id="table-referrers"><h3>Top referrers</h3></div>
-        <div class="table-card" id="table-programs"><h3>Most clicked programs</h3></div>
-      </div>
-
-      <!-- TABLES ROW 2 -->
-      <div class="grid-2 mb">
-        <div class="table-card" id="table-searches"><h3>Top searches</h3></div>
-        <div class="table-card" id="table-filters"><h3>Most used filters</h3></div>
-      </div>
-
-      <!-- TABLES ROW 3 -->
-      <div class="grid-2 mb">
-        <div class="table-card" id="table-os"><h3>Operating system</h3></div>
-        <div class="table-card" id="table-links"><h3>External links clicked</h3></div>
-      </div>
-
+    <!-- DEVICE / BROWSER / PAGE -->
+    <div class="section-label">Audience breakdown</div>
+    <div class="g3">
+      <div class="card"><div class="card-title">Device</div><canvas id="chart-device" height="160"></canvas></div>
+      <div class="card"><div class="card-title">Browser</div><canvas id="chart-browser" height="160"></canvas></div>
+      <div class="card"><div class="card-title">OS</div><canvas id="chart-os" height="160"></canvas></div>
     </div>
-  </main>
-</div>
+
+    <!-- SCROLL -->
+    <div class="section-label">Scroll depth</div>
+    <div class="card g1" style="padding:1.25rem 1.25rem 1rem">
+      <div class="card-title" style="margin-bottom:.75rem">How far visitors scroll</div>
+      <canvas id="chart-scroll" height="60"></canvas>
+    </div>
+
+    <!-- TABLES ROW 1 -->
+    <div class="section-label">Traffic sources</div>
+    <div class="g2">
+      <div class="card"><div class="card-title">Top referrers</div><div id="t-referrers"></div></div>
+      <div class="card"><div class="card-title">UTM sources</div><div id="t-utm"></div></div>
+    </div>
+
+    <!-- TABLES ROW 2 -->
+    <div class="section-label">Content engagement</div>
+    <div class="g2">
+      <div class="card"><div class="card-title">Most clicked programs</div><div id="t-programs"></div></div>
+      <div class="card"><div class="card-title">Top searches</div><div id="t-searches"></div></div>
+    </div>
+
+    <!-- TABLES ROW 3 -->
+    <div class="section-label">Filters & navigation</div>
+    <div class="g2">
+      <div class="card"><div class="card-title">Most used filters</div><div id="t-filters"></div></div>
+      <div class="card"><div class="card-title">External links clicked</div><div id="t-links"></div></div>
+    </div>
+
+  </div>
+</main>
 
 <script>
-// ── Palette ──────────────────────────────────────────────────────────
-const COLORS = ['#E8825C','#3B82F6','#4ADE80','#A78BFA','#FBBF24','#34D399','#F472B6','#60A5FA'];
-const CHART_DEFAULTS = {
-  plugins: { legend: { labels: { color: '#8A9BB0', font: { size: 11 } } } },
-  scales: {},
-};
+const PW = sessionStorage.getItem('_ss_dash_pw') || '';
+if (!PW) { window.location.href = '/'; }
 
-Chart.defaults.color = '#8A9BB0';
-Chart.defaults.borderColor = '#243548';
+let rangeDays = 7;
+let charts = {};
 
-// ── Auth ─────────────────────────────────────────────────────────────
-let savedPassword = sessionStorage.getItem('_ss_dash_pw') || '';
-
-function login() {
-  const pw = document.getElementById('pw-input').value.trim();
-  if (!pw) return;
-  savedPassword = pw;
-  sessionStorage.setItem('_ss_dash_pw', pw);
-  loadData();
+function setRange(days, btn) {
+  rangeDays = days;
+  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  load();
 }
 
-document.getElementById('pw-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') login();
-});
-
-// ── Load data ─────────────────────────────────────────────────────────
-async function loadData() {
-  document.getElementById('loading').style.display  = 'flex';
-  document.getElementById('content').style.display  = 'none';
-  document.getElementById('auth-err').style.display = 'none';
+async function load() {
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('content').style.display = 'none';
+  document.getElementById('error').style.display   = 'none';
 
   try {
-    const r = await fetch('/api/analytics', {
-      headers: { Authorization: `Bearer ${savedPassword}` },
+    const r = await fetch('/api/analytics?days=' + rangeDays, {
+      headers: { Authorization: 'Bearer ' + PW }
     });
-
-    if (r.status === 401) {
-      document.getElementById('auth-screen').style.display = 'flex';
-      document.getElementById('dashboard').style.display   = 'none';
-      document.getElementById('auth-err').style.display    = 'block';
-      document.getElementById('loading').style.display     = 'none';
-      return;
-    }
-
-    const data = await r.json();
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display   = 'block';
-    render(data);
+    if (r.status === 401) { sessionStorage.removeItem('_ss_dash_pw'); window.location.href = '/'; return; }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    render(d);
   } catch (e) {
-    document.getElementById('loading').innerHTML = `<span style="color:#f87171">Failed to load: ${e.message}</span>`;
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-msg').textContent = e.message;
+    document.getElementById('error').style.display = 'flex';
   }
 }
 
-// ── Render ────────────────────────────────────────────────────────────
-let charts = {};
-function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+const PALETTE = ['#E8825C','#0D1926','#4ADE80','#60A5FA','#A78BFA','#FBBF24','#F472B6','#34D399'];
+
+function fmt(sec) {
+  if (!sec) return '—';
+  if (sec >= 60) return Math.floor(sec/60) + 'm ' + (sec%60) + 's';
+  return sec + 's';
+}
+
+function killChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
 function render(d) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('content').style.display = 'block';
 
-  const ts = new Date(d.generated_at).toLocaleString();
-  document.getElementById('last-updated').textContent = `Updated ${ts}`;
+  const ts = new Date(d.generated_at);
+  document.getElementById('updated').textContent = 'Updated ' + ts.toLocaleTimeString();
 
-  renderStats(d.summary);
-  renderLineChart('chart-visits', d.pageviews_by_day);
-  renderDoughnut('chart-device',  d.by_device);
-  renderDoughnut('chart-browser', d.by_browser);
-  renderDoughnut('chart-page',    d.by_page);
-  renderScrollChart('chart-scroll', d.scroll_depth);
-  renderTable('table-referrers', d.top_referrers, 'No referrer data yet');
-  renderTable('table-programs',  d.top_programs,  'No program clicks yet');
-  renderTable('table-searches',  d.top_searches,  'No searches yet');
-  renderTable('table-filters',   d.top_filters,   'No filter usage yet');
-  renderTable('table-os',        d.by_os,         'No OS data yet');
-  renderTable('table-links',     d.top_links,     'No external links clicked yet');
-}
-
-function fmtDuration(sec) {
-  if (sec >= 60) return `${Math.floor(sec/60)}m ${sec%60}s`;
-  return `${sec}s`;
-}
-
-function renderStats(s) {
-  const el = document.getElementById('stat-cards');
-  const cards = [
-    { label: 'Page Views',       value: s.total_pageviews.toLocaleString(),  sub: 'last 30 days' },
-    { label: 'Unique Visitors',  value: s.unique_visitors.toLocaleString(),   sub: 'by visitor ID' },
-    { label: 'Sessions',         value: s.unique_sessions.toLocaleString(),   sub: 'unique sessions' },
-    { label: 'Avg Time on Page', value: fmtDuration(s.avg_duration_sec),      sub: 'per session' },
-    { label: 'Returning',        value: s.returning_visitors.toLocaleString(),sub: 'returning visitors' },
-    { label: 'New Visitors',     value: s.new_visitors.toLocaleString(),       sub: 'first-time visitors' },
-  ];
-  el.innerHTML = cards.map(c => `
-    <div class="stat-card">
+  const s = d.summary;
+  document.getElementById('stats').innerHTML = [
+    { label:'Page Views',      val: s.total_pageviews.toLocaleString(), sub:'last ' + rangeDays + ' days', accent:'#E8825C' },
+    { label:'Unique Visitors', val: s.unique_visitors.toLocaleString(), sub:'by visitor ID', accent:'#0D1926' },
+    { label:'Sessions',        val: s.unique_sessions.toLocaleString(), sub:'unique sessions', accent:'#4ADE80' },
+    { label:'Avg Time on Page',val: fmt(s.avg_duration_sec),            sub:'per session', accent:'#60A5FA' },
+  ].map(c => `
+    <div class="stat" style="--accent:${c.accent}">
       <div class="stat-label">${c.label}</div>
-      <div class="stat-value stat-accent">${c.value}</div>
+      <div class="stat-val">${c.val}</div>
       <div class="stat-sub">${c.sub}</div>
-    </div>
-  `).join('');
-}
+    </div>`).join('');
 
-function renderLineChart(id, data) {
-  destroyChart(id);
-  const ctx = document.getElementById(id).getContext('2d');
-  charts[id] = new Chart(ctx, {
+  // Line chart
+  killChart('line');
+  const days = d.pageviews_by_day;
+  const ctx1 = document.getElementById('chart-line').getContext('2d');
+  charts['line'] = new Chart(ctx1, {
     type: 'line',
     data: {
-      labels: data.map(d => {
-        const [,m,day] = d.date.split('-');
-        return `${parseInt(m)}/${parseInt(day)}`;
-      }),
-      datasets: [{
-        label: 'Page views',
-        data: data.map(d => d.count),
-        borderColor: '#E8825C',
-        backgroundColor: 'rgba(232,130,92,0.12)',
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: '#E8825C',
-        fill: true,
-        tension: 0.3,
-      }],
+      labels: days.map(d => { const [,m,dy] = d.date.split('-'); return +m+'/'+parseInt(dy); }),
+      datasets: [{ label:'Views', data: days.map(d => d.count),
+        borderColor:'#E8825C', backgroundColor:'rgba(232,130,92,.1)',
+        borderWidth:2, pointRadius:3, pointBackgroundColor:'#E8825C', fill:true, tension:.35 }],
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: '#243548' }, ticks: { color: '#8A9BB0', maxTicksLimit: 10 } },
-        y: { grid: { color: '#243548' }, ticks: { color: '#8A9BB0' }, beginAtZero: true },
-      },
-    },
+    options: { responsive:true, plugins:{ legend:{display:false} },
+      scales:{ x:{ grid:{color:'#F3F4F6'}, ticks:{color:'#9CA3AF',maxTicksLimit:12,font:{size:11}} },
+               y:{ grid:{color:'#F3F4F6'}, ticks:{color:'#9CA3AF',font:{size:11}}, beginAtZero:true } } }
   });
-}
 
-function renderDoughnut(id, data) {
-  destroyChart(id);
-  if (!data || !data.length) return;
-  const ctx = document.getElementById(id).getContext('2d');
-  charts[id] = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: data.map(d => d.label),
-      datasets: [{
-        data: data.map(d => d.count),
-        backgroundColor: COLORS,
-        borderColor: '#162236',
-        borderWidth: 2,
-      }],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom', labels: { color: '#8A9BB0', font: { size: 10 }, padding: 10 } },
-      },
-    },
-  });
-}
-
-function renderScrollChart(id, data) {
-  destroyChart(id);
-  const ctx = document.getElementById(id).getContext('2d');
-  charts[id] = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: data.map(d => d.label),
-      datasets: [{
-        label: 'Sessions reaching depth',
-        data: data.map(d => d.count),
-        backgroundColor: COLORS,
-        borderRadius: 5,
-      }],
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: '#8A9BB0' } },
-        y: { grid: { color: '#243548' }, ticks: { color: '#8A9BB0' }, beginAtZero: true },
-      },
-    },
-  });
-}
-
-function renderTable(containerId, data, emptyMsg) {
-  const el = document.getElementById(containerId);
-  const title = el.querySelector('h3').outerHTML;
-  if (!data || !data.length) {
-    el.innerHTML = title + `<p class="empty">${emptyMsg}</p>`;
-    return;
+  // Doughnut helpers
+  function doughnut(id, data) {
+    killChart(id);
+    if (!data || !data.length) return;
+    const ctx = document.getElementById('chart-'+id).getContext('2d');
+    charts[id] = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels: data.map(d=>d.label), datasets:[{ data:data.map(d=>d.count),
+        backgroundColor:PALETTE, borderColor:'#fff', borderWidth:3 }] },
+      options: { responsive:true, plugins:{ legend:{ position:'bottom',
+        labels:{ color:'#6B7280', font:{size:11}, padding:12, boxWidth:10 } } } }
+    });
   }
-  const max = data[0].count;
-  el.innerHTML = title + data.map((row, i) => `
-    <div class="trow">
-      <span class="trow-rank">${i + 1}</span>
-      <span class="trow-label" title="${row.label}">${row.label}</span>
-      <div class="trow-bar-wrap"><div class="trow-bar" style="width:${Math.round(row.count/max*100)}%"></div></div>
-      <span class="trow-count">${row.count}</span>
-    </div>
-  `).join('');
+  doughnut('device',  d.by_device);
+  doughnut('browser', d.by_browser);
+  doughnut('os',      d.by_os);
+
+  // Scroll depth bar
+  killChart('scroll');
+  const ctx2 = document.getElementById('chart-scroll').getContext('2d');
+  charts['scroll'] = new Chart(ctx2, {
+    type: 'bar',
+    data: { labels: d.scroll_depth.map(s=>s.label),
+      datasets:[{ label:'Sessions', data:d.scroll_depth.map(s=>s.count),
+        backgroundColor:PALETTE, borderRadius:6 }] },
+    options: { responsive:true, plugins:{ legend:{display:false} },
+      scales:{ x:{ grid:{display:false}, ticks:{color:'#9CA3AF'} },
+               y:{ grid:{color:'#F3F4F6'}, ticks:{color:'#9CA3AF'}, beginAtZero:true } } }
+  });
+
+  // Table helper
+  function table(id, rows, empty) {
+    const el = document.getElementById(id);
+    if (!rows || !rows.length) { el.innerHTML='<div class="t-empty">'+empty+'</div>'; return; }
+    const max = rows[0].count;
+    el.innerHTML = rows.map((r,i) => `
+      <div class="t-row">
+        <span class="t-num">${i+1}</span>
+        <span class="t-label" title="${r.label}">${r.label}</span>
+        <div class="t-bar-wrap"><div class="t-bar" style="width:${Math.round(r.count/max*100)}%"></div></div>
+        <span class="t-count">${r.count}</span>
+      </div>`).join('');
+  }
+
+  table('t-referrers', d.top_referrers,  'No referrer data yet');
+  table('t-utm',       d.top_utm_sources, 'No UTM traffic yet');
+  table('t-programs',  d.top_programs,    'No program clicks yet');
+  table('t-searches',  d.top_searches,    'No searches yet');
+  table('t-filters',   d.top_filters,     'No filter usage yet');
+  table('t-links',     d.top_links,       'No external links clicked yet');
 }
 
-// ── Init ──────────────────────────────────────────────────────────────
-if (savedPassword) {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('dashboard').style.display   = 'block';
-  loadData();
-}
+load();
 </script>
 </body>
 </html>
