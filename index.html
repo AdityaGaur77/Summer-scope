@@ -181,11 +181,40 @@ footer strong{color:rgba(255,255,255,.55)}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
 
+/* Hero 2-col layout */
+.hero-inner{display:flex;align-items:flex-start;gap:2.25rem}
+.hero-content{flex:1;min-width:0}
+.hero-promo{width:268px;flex-shrink:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:1.3rem;display:flex;flex-direction:column;gap:.55rem;text-decoration:none;transition:background .15s}
+.hero-promo:hover{background:rgba(255,255,255,.11)}
+.hp-badge{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8825C}
+.hp-track{font-size:.61rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.36);margin-top:-.05rem}
+.hp-title{font-family:'Lora',serif;font-size:1.15rem;color:#fff;line-height:1.25;margin-top:.1rem}
+.hp-price{font-size:1.5rem;font-weight:700;color:#E8825C;line-height:1}
+.hp-price span{font-size:.76rem;font-weight:400;color:rgba(255,255,255,.4);margin-left:3px}
+.hp-desc{font-size:.73rem;color:rgba(255,255,255,.47);line-height:1.52}
+.hp-pills{display:flex;flex-wrap:wrap;gap:.27rem}
+.hp-pill{font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:20px;background:rgba(255,255,255,.09);color:rgba(255,255,255,.5)}
+.hp-cta{background:#E8825C;color:#fff;border-radius:8px;padding:.55rem;font-size:.79rem;font-weight:700;text-align:center;margin-top:.2rem;letter-spacing:.01em}
+.hero-promo:hover .hp-cta{opacity:.86}
+/* Mobile filter toggle */
+.mob-filter-btn{display:none;align-items:center;gap:.45rem;padding:.45rem .95rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#fff;font-size:.77rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin:.75rem 1.1rem .2rem}
 @media(max-width:680px){
-  .hero h1{font-size:1.75rem}.sidebar{display:none}
+  .hero{padding:1.4rem 1.1rem 1.3rem}
+  .hero h1{font-size:1.65rem}
+  .hero-inner{flex-direction:column;gap:1.1rem}
+  .hero-promo{width:100%}
+  .sidebar{display:none}
+  .sidebar.mob-open{display:block!important;position:fixed;top:0;left:0;bottom:0;width:80vw;max-width:285px;z-index:500;overflow-y:auto;box-shadow:4px 0 28px rgba(0,0,0,.22)}
+  .mob-filter-btn{display:flex}
   .grid{grid-template-columns:1fr}.egrid{grid-template-columns:1fr}
-  .mgrid{grid-template-columns:1fr}.hstats{gap:1.1rem}
-  .ebody{padding:1rem}.nav-right{display:none}
+  .mgrid{grid-template-columns:1fr}.hstats{gap:.85rem;flex-wrap:wrap}
+  .ebody{padding:.9rem}.nav-right{display:none}
+  .main{padding:.85rem .9rem}
+  .sbar input{font-size:.84rem}
+  nav .ntab{font-size:.7rem;padding:.26rem .48rem}
+  .notice{flex-wrap:wrap;gap:.3rem}
+  .notice-date{display:none}
+  .rbar{flex-wrap:wrap;gap:.4rem}
 }
 </style>
 </head>
@@ -212,21 +241,40 @@ footer strong{color:rgba(255,255,255,.55)}
 <!-- ══ PROGRAMS PAGE ══ -->
 <div id="page-programs" class="page" style="display:none">
   <div class="hero">
-    <div class="heyebrow">The complete 2026 database</div>
-    <h1>Find your <em>perfect</em><br>summer program</h1>
-    <p class="hsub">Every top summer program for high schoolers — verified deadlines, real costs, direct apply links.</p>
-    <div class="sbar"><input type="text" id="si" placeholder="Search programs, universities, subjects…" oninput="renderCards()" autocomplete="off"></div>
-    <div class="hstats">
-      <div class="hs"><strong id="tc">—</strong>Programs</div>
-      <div class="hs"><strong id="free-count">—</strong>Free programs</div>
-      <div class="hs"><strong id="oc">—</strong>Still accepting</div>
-      <div class="hs"><strong>8</strong>Subject areas</div>
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="heyebrow">The complete 2026 database</div>
+        <h1>Find your <em>perfect</em><br>summer program</h1>
+        <p class="hsub">Every top summer program for high schoolers — verified deadlines, real costs, direct apply links.</p>
+        <div class="sbar"><input type="text" id="si" placeholder="Search programs, universities, subjects…" oninput="renderCards()" autocomplete="off"></div>
+        <div class="hstats">
+          <div class="hs"><strong id="tc">—</strong>Programs</div>
+          <div class="hs"><strong id="free-count">—</strong>Free programs</div>
+          <div class="hs"><strong id="oc">—</strong>Still accepting</div>
+          <div class="hs"><strong>8</strong>Subject areas</div>
+        </div>
+      </div>
+      <a href="https://codekids-academy.vercel.app/" target="_blank" class="hero-promo">
+        <div class="hp-badge">Featured Class</div>
+        <div class="hp-track">AI Track · CodeKids Academy</div>
+        <div class="hp-title">AI + Image<br>Recognition</div>
+        <div class="hp-price">$25<span>/ week</span></div>
+        <p class="hp-desc">Train your own AI to recognize hand gestures. Build an app with cool visual effects when you wave, point, or make a fist!</p>
+        <div class="hp-pills">
+          <span class="hp-pill">Ages 10+</span>
+          <span class="hp-pill">No coding needed</span>
+          <span class="hp-pill">6 live classes</span>
+          <span class="hp-pill">2:00–3:30 PM PST</span>
+        </div>
+        <div class="hp-cta">Enroll in AI Track →</div>
+      </a>
     </div>
   </div>
   <div class="notice">
     <div class="notice-left"><span class="ndot"></span><span>All data auto-updated weekly via the Anthropic API. Always confirm on the official site before applying.</span></div>
     <span class="notice-date" id="notice-date"></span>
   </div>
+  <button class="mob-filter-btn" onclick="toggleSidebar()">⊞ Filters</button>
   <div class="layout">
     <aside class="sidebar" id="sidebar-programs">
       <div class="fs">
@@ -632,6 +680,23 @@ loadData();
     }
   };
 })();
+</script>
+<script>
+function toggleSidebar() {
+  var sb = document.getElementById('sidebar-programs');
+  if (!sb) return;
+  var isOpen = sb.classList.contains('mob-open');
+  sb.classList.toggle('mob-open');
+  var ov = document.getElementById('mob-ov');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'mob-ov';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:499;display:none';
+    ov.onclick = function() { sb.classList.remove('mob-open'); ov.style.display='none'; };
+    document.body.appendChild(ov);
+  }
+  ov.style.display = isOpen ? 'none' : 'block';
+}
 </script>
 </body>
 </html>
