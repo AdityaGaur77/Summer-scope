@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SummerScope — Summer Programs & Events for High School Students (9th–12th Grade)</title>
+<meta name="description" content="The complete database of summer programs, hackathons, and competitions for high school students in grades 9–12. Filter by cost, format, deadline, category, and more. All data verified March 2026.">
+<meta name="keywords" content="summer programs high school, STEM summer programs, free summer programs, RSI, MITES, PROMYS, HCSSiM, hackathons high school, science competitions 2026">
+<meta property="og:title" content="SummerScope — Summer Programs & Events for High School Students">
+<meta property="og:description" content="Every prestigious summer program, hackathon, and competition for 9th–12th graders in one place. All deadlines and costs verified.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0D1926">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F0;--card:#fff;--navy:#0D1926;--navy2:#162236;
+  --text:#111827;--muted:#6B7280;--accent:#D04B27;
+  --border:#E2DFD8;--tag-bg:#EDEBE4;
+  --green:#047857;--amber:#B45309;
+  --sw:228px;--nh:58px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.6}
+
+/* NAV */
+nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo{font-family:'Lora',serif;font-size:1.3rem;color:#fff;letter-spacing:-0.01em;display:flex;align-items:center;gap:0.45rem}
+.ldot{width:7px;height:7px;background:#E8825C;border-radius:50%;flex-shrink:0}
+.nav-tabs{display:flex;gap:2px}
+.ntab{color:rgba(255,255,255,0.5);padding:0.32rem 0.85rem;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:500;transition:all .15s;border:none;background:none;font-family:'DM Sans',sans-serif}
+.ntab:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.ntab.active{color:#fff;background:rgba(255,255,255,0.14)}
+.nbadge{background:#E8825C;color:#fff;font-size:0.62rem;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:3px;vertical-align:top;margin-top:1px;display:inline-block}
+.nav-right{font-size:0.72rem;color:rgba(255,255,255,0.28)}
+
+/* HERO */
+.hero{background:var(--navy);padding:2.4rem 1.75rem 2rem;color:#fff}
+.heyebrow{font-size:0.66rem;font-weight:700;letter-spacing:0.14em;color:#E8825C;text-transform:uppercase;margin-bottom:0.55rem}
+.hero h1{font-family:'Lora',serif;font-size:2.35rem;line-height:1.1;letter-spacing:-0.025em;margin-bottom:0.55rem;max-width:540px}
+.hero h1 em{font-style:italic;color:#E8825C}
+.hsub{color:rgba(255,255,255,0.48);font-size:0.86rem;margin-bottom:1.35rem;max-width:460px}
+.sbar{display:flex;max-width:520px;gap:0.6rem}
+.sbar input{flex:1;padding:0.58rem 1rem;border-radius:7px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#fff;font-size:0.84rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s,background .15s}
+.sbar input::placeholder{color:rgba(255,255,255,0.28)}
+.sbar input:focus{border-color:rgba(255,255,255,0.28);background:rgba(255,255,255,0.1)}
+.hstats{display:flex;gap:2rem;margin-top:1.35rem;flex-wrap:wrap}
+.hs{font-size:0.72rem;color:rgba(255,255,255,0.38)}
+.hs strong{display:block;font-size:1.1rem;font-weight:600;color:#fff;line-height:1.2;margin-bottom:1px}
+
+/* NOTICE BAR */
+.notice{background:#1A2A3D;border-bottom:1px solid rgba(255,255,255,0.06);padding:0.45rem 1.75rem;display:flex;align-items:center;gap:0.55rem;font-size:0.72rem;color:rgba(255,255,255,0.4)}
+.ndot{width:5px;height:5px;background:#4ADE80;border-radius:50%;flex-shrink:0}
+
+/* PAGE */
+.page{display:none}.page.active{display:block}
+.layout{display:flex;min-height:calc(100vh - var(--nh))}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);flex-shrink:0;background:var(--card);border-right:1px solid var(--border);padding:1.2rem 1rem;position:sticky;top:var(--nh);height:calc(100vh - var(--nh));overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--border)}
+.fs{margin-bottom:1.15rem}
+.fl{font-size:0.63rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.48rem}
+.fo{display:flex;align-items:center;gap:0.42rem;padding:0.2rem 0;cursor:pointer;font-size:0.8rem;color:var(--text);user-select:none}
+.fo input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;flex-shrink:0}
+.fc{margin-left:auto;font-size:0.67rem;color:var(--muted);background:var(--tag-bg);padding:0 5px;border-radius:20px;line-height:1.55}
+.sdiv{border:none;border-top:1px solid var(--border);margin:.9rem 0}
+.clr{font-size:0.73rem;color:var(--accent);cursor:pointer;border:none;background:none;padding:.1rem 0;font-family:'DM Sans',sans-serif;display:block;margin-top:.2rem}
+.clr:hover{text-decoration:underline}
+
+/* MAIN */
+.main{flex:1;min-width:0;padding:1.2rem}
+.rbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;gap:.7rem;flex-wrap:wrap}
+.rc{font-size:0.78rem;color:var(--muted)}
+.ssel{font-size:0.76rem;padding:.28rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;outline:none}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(296px,1fr));gap:.85rem}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.05rem;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;display:flex;flex-direction:column;gap:.65rem;position:relative;overflow:hidden}
+.card:hover{border-color:#cac7be;box-shadow:0 3px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
+.cbar{position:absolute;top:0;left:0;right:0;height:3px}
+.cbar-closed{background:#FECACA}
+.cbar-open{background:#6EE7B7}
+.ctop{display:flex;gap:.58rem;align-items:flex-start}
+.clog{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;color:#fff;flex-shrink:0;letter-spacing:-0.02em}
+.ctitle{font-weight:600;font-size:0.875rem;line-height:1.3;color:var(--text)}
+.chost{font-size:0.7rem;color:var(--muted);margin-top:1px}
+.cstars{font-size:9px;color:#F59E0B;display:block;margin-top:2px;letter-spacing:1px}
+.cdesc{font-size:0.77rem;color:var(--muted);line-height:1.5}
+.tags{display:flex;flex-wrap:wrap;gap:.28rem}
+.tag{font-size:0.65rem;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap;letter-spacing:.02em}
+.tc{background:#EEF2FF;color:#3730A3}.tip{background:#ECFDF5;color:#065F46}
+.ton{background:#EFF6FF;color:#1D4ED8}.thy{background:#F5F3FF;color:#5B21B6}
+.tg{background:#FEF9C3;color:#713F12}.tf{background:#D1FAE5;color:#065F46}
+.tcl{background:#FEE2E2;color:#991B1B}
+.cmeta{display:grid;grid-template-columns:1fr 1fr;gap:.42rem}
+.mi{font-size:.73rem}.ml{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:1px}
+.mv{color:var(--text);font-weight:500}.urgent{color:#DC2626}.soon{color:#D97706}.closed-t{color:#9CA3AF}
+.cfoot{padding-top:.65rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cv{font-size:.8rem;font-weight:600}.cvf{color:var(--green)}.cvp{color:var(--text)}
+.abtn{font-size:.72rem;font-weight:500;padding:.26rem .68rem;border-radius:6px;background:var(--navy);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .12s}
+.abtn:hover{background:var(--navy2)}
+
+/* NO RESULTS */
+.nores{text-align:center;padding:3rem 2rem;color:var(--muted)}
+.nores h3{font-size:.95rem;font-weight:500;color:var(--text);margin-bottom:.35rem}
+
+/* EVENTS */
+.ehero{background:linear-gradient(135deg,#16213E 0%,#0F1926 100%);padding:2rem 1.75rem 1.6rem;color:#fff;border-bottom:1px solid rgba(255,255,255,.06)}
+.ehero h2{font-family:'Lora',serif;font-size:1.85rem;letter-spacing:-.02em;margin-bottom:.35rem}
+.ehero p{color:rgba(255,255,255,.42);font-size:.83rem}
+.ebar{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;gap:.45rem;flex-wrap:wrap;align-items:center}
+.elabel{font-size:.7rem;color:var(--muted);font-weight:500;margin-right:.2rem}
+.efbtn{font-size:.73rem;font-weight:500;padding:.26rem .72rem;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.efbtn:hover{border-color:#aaa;color:var(--text)}.efbtn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.ebody{padding:1.2rem 1.5rem}
+.esec{margin-bottom:1.8rem}
+.eslabel{font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem;padding-bottom:.38rem;border-bottom:1px solid var(--border)}
+.egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(316px,1fr));gap:.85rem}
+.ecard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.05rem;cursor:pointer;transition:all .15s}
+.ecard:hover{border-color:#cac7be;box-shadow:0 3px 16px rgba(0,0,0,.07);transform:translateY(-1px)}
+.etype{font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:.62rem}
+.eh{background:#EEF2FF;color:#3730A3}.ec{background:#FFF7ED;color:#9A3412}
+.ea{background:#FDF4FF;color:#7E22CE}.ef2{background:#F0F9FF;color:#0369A1}
+.etitle{font-weight:600;font-size:.9rem;margin-bottom:.18rem;line-height:1.3}
+.eorg{font-size:.73rem;color:var(--muted);margin-bottom:.58rem}
+.edesc{font-size:.77rem;color:var(--muted);line-height:1.5;margin-bottom:.82rem}
+.emeta{display:flex;gap:.9rem;flex-wrap:wrap}
+.emi{font-size:.74rem}.eml{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:1px}
+.emv{font-weight:500}
+.efoot{display:flex;align-items:center;justify-content:space-between;margin-top:.8rem;padding-top:.65rem;border-top:1px solid var(--border)}
+.eprize{font-size:.74rem;font-weight:600;color:var(--amber)}
+.ebtn{font-size:.72rem;font-weight:500;padding:.26rem .68rem;border-radius:6px;background:var(--navy);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .12s}
+.ebtn:hover{background:var(--navy2)}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:flex-start;justify-content:center;padding:2.5rem 1rem 2rem;overflow-y:auto}
+.mbg.open{display:flex}
+.modal{background:var(--card);border-radius:13px;max-width:550px;width:100%;overflow:hidden}
+.mh{background:var(--navy);padding:1.65rem}
+.mhtop{display:flex;align-items:flex-start;gap:.9rem;margin-bottom:.9rem}
+.mlog{width:43px;height:43px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;color:#fff;flex-shrink:0}
+.mtitle{font-family:'Lora',serif;font-size:1.45rem;letter-spacing:-.02em;line-height:1.2;color:#fff}
+.mhost{color:rgba(255,255,255,.42);font-size:.78rem;margin-top:.18rem}
+.mstars{color:#F59E0B;font-size:.82rem;margin-top:.15rem}
+.mtags2{display:flex;gap:.38rem;flex-wrap:wrap}
+.mtag{background:rgba(255,255,255,.1);color:rgba(255,255,255,.82);font-size:.67rem;font-weight:500;padding:2px 9px;border-radius:20px}
+.mb{padding:1.4rem}
+.ms{margin-bottom:1.2rem}
+.msl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.38rem}
+.mdesc{font-size:.82rem;line-height:1.65;color:var(--text)}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.mbox{background:var(--bg);border-radius:7px;padding:.6rem .8rem}
+.mbl{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.18rem}
+.mbv{font-size:.82rem;font-weight:500}
+.mfooter{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.4rem;background:var(--bg);border-top:1px solid var(--border)}
+.mclose{font-size:.79rem;color:var(--muted);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;padding:.32rem 0}
+.mclose:hover{color:var(--text)}
+.mapp{padding:.52rem 1.25rem;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .12s}
+.mapp:hover{background:#b03e1e}
+.mnotice{background:#FEF2F2;border:1px solid #FECACA;border-radius:7px;padding:.58rem .82rem;font-size:.76rem;color:#991B1B;margin-bottom:.9rem}
+.mnote{background:#FFFBEB;border:1px solid #FDE68A;border-radius:7px;padding:.58rem .82rem;font-size:.76rem;color:#92400E;margin-top:.9rem}
+
+/* FOOTER */
+footer{background:var(--navy);padding:1.4rem 1.75rem;margin-top:2rem;color:rgba(255,255,255,.3);font-size:.72rem;border-top:1px solid rgba(255,255,255,.05)}
+footer p{margin-bottom:.25rem}
+footer strong{color:rgba(255,255,255,.55)}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+@media(max-width:680px){
+  .hero h1{font-size:1.75rem}.sidebar{display:none}
+  .grid{grid-template-columns:1fr}.egrid{grid-template-columns:1fr}
+  .mgrid{grid-template-columns:1fr}.hstats{gap:1.1rem}
+  .ebody{padding:1rem}.nav-right{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><div class="ldot"></div>SummerScope</div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="showPage('programs',this)">Programs <span class="nbadge" id="pb">25</span></button>
+    <button class="ntab" onclick="showPage('events',this)">Events & Competitions <span class="nbadge">15</span></button>
+  </div>
+  <div class="nav-right">Grades 9–12 &nbsp;·&nbsp; Verified March 2026</div>
+</nav>
+
+<!-- ══ PROGRAMS ══ -->
+<div id="page-programs" class="page active">
+  <div class="hero">
+    <div class="heyebrow">The complete 2026 database</div>
+    <h1>Find your <em>perfect</em><br>summer program</h1>
+    <p class="hsub">Every top summer program for high schoolers — verified deadlines, real costs, direct apply links.</p>
+    <div class="sbar"><input type="text" id="si" placeholder="Search programs, universities, subjects…" oninput="renderCards()" autocomplete="off"></div>
+    <div class="hstats">
+      <div class="hs"><strong id="tc">25</strong>Programs</div>
+      <div class="hs"><strong>12</strong>Free programs</div>
+      <div class="hs"><strong id="oc">4</strong>Still accepting</div>
+      <div class="hs"><strong>8</strong>Subject areas</div>
+    </div>
+  </div>
+  <div class="notice"><span class="ndot"></span>All deadlines and costs verified from official program websites — March 2026. Many 2026 deadlines have already passed; those programs are clearly labeled. Always confirm on the official site before applying.</div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="fs">
+        <div class="fl">Status</div>
+        <label class="fo"><input type="checkbox" name="status" value="open" onchange="renderCards()"> Still accepting <span class="fc" id="ofc">4</span></label>
+        <label class="fo"><input type="checkbox" name="status" value="closed" onchange="renderCards()"> Closed for 2026 <span class="fc">21</span></label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Category</div>
+        <label class="fo"><input type="checkbox" name="cat" value="STEM" onchange="renderCards()"> STEM / Engineering <span class="fc">8</span></label>
+        <label class="fo"><input type="checkbox" name="cat" value="Math" onchange="renderCards()"> Mathematics <span class="fc">4</span></label>
+        <label class="fo"><input type="checkbox" name="cat" value="CS" onchange="renderCards()"> Computer Science <span class="fc">4</span></label>
+        <label class="fo"><input type="checkbox" name="cat" value="Research" onchange="renderCards()"> Research <span class="fc">7</span></label>
+        <label class="fo"><input type="checkbox" name="cat" value="Medicine" onchange="renderCards()"> Medicine / Biology <span class="fc">3</span></label>
+        <label class="fo"><input type="checkbox" name="cat" value="Humanities" onchange="renderCards()"> Humanities <span class="fc">3</span></label>
+        <label class="fo"><input type="checkbox" name="cat" value="Business" onchange="renderCards()"> Business / Econ <span class="fc">2</span></label>
+        <label class="fo"><input type="checkbox" name="cat" value="Leadership" onchange="renderCards()"> Leadership <span class="fc">2</span></label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Format</div>
+        <label class="fo"><input type="checkbox" name="fmt" value="In-Person" onchange="renderCards()"> In-Person <span class="fc">18</span></label>
+        <label class="fo"><input type="checkbox" name="fmt" value="Online" onchange="renderCards()"> Online <span class="fc">3</span></label>
+        <label class="fo"><input type="checkbox" name="fmt" value="Hybrid" onchange="renderCards()"> Hybrid <span class="fc">4</span></label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Cost</div>
+        <label class="fo"><input type="checkbox" name="cost" value="Free" onchange="renderCards()"> Free / Full Aid <span class="fc">12</span></label>
+        <label class="fo"><input type="checkbox" name="cost" value="Under3k" onchange="renderCards()"> Under $3,000 <span class="fc">2</span></label>
+        <label class="fo"><input type="checkbox" name="cost" value="3kTo8k" onchange="renderCards()"> $3,000 – $8,000 <span class="fc">7</span></label>
+        <label class="fo"><input type="checkbox" name="cost" value="Over8k" onchange="renderCards()"> Over $8,000 <span class="fc">4</span></label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Grade Eligibility</div>
+        <label class="fo"><input type="checkbox" name="grade" value="9" onchange="renderCards()"> 9th Grade <span class="fc">13</span></label>
+        <label class="fo"><input type="checkbox" name="grade" value="10" onchange="renderCards()"> 10th Grade <span class="fc">18</span></label>
+        <label class="fo"><input type="checkbox" name="grade" value="11" onchange="renderCards()"> 11th Grade <span class="fc">23</span></label>
+        <label class="fo"><input type="checkbox" name="grade" value="12" onchange="renderCards()"> 12th Grade <span class="fc">14</span></label>
+      </div>
+      <hr class="sdiv">
+      <div class="fs">
+        <div class="fl">Prestige</div>
+        <label class="fo"><input type="checkbox" name="prestige" value="5" onchange="renderCards()"> ★★★★★ Top-tier</label>
+        <label class="fo"><input type="checkbox" name="prestige" value="4" onchange="renderCards()"> ★★★★☆ Highly selective</label>
+        <label class="fo"><input type="checkbox" name="prestige" value="3" onchange="renderCards()"> ★★★☆☆ Competitive</label>
+      </div>
+      <button class="clr" onclick="clearFilters()">Clear all filters</button>
+    </aside>
+    <div class="main">
+      <div class="rbar">
+        <div class="rc" id="rt">Showing all 25 programs</div>
+        <select class="ssel" id="ss" onchange="renderCards()">
+          <option value="prestige">Most prestigious first</option>
+          <option value="deadline">Deadline: soonest first</option>
+          <option value="cost-asc">Cost: low to high</option>
+          <option value="cost-desc">Cost: high to low</option>
+          <option value="az">A – Z</option>
+        </select>
+      </div>
+      <div class="grid" id="cg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EVENTS ══ -->
+<div id="page-events" class="page">
+  <div class="ehero">
+    <h2>Events, Hackathons & Competitions</h2>
+    <p>The best hackathons, science olympiads, coding contests, and awards for 9th–12th graders — all in one place.</p>
+  </div>
+  <div class="ebar">
+    <span class="elabel">Filter:</span>
+    <button class="efbtn active" data-t="All" onclick="filterE(this)">All</button>
+    <button class="efbtn" data-t="Hackathon" onclick="filterE(this)">Hackathons</button>
+    <button class="efbtn" data-t="Competition" onclick="filterE(this)">Competitions</button>
+    <button class="efbtn" data-t="Award" onclick="filterE(this)">Awards</button>
+    <button class="efbtn" data-t="Conference" onclick="filterE(this)">Conferences</button>
+  </div>
+  <div class="ebody" id="eb"></div>
+</div>
+
+<!-- MODAL -->
+<div class="mbg" id="modal" onclick="closeMBg(event)">
+  <div class="modal" id="mi"></div>
+</div>
+
+<footer>
+  <p><strong>SummerScope</strong> — A free, open resource for high school students exploring summer opportunities.</p>
+  <p>All data is sourced directly from official program websites. Deadlines and costs change year to year — always verify on the official site before applying.</p>
+  <p style="margin-top:.65rem">Last updated: March 2026 &nbsp;·&nbsp; Programs: 25 &nbsp;·&nbsp; Events: 15 &nbsp;·&nbsp; Not affiliated with any program listed.</p>
+</footer>
+
+<script>
+// ── DATA (verified from official program websites, March 2026) ──────────────
+
+const P=[
+  {id:1,name:"Research Science Institute (RSI)",host:"MIT / Center for Excellence in Education",logo:"RSI",color:"#1E3A5F",
+   cat:["Research","STEM"],fmt:"In-Person",loc:"Cambridge, MA",grades:[11],
+   cost:"Free",costN:0,costB:"Free",
+   dates:"June 28 – August 8, 2026",
+   dl:"Dec 10, 2025",dlt:new Date("2025-12-10"),closed:true,prestige:5,
+   desc:"The most prestigious STEM summer program in the US. 100 rising seniors conduct original research mentored by MIT scientists and are placed in labs across the Boston area. Acceptance rate ~3%. Covers the full research cycle: coursework, lab work, and a formal conference-style presentation. Fully free for all admitted students — tuition, housing, and meals covered.",
+   link:"https://www.cee.org/programs/research-science-institute",
+   note:"Applications for 2026 are closed (deadline was Dec 10, 2025). Applications for RSI 2027 typically open in October 2026."
+  },
+  {id:2,name:"MITES Summer",host:"Massachusetts Institute of Technology",logo:"MIT",color:"#8B1A1A",
+   cat:["STEM","Research"],fmt:"In-Person",loc:"Cambridge, MA",grades:[11],
+   cost:"Free",costN:0,costB:"Free",
+   dates:"Late June – Early August 2026",
+   dl:"Feb 2, 2026",dlt:new Date("2026-02-02"),closed:true,prestige:5,
+   desc:"Rigorous 6-week residential program for rising seniors passionate about STEM. Acceptance rate 1.5–4% — extremely competitive. Five college-level courses in math, life sciences, physics, engineering, and an elective. Prioritizes students from underrepresented backgrounds but all may apply. All program costs covered.",
+   link:"https://mites.mit.edu",
+   note:"Applications for 2026 are closed. Apply in the fall of your junior year for 2027. Same application as MITES Semester."
+  },
+  {id:3,name:"PROMYS",host:"Boston University",logo:"P",color:"#1E5F3A",
+   cat:["Math"],fmt:"In-Person",loc:"Boston, MA",grades:[9,10,11,12],
+   cost:"Up to $8,000 (free if household income <$80k)",costN:8000,costB:"3kTo8k",
+   dates:"June 28 – August 8, 2026",
+   dl:"Feb 27, 2026",dlt:new Date("2026-02-27"),closed:true,prestige:5,
+   desc:"One of the most prestigious math programs in the world. ~75 students spend 6 weeks exploring deep number theory and proof-based mathematics as practicing mathematicians — not students. Application requires solving a challenging problem set. Must have completed 9th grade. Free for families earning under $80k.",
+   link:"https://promys.org",
+   note:"2026 application closed Feb 27. Applications for PROMYS 2027 open in January 2027."
+  },
+  {id:4,name:"HCSSiM",host:"Hampshire College",logo:"HC",color:"#5B21B6",
+   cat:["Math"],fmt:"In-Person",loc:"Amherst, MA",grades:[9,10,11,12],
+   cost:"$7,208 (free if household income <$85k)",costN:7208,costB:"3kTo8k",
+   dates:"Early July – Mid-August 2026",
+   dl:"Late April 2026 (rolling, apply early)",dlt:new Date("2026-04-25"),closed:false,prestige:5,
+   desc:"A legendary 6-week math summer program in its 54th year. ~51 students explore college-level mathematics in an immersive residential setting with unparalleled faculty access. 4-hour morning classes Mon–Sat, evening problem sessions. Application includes a 'Very Interesting Test.' Free for families earning under $85k.",
+   link:"https://hcssim.org",
+   note:"Rolling admissions — apply as early as possible, closes when full. Check hcssim.org for 2026 application link."
+  },
+  {id:5,name:"MathROOTS",host:"MIT PRIMES",logo:"MR",color:"#B45309",
+   cat:["Math"],fmt:"In-Person",loc:"Cambridge, MA",grades:[9,10],
+   cost:"Free",costN:0,costB:"Free",
+   dates:"July 2026 (2 weeks)",
+   dl:"Mar 3, 2026",dlt:new Date("2026-03-03"),closed:true,prestige:5,
+   desc:"A free 2-week residential math accelerator at MIT for high-potential students from underrepresented backgrounds. Covers rigorous combinatorics, number theory, and geometry at a college level. Nationally selective; housing and meals fully covered. Strongly encourages Black, Hispanic, and Indigenous applicants.",
+   link:"https://math.mit.edu/research/highschool/primes/roots/",
+   note:"2026 deadline was March 3. Open to students who just completed 9th or 10th grade."
+  },
+  {id:6,name:"TASS (Telluride Summer Seminar)",host:"Telluride Association",logo:"TA",color:"#065F46",
+   cat:["Humanities"],fmt:"In-Person",loc:"Various university campuses",grades:[10,11],
+   cost:"Free — all costs covered",costN:0,costB:"Free",
+   dates:"June 21 – July 25, 2026",
+   dl:"Dec 3, 2025",dlt:new Date("2025-12-03"),closed:true,prestige:5,
+   desc:"One of the most selective humanities programs in the US. ~30 students per program attend 5-week college-level seminars in Critical Black Studies or Anti-Oppressive Studies. Tuition, books, room, board, field trips, and travel fully covered. Open to sophomores and juniors (ages 15–17). Acceptance rate ~3–5%.",
+   link:"https://tellurideassociation.org/tass/",
+   note:"2026 deadline was December 3, 2025. Applications for TASS 2027 open in October 2026."
+  },
+  {id:7,name:"Simons Summer Research Program",host:"Stony Brook University",logo:"Si",color:"#0C4A6E",
+   cat:["Research","STEM"],fmt:"In-Person",loc:"Stony Brook, NY",grades:[11],
+   cost:"No tuition (commuter) or ~$3,000 residential",costN:0,costB:"Free",
+   dates:"June 29 – August 7, 2026",
+   dl:"Feb 5, 2026",dlt:new Date("2026-02-05"),closed:true,prestige:5,
+   desc:"Rising seniors conduct hands-on research with Stony Brook faculty in science, math, or engineering. Must be nominated by your school (max 2 per school). 6-week program concludes with a research poster and stipend award. Acceptance rate below 5%. US citizens and permanent residents only. No tuition charged.",
+   link:"https://www.stonybrook.edu/simons/",
+   note:"Applications closed. Requires school nomination. Commuters pay only dining; residential housing ~$3,000. Stipend provided at conclusion."
+  },
+  {id:8,name:"NASA SEES Internship",host:"NASA / UT Austin Center for Space Research",logo:"NA",color:"#0C2340",
+   cat:["Research","STEM"],fmt:"Hybrid",loc:"Austin, TX (on-site) + Virtual",grades:[10,11],
+   cost:"$2,000 (scholarship available based on need)",costN:2000,costB:"Under3k",
+   dates:"Virtual: May–July · On-site: July 5–18, 2026",
+   dl:"Feb 22, 2026",dlt:new Date("2026-02-22"),closed:true,prestige:4,
+   desc:"Sophomores and juniors (must be 16 by July 5) analyze real NASA satellite data alongside NASA scientists. Includes a 2-week residential on-site program at UT Austin with housing and meals provided. Virtual science symposium July 20–21. ~215 students selected from ~2,000 applicants. US citizens only.",
+   link:"https://csr.utexas.edu/education-outreach/high-school-internships/sees/",
+   note:"2026 deadline closed Feb 22. Cost is $2,000 — scholarship available for financial need. Must be in 10th or 11th grade."
+  },
+  {id:9,name:"MIT Beaver Works Summer Institute",host:"MIT Lincoln Laboratory",logo:"BW",color:"#374151",
+   cat:["CS","STEM"],fmt:"Hybrid",loc:"Cambridge, MA + Online",grades:[11],
+   cost:"Free (income <$90k) / up to $2,350",costN:0,costB:"Free",
+   dates:"July 2026 (4 weeks)",
+   dl:"Spring 2026 (after completing online prerequisites)",dlt:new Date("2026-04-20"),closed:false,prestige:4,
+   desc:"Rising seniors complete free online prerequisite courses (open since Dec 2025), then apply for the 4-week summer program. 14+ tracks including autonomous vehicles, quantum computing, cybersecurity, satellite design, ML, and hardware hacking. No housing provided — students must arrange their own.",
+   link:"https://bwsi.mit.edu",
+   note:"Multi-step process: register and complete online course first, then apply to summer session. Free for families earning under $90k; up to $2,350 for higher incomes. In-person students must arrange own housing."
+  },
+  {id:10,name:"Carnegie Mellon SAMS",host:"Carnegie Mellon University",logo:"CM",color:"#7C0000",
+   cat:["STEM"],fmt:"In-Person",loc:"Pittsburgh, PA",grades:[11],
+   cost:"Free",costN:0,costB:"Free",
+   dates:"June – July 2026",
+   dl:"Feb 28, 2026",dlt:new Date("2026-02-28"),closed:true,prestige:4,
+   desc:"6-week residential program at CMU for rising seniors from underrepresented backgrounds. Coursework spans diverse STEM fields with industry mentorship and college prep. Full scholarship: tuition, housing, meals, and a stipend. Prioritizes first-generation college students and students from underserved communities.",
+   link:"https://www.cmu.edu/pre-college/academic-programs/sams.html",
+   note:"Deadline passed. US citizens/permanent residents from underrepresented backgrounds. No cost — fully funded."
+  },
+  {id:11,name:"COSMOS — CA Summer School for Math & Science",host:"UC System (4 campuses)",logo:"Co",color:"#1D4ED8",
+   cat:["STEM","Research"],fmt:"In-Person",loc:"UC Davis, UC San Diego, UC Irvine, UC Santa Cruz",grades:[9,10,11,12],
+   cost:"~$4,750 (aid available for CA students)",costN:4750,costB:"3kTo8k",
+   dates:"July – August 2026 (4 weeks)",
+   dl:"Feb – Mar 2026 (varies by campus)",dlt:new Date("2026-03-01"),closed:true,prestige:4,
+   desc:"4-week residential program for students passionate about STEM. 12+ cluster tracks per campus including AI/ML, astrophysics, bioengineering, marine science, robotics, and math. Led by UC faculty and researchers. Priority to California residents, but nationally open.",
+   link:"https://cosmos-ucop.ucdavis.edu",
+   note:"Deadline varies by campus (Feb–Mar). Financial aid available via CSAC for CA students. Check each campus site for specific cluster topics."
+  },
+  {id:12,name:"UIUC Young Scholars Program",host:"University of Illinois Urbana-Champaign",logo:"UI",color:"#E84C2B",
+   cat:["Research","STEM"],fmt:"In-Person",loc:"Urbana-Champaign, IL",grades:[10,11,12],
+   cost:"Free (monetary award at program end)",costN:0,costB:"Free",
+   dates:"June – July 2026 (6 weeks)",
+   dl:"Feb 15, 2026",dlt:new Date("2026-02-15"),closed:true,prestige:4,
+   desc:"6-week research experience for rising 10th–12th graders with UIUC faculty mentors. Research areas include AI, cancer immunology, quantum mechanics, materials science, and neuroscience. Housing, meals, and a monetary award provided. Priority to students from IL, IN, KY, MI, MO, IA, WI.",
+   link:"https://wyse.grainger.illinois.edu/summer-programs/young-scholars-summer-research",
+   note:"Deadline closed. Midwest priority but all US students are eligible to apply."
+  },
+  {id:13,name:"MITES Semester (Online)",host:"Massachusetts Institute of Technology",logo:"MS",color:"#1E3A8A",
+   cat:["STEM","CS"],fmt:"Online",loc:"Online (national)",grades:[11],
+   cost:"Free",costN:0,costB:"Free",
+   dates:"June – December 2026",
+   dl:"Feb 2, 2026",dlt:new Date("2026-02-02"),closed:true,prestige:4,
+   desc:"Free 6-month online STEM program for rising seniors, designed as an alternative to MITES Summer for students who cannot attend residentially. Rigorous online courses, virtual workshops, and college admissions counseling. Same application as MITES Summer — you are offered one or the other.",
+   link:"https://mites.mit.edu",
+   note:"Same application and deadline as MITES Summer (Feb 2). If admitted, you receive one offer — Summer or Semester."
+  },
+  {id:14,name:"Yale Young Global Scholars (YYGS)",host:"Yale University",logo:"YG",color:"#00356B",
+   cat:["Humanities","Business","STEM"],fmt:"In-Person",loc:"New Haven, CT",grades:[10,11],
+   cost:"~$6,500 (need-based aid available)",costN:6500,costB:"3kTo8k",
+   dates:"July 2026 (2 weeks — multiple sessions)",
+   dl:"March 2026 (rolling)",dlt:new Date("2026-03-15"),closed:true,prestige:4,
+   desc:"Academically intensive 2-week program in 8 interdisciplinary tracks: Applied Science, Biological Science, Frontiers of Medicine, Innovations in Science and Technology, International Affairs & Security, Law & Politics, and Sustainability. 1,600+ students from 120+ countries per year. Strong financial aid.",
+   link:"https://globalscholars.yale.edu",
+   note:"Rolling admissions; apply early. Need-based aid covers full cost for qualifying families."
+  },
+  {id:15,name:"Economics for Leaders (EFL)",host:"Foundation for Teaching Economics",logo:"EF",color:"#065F46",
+   cat:["Business","Leadership"],fmt:"In-Person",loc:"Multiple universities nationwide",grades:[10,11],
+   cost:"Free (fully funded)",costN:0,costB:"Free",
+   dates:"Summer 2026 (1 week, multiple locations)",
+   dl:"Feb 15, 2026",dlt:new Date("2026-02-15"),closed:true,prestige:4,
+   desc:"Competitive week-long program at universities nationwide. Future leaders study how economic analysis applies to real policy decisions. About 2 applicants accepted per school. Fully funded: tuition, room, and board. Nominations often come through economics teachers.",
+   link:"https://www.fte.org/students/economics-for-leaders/",
+   note:"Deadline passed. Ask your economics or social studies teacher about nominations for 2027."
+  },
+  {id:16,name:"Bank of America Student Leaders",host:"Bank of America",logo:"BA",color:"#C41E3A",
+   cat:["Business","Leadership"],fmt:"In-Person",loc:"Various US cities",grades:[11,12],
+   cost:"Free (paid ~$18/hr for 8 weeks)",costN:0,costB:"Free",
+   dates:"June – August 2026 (8 weeks)",
+   dl:"March 2026 (varies by city)",dlt:new Date("2026-03-31"),closed:true,prestige:3,
+   desc:"Paid 8-week internship at a local nonprofit at ~$18/hr plus a week-long leadership summit in Washington, DC. One of the few fully paid internship programs open to high schoolers. Develops community leadership skills and nonprofit sector experience alongside peers from across the country.",
+   link:"https://about.bankofamerica.com/en/making-an-impact/student-leaders",
+   note:"Deadline varies by city. Check your local Bank of America branch website or search 'Bank of America Student Leaders [your city]' for your local application link."
+  },
+  {id:17,name:"Duke Pre-College Summer Programs",host:"Duke University",logo:"Du",color:"#003087",
+   cat:["STEM","Humanities","Medicine"],fmt:"In-Person",loc:"Durham, NC",grades:[9,10,11,12],
+   cost:"~$5,300–$7,800 (varies by session length)",costN:5500,costB:"3kTo8k",
+   dates:"June – July 2026",
+   dl:"Rolling (open until sessions fill)",dlt:new Date("2026-05-01"),closed:false,prestige:3,
+   desc:"1–3 week intensive sessions on Duke's campus taught by Duke professors. Programs include neuroscience, AI, marine biology, engineering design, global health, and creative writing. Students experience genuine college campus life. Multiple session lengths and topics. Financial aid available.",
+   link:"https://precollege.duke.edu",
+   note:"Rolling admissions — many sessions are still open. Apply early as sessions fill up quickly. Financial aid available."
+  },
+  {id:18,name:"UCSB Early Research Scholars Program",host:"UC Santa Barbara",logo:"SB",color:"#1E40AF",
+   cat:["Research","STEM"],fmt:"In-Person",loc:"Santa Barbara, CA",grades:[9,10,11],
+   cost:"~$5,400 (aid available for CA students)",costN:5400,costB:"3kTo8k",
+   dates:"June 22 – July 31, 2026 (6 weeks)",
+   dl:"March 2026",dlt:new Date("2026-03-15"),closed:true,prestige:4,
+   desc:"Students earn 4 UC transferable college credits through rigorous research at UCSB. 12+ tracks including neuroscience, CS, marine biology, physics, and chemistry. Students write a formal research paper and present at a closing symposium. 3.5+ GPA recommended. Housing available on campus.",
+   link:"https://www.summer.ucsb.edu/research",
+   note:"Deadline passed. Check for rolling spots. Partial aid available for CA residents."
+  },
+  {id:19,name:"Stanford Summer Humanities Institute",host:"Stanford University",logo:"SH",color:"#8C1515",
+   cat:["Humanities"],fmt:"In-Person",loc:"Stanford, CA",grades:[10,11],
+   cost:"~$7,100 (need-based aid available)",costN:7100,costB:"3kTo8k",
+   dates:"July – August 2026 (3 weeks)",
+   dl:"February – March 2026",dlt:new Date("2026-03-01"),closed:true,prestige:4,
+   desc:"A 3-week residential program where students engage with big questions in humanities, social science, and law at Stanford. Daily seminars led by Stanford faculty. Students produce substantial written work and engage in Socratic discussion. Selective; strong need-based financial aid program.",
+   link:"https://hs.stanford.edu/summer-programs",
+   note:"Deadline passed. Strong financial aid available. Separate from Stanford Pre-Collegiate Studies (which offers wider course selection)."
+  },
+  {id:20,name:"JHU Center for Talented Youth (CTY)",host:"Johns Hopkins University",logo:"JH",color:"#1D4ED8",
+   cat:["STEM","Math","Humanities"],fmt:"Hybrid",loc:"Multiple campuses + Online",grades:[9,10,11,12],
+   cost:"$2,000 (online) to $9,000+ (residential)",costN:5000,costB:"3kTo8k",
+   dates:"Summer 2026 (multiple sessions)",
+   dl:"Rolling — many sessions still open",dlt:new Date("2026-05-15"),closed:false,prestige:3,
+   desc:"Wide range of intensive academic courses for academically talented students. Residential programs at JHU and partner colleges; online sessions also available. Courses span STEM, writing, humanities, and research. Move quickly and go deep — designed for advanced learners. Multiple financial aid options.",
+   link:"https://cty.jhu.edu",
+   note:"Rolling admissions — many sessions still available. Financial aid and need-based scholarships available. Check cty.jhu.edu for specific course availability."
+  },
+  {id:21,name:"Cornell Summer College",host:"Cornell University",logo:"CO",color:"#B31B1B",
+   cat:["STEM","Humanities","Business"],fmt:"In-Person",loc:"Ithaca, NY",grades:[10,11,12],
+   cost:"~$12,000 for 3-week session",costN:12000,costB:"Over8k",
+   dates:"June – August 2026",
+   dl:"Rolling (open until sessions fill)",dlt:new Date("2026-06-01"),closed:false,prestige:3,
+   desc:"Take actual Cornell undergraduate courses for up to 8 weeks and earn transferable college credit. Programs in engineering, architecture, business, law, life sciences, and liberal arts. Full campus experience on Cornell's scenic campus. One of the most expansive pre-college programs available.",
+   link:"https://www.sce.cornell.edu/sc/",
+   note:"Rolling admissions — open now. Limited financial aid. Credit transferable to most US colleges and universities."
+  },
+  {id:22,name:"Georgetown Pre-College Programs",host:"Georgetown University",logo:"GU",color:"#2D4B7E",
+   cat:["Humanities","Business"],fmt:"In-Person",loc:"Washington, D.C.",grades:[9,10,11,12],
+   cost:"~$7,500–$9,000",costN:8000,costB:"Over8k",
+   dates:"June – August 2026",
+   dl:"April 2026 (rolling)",dlt:new Date("2026-04-15"),closed:false,prestige:3,
+   desc:"Summer programs in government, international affairs, pre-law, business, and STEM on Georgetown's historic campus in Washington, DC. DC location adds unique access to policy briefings, government agencies, and international organizations. Strong global affairs and politics tracks.",
+   link:"https://scs.georgetown.edu/programs/pre-college-programs/",
+   note:"Rolling admissions. DC location makes guest speakers and policy field trips a genuine differentiator."
+  },
+  {id:23,name:"Davidson Academy Online",host:"Davidson Institute",logo:"DA",color:"#0F766E",
+   cat:["STEM","Math","Humanities"],fmt:"Online",loc:"Online (national)",grades:[9,10,11,12],
+   cost:"Free (profoundly gifted students only)",costN:0,costB:"Free",
+   dates:"Year-round (summer sessions available)",
+   dl:"Rolling",dlt:new Date("2026-06-01"),closed:false,prestige:4,
+   desc:"Free online accredited school and summer enrichment for profoundly gifted students (top 99.9th percentile). Summer courses go far beyond typical high school curricula. Students engage in college-level coursework with expert instructors and a community of intellectual peers.",
+   link:"https://www.davidsongifted.org/davidson-academy/",
+   note:"Requires IQ documentation at the 99.9th percentile or above. Rolling applications. Not for merely talented students — this is for the profoundly gifted."
+  },
+  {id:24,name:"Johns Hopkins Computational Biology Summer Institute",host:"Johns Hopkins University",logo:"JC",color:"#002D72",
+   cat:["Medicine","CS","Research"],fmt:"In-Person",loc:"Baltimore, MD",grades:[10,11,12],
+   cost:"Free",costN:0,costB:"Free",
+   dates:"Summer 2026",
+   dl:"March 2026",dlt:new Date("2026-03-15"),closed:true,prestige:4,
+   desc:"Highly selective summer research program at JHU's School of Medicine in computational biology and bioinformatics. Students work with faculty on real research at the intersection of CS and biology. Programs include machine learning applications to genomics and drug discovery.",
+   link:"https://www.hopkinsmedicine.org/som/education/high-school-programs",
+   note:"Check the JHU Medicine website for specific 2026 program availability. Multiple separate programs listed."
+  },
+  {id:25,name:"Embark / Cold Email Research Apprenticeships",host:"Various universities",logo:"EM",color:"#7C3AED",
+   cat:["Research","STEM"],fmt:"In-Person",loc:"Various universities",grades:[9,10,11,12],
+   cost:"Free (most academic labs)",costN:0,costB:"Free",
+   dates:"Summer 2026",
+   dl:"Rolling — contact labs Feb–Apr",dlt:new Date("2026-04-30"),closed:false,prestige:3,
+   desc:"Email professors directly at nearby universities to request summer research apprenticeships. This is how many students get their best research experiences. Write a genuine, concise cold email with your resume, transcript, and a specific interest in their lab. Acceptance rates improve dramatically with personalization.",
+   link:"https://www.nature.com/articles/d41586-019-02535-4",
+   note:"This is an underused strategy. Many professors welcome motivated high schoolers. Start reaching out in February–March. Email 15–20 labs to maximize chances."
+  },
+];
+
+const E=[
+  {type:"Hackathon",badge:"eh",name:"NASA Space Apps Challenge",org:"NASA",
+   dates:"Oct 3–5, 2026",dl:"Register Sep 2026",
+   fmt:"Global — local events + online",cost:"Free",
+   prize:"Global recognition + NASA feature",p:5,
+   desc:"The world's largest hackathon with 55,000+ participants from 160+ countries. Use NASA's open data to solve Earth and space science challenges. Teams of 2–6. Local events in 100+ cities worldwide — find one near you at spaceappschallenge.org.",
+   link:"https://www.spaceappschallenge.org"},
+  {type:"Hackathon",badge:"eh",name:"Hack Club Hackathons (100+)",org:"Hack Club",
+   dates:"Year-round",dl:"Varies by event",
+   fmt:"In-Person across US + Online",cost:"Free",
+   prize:"Prizes, travel grants",p:3,
+   desc:"Hack Club maintains the definitive list of 100+ high school hackathons across 30+ states and 26 countries. Most events are free and cover food for participants. Find events at hackathons.hackclub.com — searchable by location, date, and size.",
+   link:"https://hackathons.hackclub.com"},
+  {type:"Hackathon",badge:"eh",name:"HackMIT Blueprint",org:"MIT",
+   dates:"October 2026",dl:"September 2026",
+   fmt:"In-Person — Cambridge, MA",cost:"Free",
+   prize:"Prizes + MIT mentorship network",p:5,
+   desc:"MIT's flagship high school hackathon. Beginner-friendly tracks, workshops taught by MIT undergrads, and hands-on mentorship. Build a project in one weekend. One of the most prestigious HS hackathons — attending MIT's campus and network is itself a draw.",
+   link:"https://blueprint.hackmit.org"},
+  {type:"Hackathon",badge:"eh",name:"Major League Hacking (MLH)",org:"MLH",
+   dates:"Year-round (200+ events)",dl:"Rolling",
+   fmt:"In-Person + Online",cost:"Free",
+   prize:"Prizes + sponsor connections",p:4,
+   desc:"The official student hackathon league with 200+ sanctioned events per year, open to high schoolers. MLH Global Hack Week runs annually in February. Company sponsors include Microsoft, GitHub, and Google. Each MLH event is a chance to meet recruiters and build your developer profile.",
+   link:"https://mlh.io"},
+  {type:"Hackathon",badge:"eh",name:"PennApps",org:"University of Pennsylvania",
+   dates:"Fall 2026",dl:"September 2026",
+   fmt:"In-Person — Philadelphia, PA",cost:"Free",
+   prize:"Cash prizes + recruiter access",p:4,
+   desc:"One of the oldest and most prestigious college hackathons in the US — open to high schoolers. Tracks in software, hardware, AI, and social good. 1,200+ attendees, mentors from top tech companies, and real recruiting connections. Housed at Penn Engineering's state-of-the-art facilities.",
+   link:"https://pennapps.com"},
+  {type:"Competition",badge:"ec",name:"Regeneron Science Talent Search",org:"Society for Science",
+   dates:"Finalists announced March 2027",dl:"November 2026",
+   fmt:"In-Person (DC finals) after selection",cost:"Free",
+   prize:"$1.8M total · 1st place: $250,000",p:5,
+   desc:"The nation's most prestigious precollege science competition since 1942. Submit original research in any STEM field. 300 scholars selected nationally; 40 finalists travel to Washington, DC for a weeklong event. One of the strongest differentiators for Ivy League admissions — start planning your research project now.",
+   link:"https://www.societyforscience.org/regeneron-sts/"},
+  {type:"Competition",badge:"ec",name:"Regeneron ISEF",org:"Society for Science",
+   dates:"International fair: May 2027",dl:"Qualify via regional fair",
+   fmt:"In-Person (rotating city)",cost:"Free after regional qualification",
+   prize:"$9M+ total prizes · Grand: $75,000",p:5,
+   desc:"The world's largest international precollege STEM fair. 1,800+ students from 70+ countries present original research. Must qualify through a regional or state-affiliated fair first. 22 subject categories. ISEF qualification alone — even without winning — is a significant credential for college admissions.",
+   link:"https://www.societyforscience.org/isef/"},
+  {type:"Competition",badge:"ec",name:"USACO (USA Computing Olympiad)",org:"USACO",
+   dates:"Dec 2026, Jan & Feb & Mar 2027",dl:"No registration needed — just compete",
+   fmt:"Online (from home)",cost:"Free",
+   prize:"USA team selection for IOI",p:5,
+   desc:"The top competitive programming competition for high schoolers. Monthly contests: Bronze → Silver → Gold → Platinum → USA IOI team. USACO Gold or Platinum is among the strongest CS credentials for college admissions at any university. No sign-up required — create an account at usaco.org and compete.",
+   link:"https://usaco.org"},
+  {type:"Competition",badge:"ec",name:"AMC 10/12 → AIME → USAMO",org:"Mathematical Association of America",
+   dates:"AMC: Nov 2026 · AIME: Feb 2027",dl:"Register through your school",
+   fmt:"In-Person at your school",cost:"Free (school fee, often waived)",
+   prize:"USAMO qualification · Scholarships",p:5,
+   desc:"The official pathway to the US Math Olympiad and ultimately the International Math Olympiad (IMO). AMC 10/12 → AIME → USAMO. AIME qualification is a solid credential; USAMO qualification is exceptional. Prepare using Art of Problem Solving (artofproblemsolving.com).",
+   link:"https://maa.org/math-competitions"},
+  {type:"Competition",badge:"ec",name:"WAICY — World AI Competition for Youth",org:"WAICY",
+   dates:"2026 season",dl:"June 2026",
+   fmt:"Online + global finals",cost:"Free",
+   prize:"Cash prizes + global recognition",p:4,
+   desc:"The world's largest AI competition for ages 13–18 with 3,000+ participants from 40+ countries. Tracks include AI project showcase, LLM applications, and AI creative work. Team-based format with mentor feedback rounds. Solid portfolio piece for CS and AI-focused students.",
+   link:"https://waicy.com"},
+  {type:"Competition",badge:"ec",name:"Kaggle Competitions",org:"Google / Kaggle",
+   dates:"Year-round",dl:"Rolling",
+   fmt:"Online",cost:"Free",
+   prize:"Cash prizes up to $100,000",p:3,
+   desc:"The world's largest data science community. Open to high schoolers. Start with beginner Kaggle challenges (Titanic, House Prices) to build a track record. Even placing in the top 10% of a Kaggle competition is a meaningful CS portfolio piece. Used by industry to assess real ML skills.",
+   link:"https://www.kaggle.com/competitions"},
+  {type:"Award",badge:"ea",name:"Breakthrough Junior Challenge",org:"Breakthrough Prize Foundation",
+   dates:"Submissions: May – Sep 2026",dl:"September 2026",
+   fmt:"Online — 3-minute video submission",cost:"Free",
+   prize:"$250,000 college scholarship + $50,000 for teacher",p:5,
+   desc:"Create a 3-minute original video explaining a complex scientific concept in a clear, creative, accessible way. Open globally to ages 13–18. One of the largest science prizes for young people. Past winners have explained quantum entanglement, CRISPR, and general relativity.",
+   link:"https://breakthroughjuniorchallenge.org"},
+  {type:"Award",badge:"ea",name:"Davidson Fellows Scholarship",org:"Davidson Institute",
+   dates:"Research ongoing · Submit: Feb 2027",dl:"February 2027",
+   fmt:"Online (written submission)",cost:"Free",
+   prize:"$50,000 / $25,000 / $10,000 scholarship",p:5,
+   desc:"Recognizes students 18 and under who have completed a significant piece of original work in STEM, literature, music, or philosophy. One of the most distinguished youth awards. Requires genuinely exceptional, publishable-quality research or creative work. Very few awarded each year — plan early.",
+   link:"https://www.davidsongifted.org/fellows-scholarship/"},
+  {type:"Conference",badge:"ef2",name:"JSHS — Junior Science & Humanities Symposium",org:"US Army, Navy, Air Force",
+   dates:"National finals: Apr 2027",dl:"Regional deadlines Nov 2026 – Jan 2027",
+   fmt:"In-Person regional + national",cost:"Free",
+   prize:"$12,000 scholarship (1st, national)",p:4,
+   desc:"Students present original STEM research to panels of military scientists and scholars. Regional → national competition structure. Top finalists receive substantial scholarships and present at the national symposium. Covers all STEM disciplines. Underrated — competition is less intense than ISEF.",
+   link:"https://www.jshs.org"},
+  {type:"Conference",badge:"ef2",name:"Conrad Innovation Summit",org:"Conrad Challenge",
+   dates:"Finals: April 2027",dl:"October 2026",
+   fmt:"In-Person finals + online prelims",cost:"Free to enter",
+   prize:"$10,000+ per category",p:3,
+   desc:"Teams solve real-world problems using STEM innovation and entrepreneurship, then pitch solutions to NASA astronauts, engineers, and industry leaders. Categories include aerospace, energy, cybersecurity, and health sciences. Open globally to students ages 13–18. Strong intro to tech entrepreneurship.",
+   link:"https://www.conradchallenge.org"},
+];
+
+// ── RENDER PROGRAMS ────────────────────────────────────────────────────────────
+
+function getF(n){ return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e=>e.value) }
+
+function renderCards(){
+  const q=document.getElementById('si').value.toLowerCase().trim();
+  const cats=getF('cat'),fmts=getF('fmt'),costs=getF('cost'),grades=getF('grade'),prest=getF('prestige'),stats=getF('status');
+  const sort=document.getElementById('ss').value;
+  const now=new Date();
+
+  let f=P.filter(p=>{
+    if(q&&!`${p.name} ${p.host} ${p.cat.join(' ')} ${p.loc} ${p.desc}`.toLowerCase().includes(q)) return false;
+    if(cats.length&&!cats.some(c=>p.cat.includes(c))) return false;
+    if(fmts.length&&!fmts.includes(p.fmt)) return false;
+    if(costs.length&&!costs.includes(p.costB)) return false;
+    if(grades.length&&!grades.some(g=>p.grades.includes(parseInt(g)))) return false;
+    if(prest.length&&!prest.includes(String(p.prestige))) return false;
+    if(stats.length){
+      if(stats.includes('open')&&!stats.includes('closed')&&p.closed) return false;
+      if(stats.includes('closed')&&!stats.includes('open')&&!p.closed) return false;
+    }
+    return true;
+  });
+
+  if(sort==='prestige') f.sort((a,b)=>b.prestige-a.prestige||(a.closed?1:-1)||(a.dlt-b.dlt));
+  else if(sort==='deadline') f.sort((a,b)=>((a.closed?1:0)-(b.closed?1:0))||a.dlt-b.dlt);
+  else if(sort==='cost-asc') f.sort((a,b)=>a.costN-b.costN);
+  else if(sort==='cost-desc') f.sort((a,b)=>b.costN-a.costN);
+  else if(sort==='az') f.sort((a,b)=>a.name.localeCompare(b.name));
+
+  document.getElementById('rt').textContent=`Showing ${f.length} of ${P.length} programs`;
+  document.getElementById('pb').textContent=P.length;
+  document.getElementById('tc').textContent=P.length;
+  const oc=P.filter(x=>!x.closed).length;
+  document.getElementById('oc').textContent=oc;
+  document.getElementById('ofc').textContent=oc;
+
+  const g=document.getElementById('cg');
+  if(!f.length){g.innerHTML=`<div class="nores"><h3>No programs match your filters</h3><p>Try adjusting or clearing some filters.</p></div>`;return;}
+
+  g.innerHTML=f.map(p=>{
+    const stars='★'.repeat(p.prestige)+'☆'.repeat(5-p.prestige);
+    const fc=p.fmt==='In-Person'?'tip':p.fmt==='Online'?'ton':'thy';
+    const gtags=p.grades.map(g=>`<span class="tag tg">Gr ${g}</span>`).join('');
+    const days=Math.ceil((p.dlt-now)/(864e5));
+    let dlc='mv',dlt2=p.dl;
+    if(p.closed){dlc='mv closed-t';dlt2=p.dl+' — Closed';}
+    else if(days<=14&&days>=0){dlc='mv urgent';dlt2=`${p.dl} (${days}d!)`;}
+    else if(days<=45&&days>=0){dlc='mv soon';dlt2=`${p.dl} (${days}d)`;}
+    const costEl=p.costN===0?`<span class="cv cvf">Free / Full Aid</span>`:`<span class="cv cvp">${p.cost}</span>`;
+    return `<div class="card" onclick="openM(${p.id})">
+      <div class="cbar ${p.closed?'cbar-closed':'cbar-open'}"></div>
+      <div class="ctop">
+        <div class="clog" style="background:${p.color}">${p.logo}</div>
+        <div style="flex:1;min-width:0">
+          <div class="ctitle">${p.name}</div>
+          <div class="chost">${p.host}</div>
+          <span class="cstars">${stars}</span>
+        </div>
+        ${p.closed?'<span class="tag tcl" style="flex-shrink:0;align-self:flex-start;margin-top:2px">Closed</span>':'<span class="tag tf" style="flex-shrink:0;align-self:flex-start;margin-top:2px">Open</span>'}
+      </div>
+      <div class="cdesc">${p.desc.substring(0,128)}…</div>
+      <div class="tags">${p.cat.map(c=>`<span class="tag tc">${c}</span>`).join('')}<span class="tag ${fc}">${p.fmt}</span>${gtags}</div>
+      <div class="cmeta">
+        <div class="mi"><div class="ml">Deadline</div><div class="${dlc}">${dlt2}</div></div>
+        <div class="mi"><div class="ml">Dates</div><div class="mv">${p.dates}</div></div>
+        <div class="mi"><div class="ml">Location</div><div class="mv">${p.loc}</div></div>
+        <div class="mi"><div class="ml">Grades</div><div class="mv">${p.grades.map(g=>g+'th').join(', ')}</div></div>
+      </div>
+      <div class="cfoot">${costEl}<button class="abtn" onclick="event.stopPropagation();window.open('${p.link}','_blank')">Visit Site →</button></div>
+    </div>`;
+  }).join('');
+}
+
+function openM(id){
+  const p=P.find(x=>x.id===id);
+  const stars='★'.repeat(p.prestige)+'☆'.repeat(5-p.prestige);
+  const closedN=p.closed?`<div class="mnotice">⚠️ The 2026 application deadline for this program has passed. ${p.note||'Check the official website for 2027 opening dates.'}</div>`:'';
+  const noteN=!p.closed&&p.note?`<div class="mnote">ℹ️ ${p.note}</div>`:'';
+  document.getElementById('mi').innerHTML=`
+    <div class="mh">
+      <div class="mhtop">
+        <div class="mlog" style="background:${p.color}">${p.logo}</div>
+        <div><div class="mtitle">${p.name}</div><div class="mhost">${p.host} · ${p.loc}</div><div class="mstars">${stars}</div></div>
+      </div>
+      <div class="mtags2">${p.cat.map(c=>`<span class="mtag">${c}</span>`).join('')}<span class="mtag">${p.fmt}</span><span class="mtag">Grades ${p.grades.join(', ')}</span>${p.closed?'<span class="mtag" style="background:rgba(239,68,68,.2);color:#FCA5A5">Closed 2026</span>':'<span class="mtag" style="background:rgba(52,211,153,.2);color:#6EE7B7">Open</span>'}</div>
+    </div>
+    <div class="mb">
+      ${closedN}
+      <div class="ms"><div class="msl">About this program</div><div class="mdesc">${p.desc}</div></div>
+      <div class="ms"><div class="mgrid">
+        <div class="mbox"><div class="mbl">Application Deadline</div><div class="mbv" style="color:${p.closed?'#9CA3AF':'inherit'}">${p.dl}${p.closed?' (closed)':''}</div></div>
+        <div class="mbox"><div class="mbl">Program Dates</div><div class="mbv">${p.dates}</div></div>
+        <div class="mbox"><div class="mbl">Cost</div><div class="mbv" style="color:${p.costN===0?'#047857':'inherit'}">${p.cost}</div></div>
+        <div class="mbox"><div class="mbl">Eligible Grades</div><div class="mbv">${p.grades.map(g=>g+'th').join(', ')}</div></div>
+      </div></div>
+      ${noteN}
+    </div>
+    <div class="mfooter">
+      <button class="mclose" onclick="document.getElementById('modal').classList.remove('open')">← Back</button>
+      <button class="mapp" onclick="window.open('${p.link}','_blank')">Official Website →</button>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeMBg(e){if(e.target.id==='modal')document.getElementById('modal').classList.remove('open');}
+function clearFilters(){document.querySelectorAll('.sidebar input[type=checkbox]').forEach(e=>e.checked=false);document.getElementById('si').value='';renderCards();}
+
+// ── RENDER EVENTS ──────────────────────────────────────────────────────────────
+
+let aet='All';
+function filterE(btn){document.querySelectorAll('.efbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');aet=btn.dataset.t;renderEvents();}
+
+function renderEvents(){
+  const secs=[
+    {label:'Hackathons',types:['Hackathon']},
+    {label:'Science & Math Competitions',types:['Competition']},
+    {label:'Awards & Recognition',types:['Award']},
+    {label:'Conferences & Challenges',types:['Conference']},
+  ];
+  let html='';
+  secs.forEach(s=>{
+    let evs=E.filter(e=>s.types.includes(e.type)&&(aet==='All'||aet===e.type));
+    if(!evs.length) return;
+    html+=`<div class="esec"><div class="eslabel">${s.label}</div><div class="egrid">`;
+    evs.forEach(ev=>{
+      html+=`<div class="ecard" onclick="window.open('${ev.link}','_blank')">
+        <div class="etype ${ev.badge}">${ev.type}</div>
+        <div class="etitle">${ev.name}</div><div class="eorg">${ev.org}</div>
+        <div class="edesc">${ev.desc}</div>
+        <div class="emeta">
+          <div class="emi"><div class="eml">When</div><div class="emv">${ev.dates}</div></div>
+          <div class="emi"><div class="eml">Deadline</div><div class="emv">${ev.dl}</div></div>
+          <div class="emi"><div class="eml">Format</div><div class="emv">${ev.fmt}</div></div>
+          <div class="emi"><div class="eml">Cost</div><div class="emv" style="color:${ev.cost==='Free'?'#047857':'inherit'}">${ev.cost}</div></div>
+        </div>
+        <div class="efoot"><div class="eprize">${ev.prize?'🏆 '+ev.prize:''}</div><button class="ebtn">Learn More →</button></div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('eb').innerHTML=html;
+}
+
+// ── PAGE SWITCHING ──────────────────────────────────────────────────────────────
+
+function showPage(page,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  btn.classList.add('active');
+  if(page==='events') renderEvents();
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+renderCards();
+</script>
+<script type="module" src="./analytics.bundle.js"></script>
+</body>
+</html>
