@@ -5,68 +5,120 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SummerScope — Analytics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   Palette — validated with the dataviz validator against this page's white
+   card surface (#ffffff), categorical mode:
+     lightness band PASS · chroma floor PASS · CVD separation PASS (worst
+     adjacent ΔE 9.1 protan) · normal-vision floor PASS (worst 19.6)
+     contrast WARN on aqua/yellow/magenta → relief is satisfied because every
+     breakdown ships a visible numeric label and a table view.
+   The previous palette failed four of those five checks — #A78BFA and
+   #60A5FA were ΔE 0.3 apart under deuteranopia, i.e. the same color.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  --surface:#ffffff; --bg:#F5F4F0; --navy:#0D1926;
+  --ink:#111827; --ink-2:#52514E; --ink-3:#9CA3AF;
+  --line:#E2DFD8; --grid:#F1EFEA;
+
+  --s1:#eb6834; --s2:#2a78d6; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
+
+  /* ordinal ramp (one hue, light→dark) — validated with --ordinal */
+  --o1:#86b6ef; --o2:#5598e7; --o3:#2a78d6; --o4:#184f95;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#F5F4F0;color:#111827;font-size:14px;min-height:100vh}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;min-height:100vh}
 
 /* NAV */
-nav{background:#0D1926;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06)}
+nav{background:var(--navy);min-height:58px;display:flex;align-items:center;justify-content:space-between;padding:.5rem 1.75rem;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06);gap:1rem;flex-wrap:wrap}
 .logo{font-family:'Lora',serif;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:.4rem}
-.ldot{width:7px;height:7px;background:#E8825C;border-radius:50%}
-.nav-right{display:flex;align-items:center;gap:1rem}
+.ldot{width:7px;height:7px;background:var(--s1);border-radius:50%}
+.nav-right{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
 .range-tabs{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px}
-.rtab{padding:.25rem .7rem;border-radius:6px;border:none;background:none;color:rgba(255,255,255,.5);font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.rtab{padding:.25rem .7rem;border-radius:6px;border:none;background:none;color:rgba(255,255,255,.55);font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.rtab:hover{color:#fff}
 .rtab.active{background:rgba(255,255,255,.18);color:#fff}
-.refresh-btn{padding:.3rem .9rem;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s}
+.refresh-btn{padding:.3rem .9rem;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.65);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s}
 .refresh-btn:hover{border-color:rgba(255,255,255,.35);color:#fff}
-.updated{font-size:.7rem;color:rgba(255,255,255,.3)}
+.updated{font-size:.7rem;color:rgba(255,255,255,.35)}
 
-/* MAIN */
 main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
+/* Refetch holds the previous render at reduced opacity — no skeleton flash. */
+#content.reloading{opacity:.45;transition:opacity .12s}
 
-/* LOADING / EMPTY */
-.center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;gap:1rem;color:#9CA3AF;text-align:center}
-.spinner{width:30px;height:30px;border:2.5px solid #E2DFD8;border-top-color:#E8825C;border-radius:50%;animation:spin .7s linear infinite}
+.center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;gap:1rem;color:var(--ink-3);text-align:center}
+.spinner{width:30px;height:30px;border:2.5px solid var(--line);border-top-color:var(--s1);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.empty-icon{font-size:2rem;margin-bottom:.25rem}
-.empty-title{font-size:1rem;font-weight:600;color:#6B7280}
-.empty-sub{font-size:.82rem;color:#9CA3AF;max-width:320px;line-height:1.5}
+.empty-icon{font-size:2rem}
+.empty-title{font-size:1rem;font-weight:600;color:var(--ink-2)}
+.empty-sub{font-size:.82rem;color:var(--ink-3);max-width:380px;line-height:1.5}
 
-/* STAT CARDS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:1.1rem}
-@media(max-width:760px){.stats-row{grid-template-columns:1fr 1fr}}
-.stat{background:#fff;border:1px solid #E2DFD8;border-radius:13px;padding:1.1rem 1.25rem;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,#E8825C)}
-.stat-label{font-size:.67rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9CA3AF;margin-bottom:.4rem}
-.stat-val{font-size:1.85rem;font-weight:600;color:#0D1926;line-height:1}
-.stat-sub{font-size:.72rem;color:#9CA3AF;margin-top:.35rem}
+/* ── LIFETIME BAND ───────────────────────────────────────────────────────── */
+.life{background:var(--navy);border-radius:14px;padding:1.35rem 1.5rem;margin-bottom:1.4rem;color:#fff}
+.life-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.life-title{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.life-since{font-size:.7rem;color:rgba(255,255,255,.35)}
+.life-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:1.5rem}
+@media(max-width:760px){.life-grid{grid-template-columns:1fr 1fr}}
+.life-item .ll{font-size:.68rem;color:rgba(255,255,255,.45);margin-bottom:.28rem}
+/* Hero figure: same sans as everything else, proportional figures. */
+.life-hero{font-size:2.9rem;font-weight:600;line-height:1;letter-spacing:-.02em}
+.life-val{font-size:1.5rem;font-weight:600;line-height:1;letter-spacing:-.01em}
+.life-sub{font-size:.68rem;color:rgba(255,255,255,.35);margin-top:.3rem}
+.life-note{margin-top:.9rem;font-size:.68rem;color:rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.09);padding-top:.7rem}
 
-/* SECTION LABEL */
-.section-label{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9CA3AF;margin:1.4rem 0 .75rem}
+/* ── STAT TILES ──────────────────────────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:.7rem;margin-bottom:1.1rem}
+@media(max-width:1000px){.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.9rem 1rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--s1))}
+.stat-label{font-size:.63rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.35rem}
+.stat-val{font-size:1.5rem;font-weight:600;color:var(--navy);line-height:1;letter-spacing:-.01em}
+.stat-sub{font-size:.68rem;color:var(--ink-3);margin-top:.3rem}
 
-/* CARDS */
-.card{background:#fff;border:1px solid #E2DFD8;border-radius:13px;padding:1.25rem}
-.card-title{font-size:.82rem;font-weight:600;color:#0D1926;margin-bottom:1rem}
-.card canvas{display:block}
+.section-label{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:1.5rem 0 .75rem}
 
-/* GRID LAYOUTS */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:1.25rem}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:1rem}
+.card-title{font-size:.82rem;font-weight:600;color:var(--navy)}
+.card-sub{font-size:.7rem;color:var(--ink-3);font-weight:400;margin-top:2px}
+/* Every chart has a table-view twin so no value is reachable only by hover. */
+.tbtn{font-size:.66rem;color:var(--ink-2);background:none;border:1px solid var(--line);border-radius:6px;padding:.15rem .5rem;cursor:pointer;font-family:inherit;flex-shrink:0}
+.tbtn:hover{border-color:var(--ink-3)}
+.tview{display:none;margin-top:.9rem;max-height:230px;overflow:auto}
+.tview.on{display:block}
+.tview table{width:100%;border-collapse:collapse;font-size:.74rem;font-variant-numeric:tabular-nums}
+.tview th{text-align:left;color:var(--ink-3);font-weight:600;padding:.3rem .5rem;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
+.tview td{padding:.26rem .5rem;border-bottom:1px solid var(--grid);color:var(--ink-2)}
+.tview td:last-child,.tview th:last-child{text-align:right}
+.chart-wrap{position:relative}
+
 .g1{margin-bottom:.85rem}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:.85rem}
-@media(max-width:860px){.g3{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:.85rem}
+@media(max-width:1000px){.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:860px){.g3{grid-template-columns:1fr}}
+@media(max-width:600px){.g4{grid-template-columns:1fr}}
+@media(max-width:600px){.g2{grid-template-columns:1fr}}
 
-/* TABLE LIST */
-.t-row{display:flex;align-items:center;gap:.65rem;padding:.42rem 0;border-bottom:1px solid #F3F4F6}
+/* ── BAR LISTS ───────────────────────────────────────────────────────────── */
+/* Horizontal bars with the value always printed — this is the "relief" the
+   palette's contrast WARN requires, and it beats a donut for close values. */
+.t-row{display:flex;align-items:center;gap:.65rem;padding:.4rem 0;border-bottom:1px solid var(--grid)}
 .t-row:last-child{border-bottom:none}
-.t-num{font-size:.68rem;color:#D1D5DB;width:16px;text-align:right;flex-shrink:0}
-.t-label{flex:1;font-size:.8rem;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.t-bar-wrap{width:64px;height:4px;background:#F3F4F6;border-radius:2px;flex-shrink:0}
-.t-bar{height:100%;border-radius:2px;background:#E8825C}
-.t-count{font-size:.75rem;font-weight:600;color:#6B7280;width:26px;text-align:right;flex-shrink:0}
-.t-empty{font-size:.8rem;color:#D1D5DB;padding:.5rem 0}
+.t-num{font-size:.68rem;color:#D1D5DB;width:16px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.t-label{flex:1;font-size:.79rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-bar-wrap{width:70px;height:6px;background:var(--grid);border-radius:3px;flex-shrink:0;overflow:hidden}
+.t-bar{height:100%;border-radius:3px;background:var(--s1)}
+.t-count{font-size:.75rem;font-weight:600;color:var(--ink-2);min-width:34px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.t-empty{font-size:.79rem;color:#D1D5DB;padding:.5rem 0}
+
+.banner{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;font-size:.75rem;border-radius:10px;padding:.6rem .9rem;margin-bottom:1rem;line-height:1.5}
 </style>
 </head>
 <body>
@@ -74,68 +126,104 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
 <nav>
   <div class="logo"><div class="ldot"></div>SummerScope <span style="font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:400;color:rgba(255,255,255,.35);margin-left:.3rem">Analytics</span></div>
   <div class="nav-right">
-    <div class="range-tabs">
-      <button class="rtab active" onclick="setRange(7,this)">7d</button>
-      <button class="rtab" onclick="setRange(30,this)">30d</button>
-      <button class="rtab" onclick="setRange(90,this)">90d</button>
+    <!-- One filter row, above everything it scopes. -->
+    <div class="range-tabs" id="range-tabs">
+      <button class="rtab active" data-days="7">7d</button>
+      <button class="rtab" data-days="30">30d</button>
+      <button class="rtab" data-days="90">90d</button>
+      <button class="rtab" data-days="365">1y</button>
+      <button class="rtab" data-days="all">All time</button>
     </div>
     <span class="updated" id="updated"></span>
-    <button class="refresh-btn" onclick="load()">↻ Refresh</button>
+    <button class="refresh-btn" id="refresh">↻ Refresh</button>
   </div>
 </nav>
 
 <main>
   <div id="loading" class="center-state"><div class="spinner"></div><span>Loading analytics…</span></div>
-  <div id="error"  class="center-state" style="display:none">
+  <div id="error" class="center-state" style="display:none">
     <div class="empty-icon">⚠️</div>
     <div class="empty-title">Could not load data</div>
     <div class="empty-sub" id="error-msg"></div>
   </div>
+
   <div id="content" style="display:none">
 
-    <!-- STAT CARDS -->
+    <!-- LIFETIME — always all-time, never affected by the range tabs -->
+    <div class="life">
+      <div class="life-head">
+        <div class="life-title">Lifetime totals · all time</div>
+        <div class="life-since" id="life-since"></div>
+      </div>
+      <div class="life-grid" id="life-grid"></div>
+      <div class="life-note" id="life-note"></div>
+    </div>
+
+    <div id="trunc-banner"></div>
+
+    <div class="section-label" id="range-label">Selected range</div>
     <div class="stats-row" id="stats"></div>
 
-    <!-- VISITS OVER TIME -->
     <div class="section-label">Visits over time</div>
-    <div class="card g1" style="padding:1.25rem 1.25rem 1rem">
-      <canvas id="chart-line" height="90"></canvas>
+    <div class="card g1">
+      <div class="card-head">
+        <div><div class="card-title">Page views per day</div><div class="card-sub" id="line-sub"></div></div>
+        <button class="tbtn" data-table="tv-line">Table</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-line" height="88"></canvas></div>
+      <div class="tview" id="tv-line"></div>
     </div>
 
-    <!-- DEVICE / BROWSER / PAGE -->
-    <div class="section-label">Audience breakdown</div>
-    <div class="g3">
-      <div class="card"><div class="card-title">Device</div><canvas id="chart-device" height="160"></canvas></div>
-      <div class="card"><div class="card-title">Browser</div><canvas id="chart-browser" height="160"></canvas></div>
-      <div class="card"><div class="card-title">OS</div><canvas id="chart-os" height="160"></canvas></div>
+    <div class="section-label">When people visit <span style="text-transform:none;letter-spacing:0;font-weight:400">(UTC)</span></div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-head"><div class="card-title">By hour of day</div><button class="tbtn" data-table="tv-hour">Table</button></div>
+        <div class="chart-wrap"><canvas id="chart-hour" height="120"></canvas></div>
+        <div class="tview" id="tv-hour"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">By day of week</div><button class="tbtn" data-table="tv-dow">Table</button></div>
+        <div class="chart-wrap"><canvas id="chart-dow" height="120"></canvas></div>
+        <div class="tview" id="tv-dow"></div>
+      </div>
     </div>
 
-    <!-- SCROLL -->
-    <div class="section-label">Scroll depth</div>
-    <div class="card g1" style="padding:1.25rem 1.25rem 1rem">
-      <div class="card-title" style="margin-bottom:.75rem">How far visitors scroll</div>
-      <canvas id="chart-scroll" height="60"></canvas>
+    <div class="section-label">Audience</div>
+    <div class="g4">
+      <div class="card"><div class="card-head"><div class="card-title">Device</div></div><div id="t-device"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Browser</div></div><div id="t-browser"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Operating system</div></div><div id="t-os"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Pages viewed</div></div><div id="t-pages"></div></div>
     </div>
 
-    <!-- TABLES ROW 1 -->
+    <div class="section-label">Engagement</div>
+    <div class="card g1">
+      <div class="card-head">
+        <div><div class="card-title">Scroll depth</div><div class="card-sub">Share of sessions reaching each mark</div></div>
+        <button class="tbtn" data-table="tv-scroll">Table</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-scroll" height="70"></canvas></div>
+      <div class="tview" id="tv-scroll"></div>
+    </div>
+
     <div class="section-label">Traffic sources</div>
     <div class="g2">
-      <div class="card"><div class="card-title">Top referrers</div><div id="t-referrers"></div></div>
-      <div class="card"><div class="card-title">UTM sources</div><div id="t-utm"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Top referrers</div></div><div id="t-referrers"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">UTM campaign sources</div></div><div id="t-utm"></div></div>
     </div>
 
-    <!-- TABLES ROW 2 -->
-    <div class="section-label">Content engagement</div>
+    <div class="section-label">What people click</div>
     <div class="g2">
-      <div class="card"><div class="card-title">Most clicked programs</div><div id="t-programs"></div></div>
-      <div class="card"><div class="card-title">Top searches</div><div id="t-searches"></div></div>
+      <div class="card"><div class="card-head"><div><div class="card-title">Programs opened</div><div class="card-sub">Card clicks</div></div></div><div id="t-programs"></div></div>
+      <div class="card"><div class="card-head"><div><div class="card-title">Applied / visited site</div><div class="card-sub">Clicks through to the official program site</div></div></div><div id="t-apply"></div></div>
     </div>
-
-    <!-- TABLES ROW 3 -->
-    <div class="section-label">Filters & navigation</div>
     <div class="g2">
-      <div class="card"><div class="card-title">Most used filters</div><div id="t-filters"></div></div>
-      <div class="card"><div class="card-title">External links clicked</div><div id="t-links"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Top searches</div></div><div id="t-searches"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">Most used filters</div></div><div id="t-filters"></div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="card-head"><div class="card-title">Events &amp; competitions opened</div></div><div id="t-events"></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">External links clicked</div></div><div id="t-links"></div></div>
     </div>
 
   </div>
@@ -145,135 +233,296 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
 const PW = sessionStorage.getItem('_ss_dash_pw') || '';
 if (!PW) { window.location.href = '/'; }
 
-let rangeDays = 7;
+let rangeDays = '7';
 let charts = {};
+let firstLoad = true;
 
-function setRange(days, btn) {
-  rangeDays = days;
-  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  load();
+const CSS = getComputedStyle(document.documentElement);
+const c = n => CSS.getPropertyValue(n).trim();
+const SERIES = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'].map(c);
+const ORDINAL = ['--o1','--o2','--o3','--o4'].map(c);
+const INK3 = c('--ink-3'), GRID = c('--grid'), SURFACE = c('--surface');
+
+const nf = n => (n == null ? '—' : Number(n).toLocaleString());
+function fmtDur(sec) {
+  if (!sec) return '—';
+  if (sec >= 3600) return Math.floor(sec / 3600) + 'h ' + Math.floor((sec % 3600) / 60) + 'm';
+  if (sec >= 60) return Math.floor(sec / 60) + 'm ' + (sec % 60) + 's';
+  return sec + 's';
+}
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
+// ── Chart.js shared look: hairline solid grid, recessive axes, thin marks ──
+Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = INK3;
+const AXES = {
+  x: { grid: { display: false }, border: { color: GRID }, ticks: { color: INK3, maxRotation: 0, autoSkipPadding: 12 } },
+  y: { grid: { color: GRID, drawTicks: false }, border: { display: false },
+       ticks: { color: INK3, precision: 0, maxTicksLimit: 6, callback: v => Number(v).toLocaleString() },
+       beginAtZero: true },
+};
+const TOOLTIP = {
+  backgroundColor: '#0D1926', padding: 10, cornerRadius: 8, displayColors: false,
+  titleFont: { weight: '600', size: 12 }, bodyFont: { size: 12 },
+};
+
+function killChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ── Table-view twins ───────────────────────────────────────────────────────
+function renderTable(id, cols, rows) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '<table><thead><tr>' + cols.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>'
+    + rows.map(r => '<tr>' + r.map(v => `<td>${v}</td>`).join('') + '</tr>').join('')
+    + '</tbody></table>';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.tbtn');
+  if (!b) return;
+  const t = document.getElementById(b.dataset.table);
+  const on = t.classList.toggle('on');
+  b.textContent = on ? 'Chart' : 'Table';
+});
+
+// ── Bar lists ──────────────────────────────────────────────────────────────
+function barList(id, rows, empty, color) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!rows || !rows.length) { el.innerHTML = `<div class="t-empty">${empty}</div>`; return; }
+  const max = Math.max(...rows.map(r => r.count)) || 1;
+  const total = rows.reduce((a, r) => a + r.count, 0);
+  el.innerHTML = rows.map((r, i) => `
+    <div class="t-row">
+      <span class="t-num">${i + 1}</span>
+      <span class="t-label" title="${esc(r.label)}">${esc(r.label)}</span>
+      <div class="t-bar-wrap"><div class="t-bar" style="width:${Math.max(3, Math.round(r.count / max * 100))}%;background:${color || SERIES[0]}"></div></div>
+      <span class="t-count" title="${total ? Math.round(r.count / total * 100) : 0}% of ${nf(total)}">${nf(r.count)}</span>
+    </div>`).join('');
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+
+// ── Load ───────────────────────────────────────────────────────────────────
 async function load() {
-  document.getElementById('loading').style.display = 'flex';
-  document.getElementById('content').style.display = 'none';
-  document.getElementById('error').style.display   = 'none';
+  const content = document.getElementById('content');
+  if (firstLoad) {
+    document.getElementById('loading').style.display = 'flex';
+    content.style.display = 'none';
+  } else {
+    content.classList.add('reloading'); // hold previous render, no skeleton flash
+  }
+  document.getElementById('error').style.display = 'none';
 
   try {
-    const r = await fetch('/api/analytics?days=' + rangeDays, {
-      headers: { Authorization: 'Bearer ' + PW }
-    });
+    const r = await fetch('/api/analytics?days=' + rangeDays, { headers: { Authorization: 'Bearer ' + PW } });
     if (r.status === 401) { sessionStorage.removeItem('_ss_dash_pw'); window.location.href = '/'; return; }
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!r.ok) {
+      let detail = 'HTTP ' + r.status;
+      try { const j = await r.json(); if (j.error) detail = j.error; } catch (_) {}
+      throw new Error(detail);
+    }
     const d = await r.json();
     if (d.error) throw new Error(d.error);
     render(d);
+    firstLoad = false;
   } catch (e) {
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('error-msg').textContent = e.message;
+    content.classList.remove('reloading');
+    document.getElementById('error-msg').textContent =
+      e.message === 'dashboard_password_not_configured'
+        ? 'DASHBOARD_PASSWORD is not set on the server. Add it in your Vercel project settings — the analytics endpoint refuses to serve without it.'
+        : e.message;
     document.getElementById('error').style.display = 'flex';
   }
 }
 
-const PALETTE = ['#E8825C','#0D1926','#4ADE80','#60A5FA','#A78BFA','#FBBF24','#F472B6','#34D399'];
-
-function fmt(sec) {
-  if (!sec) return '—';
-  if (sec >= 60) return Math.floor(sec/60) + 'm ' + (sec%60) + 's';
-  return sec + 's';
-}
-
-function killChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
-
 function render(d) {
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('content').style.display = 'block';
+  const content = document.getElementById('content');
+  content.style.display = 'block';
+  content.classList.remove('reloading');
 
-  const ts = new Date(d.generated_at);
-  document.getElementById('updated').textContent = 'Updated ' + ts.toLocaleTimeString();
+  document.getElementById('updated').textContent = 'Updated ' + new Date(d.generated_at).toLocaleTimeString();
 
+  // ── LIFETIME ─────────────────────────────────────────────────────────────
+  const L = d.lifetime || {};
+  document.getElementById('life-since').textContent =
+    L.first_event_at ? `Tracking since ${fmtDate(L.first_event_at)} · ${nf(L.days_tracked)} days` : '';
+  document.getElementById('life-grid').innerHTML = `
+    <div class="life-item">
+      <div class="ll">Total page views</div>
+      <div class="life-hero">${nf(L.total_pageviews)}</div>
+      <div class="life-sub">${L.avg_pageviews_per_day != null ? nf(L.avg_pageviews_per_day) + ' per day on average' : ''}</div>
+    </div>
+    <div class="life-item">
+      <div class="ll">Unique visitors</div>
+      <div class="life-val">${nf(L.unique_visitors)}</div>
+      <div class="life-sub">${L.distinct_counts_capped ? 'at least — see note' : 'by visitor ID'}</div>
+    </div>
+    <div class="life-item">
+      <div class="ll">Sessions</div>
+      <div class="life-val">${nf(L.unique_sessions)}</div>
+      <div class="life-sub">${L.distinct_counts_capped ? 'at least — see note' : 'all time'}</div>
+    </div>
+    <div class="life-item">
+      <div class="ll">Events recorded</div>
+      <div class="life-val">${nf(L.total_events)}</div>
+      <div class="life-sub">views, clicks, scrolls, searches</div>
+    </div>`;
+
+  // Say plainly where the number came from and whether it is exact.
+  const note = document.getElementById('life-note');
+  if (L.source === 'sql_rollup') {
+    note.textContent = 'Exact, from the permanent rollup tables — these totals survive even if old raw events are deleted.';
+  } else if (L.distinct_counts_capped) {
+    note.innerHTML = 'Page-view and event totals are exact. Unique visitors and sessions are a <strong>minimum</strong>: '
+      + 'they were counted from the most recent ' + nf(d.detail_row_cap) + ' page views. '
+      + 'Apply <code>supabase/schema.sql</code> to get exact lifetime uniques.';
+  } else {
+    note.innerHTML = 'Exact, counted from the full event history. Applying <code>supabase/schema.sql</code> makes this cheaper as the table grows '
+      + 'and preserves the totals if you ever prune old events.';
+  }
+
+  // Truncation is surfaced, never silent.
+  document.getElementById('trunc-banner').innerHTML = d.detail_truncated
+    ? `<div class="banner"><strong>Charts below are based on the most recent ${nf(d.detail_row_cap)} events</strong> in this range, not all of them.
+       Lifetime totals above are still exact. Pick a shorter range for complete detail.</div>`
+    : '';
+
+  // ── RANGE STATS ──────────────────────────────────────────────────────────
   const s = d.summary;
+  const rangeName = d.range_days === 'all' ? 'all time' : 'last ' + d.range_days + ' days';
+  document.getElementById('range-label').textContent = 'Selected range — ' + rangeName;
+  document.getElementById('line-sub').textContent = rangeName;
+
   document.getElementById('stats').innerHTML = [
-    { label:'Page Views',      val: s.total_pageviews.toLocaleString(), sub:'last ' + rangeDays + ' days', accent:'#E8825C' },
-    { label:'Unique Visitors', val: s.unique_visitors.toLocaleString(), sub:'by visitor ID', accent:'#0D1926' },
-    { label:'Sessions',        val: s.unique_sessions.toLocaleString(), sub:'unique sessions', accent:'#4ADE80' },
-    { label:'Avg Time on Page',val: fmt(s.avg_duration_sec),            sub:'per session', accent:'#60A5FA' },
-  ].map(c => `
-    <div class="stat" style="--accent:${c.accent}">
-      <div class="stat-label">${c.label}</div>
-      <div class="stat-val">${c.val}</div>
-      <div class="stat-sub">${c.sub}</div>
+    { label: 'Page views',      val: nf(s.total_pageviews),   sub: rangeName,                       accent: SERIES[0] },
+    { label: 'Unique visitors', val: nf(s.unique_visitors),   sub: `${nf(s.new_visitors)} new · ${nf(s.returning_visitors)} returning`, accent: SERIES[1] },
+    { label: 'Sessions',        val: nf(s.unique_sessions),   sub: `${s.pages_per_session} pages each`, accent: SERIES[2] },
+    { label: 'Avg time',        val: fmtDur(s.avg_duration_sec), sub: `median ${fmtDur(s.median_duration_sec)}`, accent: SERIES[3] },
+    { label: 'Bounce rate',     val: s.bounce_rate_pct + '%', sub: 'one-page sessions',             accent: SERIES[4] },
+    { label: 'Total events',    val: nf(s.total_events),      sub: 'all interactions',              accent: SERIES[6] },
+  ].map(x => `
+    <div class="stat" style="--accent:${x.accent}">
+      <div class="stat-label">${x.label}</div>
+      <div class="stat-val">${x.val}</div>
+      <div class="stat-sub">${x.sub}</div>
     </div>`).join('');
 
-  // Line chart
+  // ── LINE: page views per day ─────────────────────────────────────────────
+  // Single series, so no legend box — the card title names it.
   killChart('line');
-  const days = d.pageviews_by_day;
-  const ctx1 = document.getElementById('chart-line').getContext('2d');
-  charts['line'] = new Chart(ctx1, {
+  const days = d.pageviews_by_day || [];
+  const peak = days.reduce((m, x, i) => (x.count > (days[m] ? days[m].count : -1) ? i : m), 0);
+  charts.line = new Chart(document.getElementById('chart-line'), {
     type: 'line',
     data: {
-      labels: days.map(d => { const [,m,dy] = d.date.split('-'); return +m+'/'+parseInt(dy); }),
-      datasets: [{ label:'Views', data: days.map(d => d.count),
-        borderColor:'#E8825C', backgroundColor:'rgba(232,130,92,.1)',
-        borderWidth:2, pointRadius:3, pointBackgroundColor:'#E8825C', fill:true, tension:.35 }],
+      labels: days.map(x => { const [, m, dy] = x.date.split('-'); return +m + '/' + +dy; }),
+      datasets: [{
+        label: 'Page views',
+        data: days.map(x => x.count),
+        borderColor: SERIES[0],
+        backgroundColor: 'rgba(235,104,52,.10)',   // ~10% wash, never a saturated block
+        borderWidth: 2, tension: .32, fill: true,
+        pointRadius: days.map((_, i) => (i === peak || i === days.length - 1 ? 4.5 : 0)),
+        pointBackgroundColor: SERIES[0],
+        pointBorderColor: SURFACE, pointBorderWidth: 2,   // 2px surface ring
+        pointHoverRadius: 5.5, pointHitRadius: 14,
+      }],
     },
-    options: { responsive:true, plugins:{ legend:{display:false} },
-      scales:{ x:{ grid:{color:'#F3F4F6'}, ticks:{color:'#9CA3AF',maxTicksLimit:12,font:{size:11}} },
-               y:{ grid:{color:'#F3F4F6'}, ticks:{color:'#9CA3AF',font:{size:11}}, beginAtZero:true } } }
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },   // crosshair-style hover
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...TOOLTIP, callbacks: {
+          title: i => days[i[0].dataIndex] ? fmtDate(days[i[0].dataIndex].date) : '',
+          label: i => nf(i.parsed.y) + ' page views',
+        } },
+      },
+      scales: AXES,
+    },
   });
+  renderTable('tv-line', ['Date', 'Page views'], days.map(x => [x.date, nf(x.count)]));
 
-  // Doughnut helpers
-  function doughnut(id, data) {
+  // ── COLUMNS: hour + weekday ──────────────────────────────────────────────
+  function columns(id, tableId, rows, color, unit) {
     killChart(id);
-    if (!data || !data.length) return;
-    const ctx = document.getElementById('chart-'+id).getContext('2d');
-    charts[id] = new Chart(ctx, {
-      type: 'doughnut',
-      data: { labels: data.map(d=>d.label), datasets:[{ data:data.map(d=>d.count),
-        backgroundColor:PALETTE, borderColor:'#fff', borderWidth:3 }] },
-      options: { responsive:true, plugins:{ legend:{ position:'bottom',
-        labels:{ color:'#6B7280', font:{size:11}, padding:12, boxWidth:10 } } } }
+    if (!rows || !rows.length) return;
+    charts[id] = new Chart(document.getElementById('chart-' + id), {
+      type: 'bar',
+      data: { labels: rows.map(r => r.label), datasets: [{
+        data: rows.map(r => r.count),
+        backgroundColor: color,
+        borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 }, // rounded data-end, square baseline
+        borderSkipped: false,
+        maxBarThickness: 24,
+        // 2px surface gap between adjacent bars
+        borderColor: SURFACE, borderWidth: { top: 0, left: 1, right: 1, bottom: 0 },
+      }] },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { ...TOOLTIP, callbacks: { label: i => nf(i.parsed.y) + ' ' + unit } } },
+        scales: AXES,
+      },
     });
+    renderTable(tableId, ['Bucket', 'Page views'], rows.map(r => [r.label, nf(r.count)]));
   }
-  doughnut('device',  d.by_device);
-  doughnut('browser', d.by_browser);
-  doughnut('os',      d.by_os);
+  columns('hour', 'tv-hour', d.by_hour, SERIES[1], 'page views');
+  columns('dow',  'tv-dow',  d.by_weekday, SERIES[1], 'page views');
 
-  // Scroll depth bar
+  // ── SCROLL DEPTH — ordinal, so a one-hue light→dark ramp ─────────────────
   killChart('scroll');
-  const ctx2 = document.getElementById('chart-scroll').getContext('2d');
-  charts['scroll'] = new Chart(ctx2, {
+  const sd = d.scroll_depth || [];
+  charts.scroll = new Chart(document.getElementById('chart-scroll'), {
     type: 'bar',
-    data: { labels: d.scroll_depth.map(s=>s.label),
-      datasets:[{ label:'Sessions', data:d.scroll_depth.map(s=>s.count),
-        backgroundColor:PALETTE, borderRadius:6 }] },
-    options: { responsive:true, plugins:{ legend:{display:false} },
-      scales:{ x:{ grid:{display:false}, ticks:{color:'#9CA3AF'} },
-               y:{ grid:{color:'#F3F4F6'}, ticks:{color:'#9CA3AF'}, beginAtZero:true } } }
+    data: { labels: sd.map(x => x.label), datasets: [{
+      data: sd.map(x => x.count),
+      backgroundColor: ORDINAL,
+      borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
+      borderSkipped: false, maxBarThickness: 24,
+      borderColor: SURFACE, borderWidth: { top: 0, left: 1, right: 1, bottom: 0 },
+    }] },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: { ...TOOLTIP, callbacks: {
+        label: i => `${nf(i.parsed.y)} sessions · ${sd[i.dataIndex].pct}% of all`,
+      } } },
+      scales: AXES,
+    },
   });
+  renderTable('tv-scroll', ['Depth', 'Sessions', 'Share'], sd.map(x => [x.label, nf(x.count), x.pct + '%']));
 
-  // Table helper
-  function table(id, rows, empty) {
-    const el = document.getElementById(id);
-    if (!rows || !rows.length) { el.innerHTML='<div class="t-empty">'+empty+'</div>'; return; }
-    const max = rows[0].count;
-    el.innerHTML = rows.map((r,i) => `
-      <div class="t-row">
-        <span class="t-num">${i+1}</span>
-        <span class="t-label" title="${r.label}">${r.label}</span>
-        <div class="t-bar-wrap"><div class="t-bar" style="width:${Math.round(r.count/max*100)}%"></div></div>
-        <span class="t-count">${r.count}</span>
-      </div>`).join('');
-  }
-
-  table('t-referrers', d.top_referrers,  'No referrer data yet');
-  table('t-utm',       d.top_utm_sources, 'No UTM traffic yet');
-  table('t-programs',  d.top_programs,    'No program clicks yet');
-  table('t-searches',  d.top_searches,    'No searches yet');
-  table('t-filters',   d.top_filters,     'No filter usage yet');
-  table('t-links',     d.top_links,       'No external links clicked yet');
+  // ── BAR LISTS ────────────────────────────────────────────────────────────
+  barList('t-device',    d.by_device,       'No device data yet',   SERIES[1]);
+  barList('t-browser',   d.by_browser,      'No browser data yet',  SERIES[2]);
+  barList('t-os',        d.by_os,           'No OS data yet',       SERIES[3]);
+  barList('t-pages',     d.by_page,         'No page data yet',     SERIES[5]);
+  barList('t-referrers', d.top_referrers,   'No referrer data yet — all traffic is direct so far', SERIES[1]);
+  barList('t-utm',       d.top_utm_sources, 'No UTM-tagged traffic yet', SERIES[4]);
+  barList('t-programs',  d.top_programs,    'No program clicks yet', SERIES[0]);
+  barList('t-apply',     d.top_apply,       'No apply clicks yet',   SERIES[2]);
+  barList('t-searches',  d.top_searches,    'No searches yet',       SERIES[6]);
+  barList('t-filters',   d.top_filters,     'No filter usage yet',   SERIES[7]);
+  barList('t-events',    d.top_events,      'No event clicks yet',   SERIES[4]);
+  barList('t-links',     d.top_links,       'No external links clicked yet', SERIES[3]);
 }
+
+// ── Controls ───────────────────────────────────────────────────────────────
+document.getElementById('range-tabs').addEventListener('click', e => {
+  const b = e.target.closest('.rtab');
+  if (!b) return;
+  rangeDays = b.dataset.days;
+  document.querySelectorAll('.rtab').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  load();
+});
+document.getElementById('refresh').addEventListener('click', load);
 
 load();
 </script>

@@ -140,35 +140,66 @@
   //    Fires once each at 25 / 50 / 75 / 100 % per session.
   // ════════════════════════════════════════════════════════════════════
   const scrollHits = new Set();
+  let scrollQueued = false;
   window.addEventListener('scroll', function () {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    if (total <= 0) return;
-    const pct = Math.round((window.scrollY / total) * 100);
-    [25, 50, 75, 100].forEach(function (m) {
-      if (pct >= m && !scrollHits.has(m)) {
-        scrollHits.add(m);
-        send({ event_type: 'scroll', scroll_depth: m });
-      }
+    // Coalesce to one measurement per frame — the handler reads
+    // scrollHeight, which forces layout, and scroll fires very often.
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(function () {
+      scrollQueued = false;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (total <= 0) return;
+      const pct = Math.round((window.scrollY / total) * 100);
+      [25, 50, 75, 100].forEach(function (m) {
+        if (pct >= m && !scrollHits.has(m)) {
+          scrollHits.add(m);
+          send({ event_type: 'scroll', scroll_depth: m });
+        }
+      });
     });
   }, { passive: true });
 
   // ════════════════════════════════════════════════════════════════════
   // 3. TIME ON PAGE / SESSION END
-  //    Uses visibilitychange + pagehide so it fires even on mobile
-  //    when the user switches apps without closing the tab.
+  //    Measures ACTIVE time — the clock pauses while the tab is hidden.
+  //    The previous version stopped counting at the first tab switch and
+  //    never resumed, so any visitor who checked another tab mid-visit had
+  //    their whole session recorded as however long they'd been reading
+  //    before that moment.
   // ════════════════════════════════════════════════════════════════════
+  let activeMs = 0;
+  let lastResume = Date.now();
+  let visible = document.visibilityState !== 'hidden';
   let endSent = false;
+
+  function activeDuration() {
+    return activeMs + (visible ? Date.now() - lastResume : 0);
+  }
+
   function sendEnd() {
     if (endSent) return;
     endSent = true;
     send({
       event_type:  'session_end',
-      duration_ms: Date.now() - pageStart,
-      metadata: { scroll_depth_reached: Math.max(...[0, ...scrollHits]) },
+      duration_ms: activeDuration(),
+      metadata: {
+        scroll_depth_reached: Math.max.apply(null, [0].concat(Array.from(scrollHits))),
+        wall_clock_ms:        Date.now() - pageStart,
+      },
     });
   }
+
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') sendEnd();
+    if (document.visibilityState === 'hidden') {
+      if (visible) { activeMs += Date.now() - lastResume; visible = false; }
+      // A hidden tab may never come back — on mobile the process can be
+      // killed outright — so flush now. `endSent` keeps it to one row.
+      sendEnd();
+    } else if (!visible) {
+      visible = true;
+      lastResume = Date.now();
+    }
   });
   window.addEventListener('pagehide', sendEnd);
 
@@ -178,6 +209,12 @@
   //    event cards, sidebar filter checkboxes, clear-filters, external
   //    links (apply / website links), sort dropdown, other buttons.
   // ════════════════════════════════════════════════════════════════════
+  /** Read a card's title, falling back through the usual heading elements. */
+  function titleOf(root, sel) {
+    const el = root.querySelector(sel) || root.querySelector('h1, h2, h3, strong');
+    return el ? el.textContent.trim().replace(/\s+/g, ' ').slice(0, 120) : '';
+  }
+
   document.addEventListener('click', function (e) {
     const t = e.target;
 
@@ -203,26 +240,46 @@
       return;
     }
 
-    // 4c. Program cards (dynamically rendered)
-    const card = t.closest('.card');
-    if (card) {
-      const heading = card.querySelector('h3, h2, strong, .cname, [class*="name"]');
+    // 4c. Apply / official-website buttons.
+    //     These are <button onclick="window.open(...)">, not anchors, so the
+    //     outbound-link branch below never sees them — and because they sit
+    //     inside a .card they used to be recorded as an ordinary card click.
+    //     They are the single most valuable signal on the site: an actual
+    //     click through to a program. Checked before the card branch.
+    const applyBtn = t.closest('.abtn, .mapp');
+    if (applyBtn) {
+      const host = applyBtn.closest('.card');
+      const name = host ? titleOf(host, '.ctitle') : titleOf(document, '.mtitle');
       send({
         event_type:    'click',
-        element:       'program_card',
-        element_label: (heading || card).textContent.trim().slice(0, 120),
+        element:       'apply_click',
+        element_label: name || applyBtn.textContent.trim().slice(0, 80),
+        metadata:      { source: host ? 'card' : 'modal' },
       });
       return;
     }
 
-    // 4d. Event / competition cards
+    // 4d. Program cards (dynamically rendered)
+    const card = t.closest('.card');
+    if (card) {
+      send({
+        event_type:    'click',
+        element:       'program_card',
+        // .ctitle is the program name. The old selector list didn't include
+        // it, so every label was the entire card's text content — which made
+        // the "most clicked programs" table unreadable.
+        element_label: titleOf(card, '.ctitle') || card.textContent.trim().slice(0, 120),
+      });
+      return;
+    }
+
+    // 4e. Event / competition cards
     const ecard = t.closest('.ecard');
     if (ecard) {
-      const heading = ecard.querySelector('h3, h2, strong');
       send({
         event_type:    'click',
         element:       'event_card',
-        element_label: (heading || ecard).textContent.trim().slice(0, 120),
+        element_label: titleOf(ecard, '.etitle') || ecard.textContent.trim().slice(0, 120),
       });
       return;
     }

@@ -1,0 +1,87 @@
+name: Archive analytics snapshot
+
+# A second, independent copy of the lifetime numbers, committed to the repo.
+#
+# Supabase already holds the raw events, and supabase/schema.sql keeps permanent
+# rollups there. This workflow adds an off-site archive: once a week it records
+# the lifetime totals into analytics/history.json and commits it. If the
+# Supabase project is ever wiped, downgraded, or pruned, the history of "how
+# many views have we had" survives in git.
+#
+# Opt-in. Without the two secrets below it exits successfully and does nothing,
+# so a fork or an unconfigured repo never sees a failing workflow.
+#
+# To enable — Settings → Secrets and variables → Actions:
+#   SITE_URL            e.g. https://summerscope.vercel.app
+#   DASHBOARD_PASSWORD  the same value set in Vercel
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'   # Mondays, 05:17 UTC
+  workflow_dispatch:        # or run it by hand
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch and append snapshot
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          DASHBOARD_PASSWORD: ${{ secrets.DASHBOARD_PASSWORD }}
+        run: |
+          if [ -z "$SITE_URL" ] || [ -z "$DASHBOARD_PASSWORD" ]; then
+            echo "SITE_URL / DASHBOARD_PASSWORD not configured — skipping (this is not a failure)."
+            exit 0
+          fi
+
+          mkdir -p analytics
+          curl -sS --fail-with-body \
+            -H "Authorization: Bearer $DASHBOARD_PASSWORD" \
+            "$SITE_URL/api/analytics?days=all" -o /tmp/analytics.json
+
+          node --input-type=module - <<'JS'
+          import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+
+          const live = JSON.parse(readFileSync('/tmp/analytics.json', 'utf8'));
+          const path = 'analytics/history.json';
+          mkdirSync('analytics', { recursive: true });
+          const archive = existsSync(path)
+            ? JSON.parse(readFileSync(path, 'utf8'))
+            : { note: 'Append-only archive of lifetime analytics totals. One entry per run.', snapshots: [] };
+
+          const today = new Date().toISOString().slice(0, 10);
+          const entry = {
+            date: today,
+            generated_at: live.generated_at,
+            lifetime: live.lifetime,
+            // A per-day series so the shape of the traffic survives too, not
+            // just the running totals.
+            days: (live.pageviews_by_day || []).filter(d => d.count > 0),
+          };
+
+          // One entry per day — a manual re-run replaces rather than duplicates.
+          const i = archive.snapshots.findIndex(s => s.date === today);
+          if (i >= 0) archive.snapshots[i] = entry; else archive.snapshots.push(entry);
+          archive.snapshots.sort((a, b) => a.date.localeCompare(b.date));
+          archive.updated_at = new Date().toISOString();
+
+          writeFileSync(path, JSON.stringify(archive, null, 2) + '\n');
+          console.log(`archived ${today}: ${entry.lifetime?.total_pageviews} lifetime page views`);
+          JS
+
+      - name: Commit if changed
+        run: |
+          if [ -n "$(git status --porcelain analytics/)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add analytics/
+            git commit -m "chore: archive analytics snapshot $(date -u +%Y-%m-%d)"
+            git push
+          else
+            echo "No change."
+          fi
