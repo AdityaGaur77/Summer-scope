@@ -1,8 +1,8 @@
 # SummerScope 🎓
 
-The complete database of summer programs, hackathons, and competitions for high school students (grades 9–12). Auto-updated weekly using the Anthropic API with web search.
+The complete database of summer programs, hackathons, and competitions for high school students (grades 9–12), plus a private analytics dashboard.
 
-**Live site:** https://summerscope.vercel.app *(your URL after deployment)*
+**Live site:** https://summerscope.vercel.app
 
 ---
 
@@ -10,125 +10,210 @@ The complete database of summer programs, hackathons, and competitions for high 
 
 ```
 summerscope/
-├── index.html                    ← The website (fetches data.json at load time)
-├── data.json                     ← All program and event data (auto-updated)
-├── update.js                     ← Node.js script to refresh data via Anthropic API
-├── package.json
-├── vercel.json                   ← Vercel deployment config
-├── netlify.toml                  ← Netlify deployment config (alternative)
-├── .gitignore
-└── .github/
-    └── workflows/
-        └── update-data.yml       ← GitHub Actions: runs update.js every Monday
+├── index.html                 ← the site (fetches data.json at load)
+├── landing.html               ← alternate landing page (same data.json)
+├── summerscope.js             ← shared status model + data loader for both pages
+├── dashboard.html             ← private analytics dashboard
+├── analytics.bundle.js        ← client-side event tracker
+├── data.json                  ← all program and event data
+├── api/
+│   ├── track.js               ← POST endpoint: browser → Supabase
+│   ├── analytics.js           ← GET endpoint: aggregated stats + lifetime totals
+│   └── _supabase.js           ← shared PostgREST helpers
+├── supabase/
+│   └── schema.sql             ← durable lifetime storage (run once — see below)
+├── scripts/
+│   ├── roll-cycle.mjs         ← rolls the database to a new application cycle
+│   └── cycle-2027-updates.json← curated facts for the 2027 cycle
+└── vercel.json
 ```
 
 ---
 
-## Deploy to Vercel (recommended, 5 minutes)
+## The program data model
 
-### 1. Push to GitHub
-```bash
-git init
-git add .
-git commit -m "initial commit"
-gh repo create summerscope --public --push
-# or: git remote add origin https://github.com/YOUR_USERNAME/summerscope.git && git push -u origin main
-```
+### Status is computed, never stored
 
-### 2. Deploy to Vercel
-```bash
-npm install -g vercel
-vercel --prod
-```
-Or go to [vercel.com](https://vercel.com), import your GitHub repo, and click Deploy. No build command needed — it's a static site.
+Each program's state is **derived from its dates at render time**, by
+`statusOf()` in `summerscope.js`. It is deliberately not a stored boolean.
 
-### 3. Add your Anthropic API key to GitHub Secrets
-1. Go to your GitHub repo → **Settings** → **Secrets and variables** → **Actions**
-2. Click **New repository secret**
-3. Name: `ANTHROPIC_API_KEY`
-4. Value: your Anthropic API key from [console.anthropic.com](https://console.anthropic.com)
+The old schema had `"closed": true|false` baked into `data.json`. That value was
+correct on the day it was written and wrong forever after — by August 2026 the
+site was still advertising programs as "Open" whose deadlines had passed in
+May. Deriving the status against the live clock means a stale `data.json` can
+show an out-of-date *deadline*, but it can no longer show a wrong *status*.
 
-That's it! The GitHub Action will now run every Monday and push updated `data.json` to your repo, which triggers a Vercel redeploy automatically.
+| Status | Meaning |
+|---|---|
+| `open` | Applications are open now. |
+| `upcoming` | Confirmed for this cycle; applications have not opened yet. |
+| `rolling` | Rolling admissions or multiple cohorts — no single fixed deadline. |
+| `closed` | This cycle's deadline has passed. |
+| `uncertain` | Ran previously, next cycle not confirmed. |
+| `discontinued` | No longer operating. **Kept on file**, never deleted. |
 
----
+### Verified vs projected dates
 
-## Deploy to Netlify (alternative)
+Every program carries a `verification` field:
 
-```bash
-npm install -g netlify-cli
-netlify deploy --prod --dir .
-```
+- **`verified`** — checked against the program's own materials on `lastVerified`.
+- **`projected`** — the date was carried forward from the previous cycle. The UI
+  renders these with a dashed underline and the modal says so explicitly. Treat
+  them as "expected", not "confirmed".
 
-Or drag-and-drop the folder at [app.netlify.com](https://app.netlify.com). Then add `ANTHROPIC_API_KEY` to Netlify's environment variables under **Site settings → Environment variables**.
+### Nothing is ever deleted
 
----
+Each program has an append-only `history[]` array holding a snapshot of every
+previous cycle — deadline, dates, cost, status. Programs that shut down are
+marked `discontinued` and stay in the file with their history intact, so a
+student who searches for them gets an answer instead of silence.
 
-## Run the updater manually
-
-```bash
-npm install
-ANTHROPIC_API_KEY=your_key_here npm run update
-```
-
-The updater:
-- Checks all programs still marked "open" (closed: false)
-- Rechecks recently-closed programs (within 90 days) for any corrections
-- Uses Claude + web search to verify deadlines, dates, and costs
-- Updates `data.json` in place
-- Commits and pushes if run via GitHub Actions
-
----
-
-## Add or edit a program
-
-Edit `data.json` directly. Each program entry has this shape:
+### Program shape
 
 ```json
 {
-  "id": 29,
-  "name": "Program Name",
-  "host": "Institution Name",
-  "logo": "2-4 letter abbreviation",
-  "color": "#hexcolor",
-  "cat": ["STEM", "Research"],
+  "id": 1,
+  "name": "Research Science Institute (RSI)",
+  "host": "MIT / Center for Excellence in Education",
+  "logo": "RSI", "color": "#1E3A5F",
+  "cat": ["Research", "STEM"],
   "fmt": "In-Person",
-  "loc": "City, State",
-  "grades": [10, 11, 12],
-  "cost": "Free",
-  "costN": 0,
-  "costB": "Free",
-  "dates": "June 15 – July 30, 2026",
-  "dl": "Mar 1, 2026",
-  "dlt": "2026-03-01",
-  "closed": true,
-  "prestige": 4,
+  "loc": "Cambridge, MA",
+  "grades": [11],
+  "cost": "Free", "costN": 0, "costB": "Free",
+  "dates": "Late June – early August 2027",
+  "dl": "Dec 9, 2026", "dlt": "2026-12-09",
+  "opensOn": "2026-10-01",
+  "cycle": 2027,
+  "verification": "verified",
+  "lastVerified": "2026-08-12",
+  "prestige": 5,
   "isNew": false,
-  "desc": "Full description here.",
-  "link": "https://program-website.edu",
-  "note": "Optional insider tip or status note."
+  "desc": "…", "link": "https://…", "note": "…",
+  "history": [
+    { "cycle": 2026, "dl": "Dec 10, 2025", "dlt": "2025-12-10", "dates": "…", "closed": true }
+  ]
 }
 ```
 
-`costB` must be one of: `"Free"`, `"Under3k"`, `"3kTo8k"`, `"Over8k"`
+`costB` ∈ `Free` · `Under3k` · `3kTo8k` · `Over8k`  ·  `fmt` ∈ `In-Person` · `Online` · `Hybrid`
 
-`fmt` must be one of: `"In-Person"`, `"Online"`, `"Hybrid"`
-
----
-
-## Custom domain
-
-In Vercel: **Project settings → Domains → Add** your domain and follow the DNS instructions.
+`closed` is still written for backwards compatibility but **is not read by the
+site** — `statusOf()` is the only source of truth.
 
 ---
 
-## Tech stack
+## Rolling the database to a new cycle
 
-- **Frontend:** Vanilla HTML/CSS/JS — zero dependencies, no build step
-- **Data layer:** Static `data.json` fetched at page load
-- **Auto-update:** Node.js script + Anthropic SDK (`@anthropic-ai/sdk`) with web search
-- **Automation:** GitHub Actions cron job (every Monday 8am UTC)
-- **Hosting:** Vercel (or Netlify)
+Once a year, when the summer is over and the next cycle's applications start
+opening:
+
+```bash
+# 1. Write the year's curated facts
+cp scripts/cycle-2027-updates.json scripts/cycle-2028-updates.json
+#    …edit it: confirmed dates, programs that stopped, new programs to add
+
+# 2. Preview
+npm run roll-cycle -- --cycle 2028 --dry-run
+
+# 3. Apply
+npm run roll-cycle -- --cycle 2028
+```
+
+The script snapshots the outgoing cycle into every program's `history[]`,
+rolls each deadline forward a year and flags it `projected`, then applies your
+curated overrides on top. It is idempotent — re-running it will not stack
+duplicate history entries or re-add the same programs.
+
+The updates file has four sections:
+
+| Section | What it does |
+|---|---|
+| `verified` | Confirmed dates for this cycle. Sets `verification: "verified"`. |
+| `discontinued` | Programs that have stopped. Marked and kept, never deleted. |
+| `uncertain` | Ran before, next cycle unannounced. No date is invented. |
+| `newPrograms` / `newEvents` | Added with fresh IDs and an `isNew` flag. |
 
 ---
 
-*Not affiliated with any program listed. Always verify on official sites before applying.*
+## Analytics
+
+### How it fits together
+
+```
+browser (analytics.bundle.js)
+   └─ POST /api/track      → Supabase `events` table
+                                    │
+dashboard.html ── GET /api/analytics ┘
+```
+
+`/api/analytics` accepts `?days=7|30|90|365|all` and **always** returns a
+`lifetime` block with all-time totals alongside the windowed numbers, so
+cumulative views and visits are visible on every range.
+
+### Environment variables (Vercel → Settings → Environment Variables)
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `SUPABASE_SERVICE_KEY` | yes | Server-side writes and reads. Never exposed to the browser. |
+| `DASHBOARD_PASSWORD` | yes | Gates `/api/analytics`. |
+| `SUPABASE_URL` | no | Defaults to the project URL hardcoded in `api/_supabase.js`. |
+
+**`DASHBOARD_PASSWORD` is mandatory.** The endpoint used to enforce it only
+`if (pw)`, which meant an unset variable published the entire analytics feed to
+anyone who guessed the URL. It now fails closed with `503
+dashboard_password_not_configured` rather than serving.
+
+### Durable lifetime storage — run this once
+
+```
+Supabase Dashboard → SQL Editor → New query → paste supabase/schema.sql → Run
+```
+
+This is optional but recommended. It creates three permanent tables —
+`analytics_daily`, `analytics_visitors`, `analytics_sessions` — that accumulate
+rather than expire, plus the `summerscope_lifetime()` function the API prefers.
+
+Why it matters:
+
+- **Exact lifetime uniques.** PostgREST cannot express `COUNT(DISTINCT …)`, so
+  without the migration the API counts distinct visitors from a capped scan and
+  honestly reports the result as a floor. With it, the number is exact.
+- **Speed that doesn't decay.** Counting distinct visitors from the raw log gets
+  slower every week. A visitor ledger grows with your audience, not your traffic.
+- **Survives pruning.** Once a day is rolled up its numbers are fixed. You can
+  delete raw events from 2026 and the dashboard still shows 2026.
+
+The script is idempotent, backfills all existing history on first run, and
+touches nothing in the `events` table. Everything works without it — the
+dashboard just labels its lifetime uniques as a minimum and says why.
+
+### Opening the dashboard
+
+Click the logo five times on the site, enter the admin password, and you land on
+`/dashboard.html`.
+
+---
+
+## Local development
+
+```bash
+npm install
+npm run dev          # serves the static site at localhost:3000
+```
+
+The `/api/*` routes need the Vercel runtime — use `vercel dev` to exercise them
+locally.
+
+---
+
+## Deploy
+
+Push to `main`; Vercel builds automatically. No build step — it's a static site
+plus two serverless functions.
+
+---
+
+*Not affiliated with any program listed. Deadlines marked as expected are
+carried forward from the previous cycle — always verify on the official site
+before applying.*

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SummerScope — Summer Programs & Events for High School Students</title>
 <meta name="description" content="The complete database of summer programs, hackathons, and competitions for high school students in grades 9–12. Auto-updated with verified deadlines and costs.">
-<meta name="keywords" content="summer programs high school, STEM summer programs, free summer programs, RSI, MITES, PROMYS, HCSSiM, SSP, hackathons high school, science competitions 2026">
+<meta name="keywords" content="summer programs high school, STEM summer programs, free summer programs, RSI, MITES, PROMYS, HCSSiM, SSP, hackathons high school, science competitions 2027, summer 2027 deadlines">
 <meta property="og:title" content="SummerScope — Summer Programs & Events for High School Students">
 <meta property="og:description" content="Every prestigious summer program, hackathon, and competition for 9th–12th graders in one place. Auto-updated weekly.">
 <meta property="og:type" content="website">
@@ -104,6 +104,14 @@ nav{background:var(--navy);height:var(--nh);display:flex;align-items:center;just
 .ton{background:#EFF6FF;color:#1D4ED8}.thy{background:#F5F3FF;color:#5B21B6}
 .tg{background:#FEF9C3;color:#713F12}.tf{background:#D1FAE5;color:#065F46}
 .tcl{background:#FEE2E2;color:#991B1B}.tnew{background:#FDF4FF;color:#7E22CE}
+/* lifecycle badges */
+.tup{background:#FEF3C7;color:#92400E}.trl{background:#E0F2FE;color:#075985}
+.tdc{background:#F3F4F6;color:#4B5563}.tun{background:#FFEDD5;color:#9A3412}
+/* "expected date, not confirmed" marker */
+.exp{border-bottom:1px dashed currentColor;cursor:help}
+.cbar-upcoming{background:linear-gradient(90deg,#F59E0B,#FBBF24)}
+.cbar-rolling{background:linear-gradient(90deg,#0EA5E9,#38BDF8)}
+.cbar-inactive{background:linear-gradient(90deg,#9CA3AF,#D1D5DB)}
 .cmeta{display:grid;grid-template-columns:1fr 1fr;gap:.42rem}
 .mi{font-size:.73rem}.ml{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:1px}
 .mv{color:var(--text);font-weight:500}.urgent{color:#DC2626}.soon{color:#D97706}.closed-t{color:#9CA3AF}
@@ -243,7 +251,7 @@ footer strong{color:rgba(255,255,255,.55)}
   <div class="hero">
     <div class="hero-inner">
       <div class="hero-content">
-        <div class="heyebrow">The complete 2026 database</div>
+        <div class="heyebrow">The complete 2027 database</div>
         <h1>Find your <em>perfect</em><br>summer program</h1>
         <p class="hsub">Every top summer program for high schoolers — verified deadlines, real costs, direct apply links.</p>
         <div class="sbar"><input type="text" id="si" placeholder="Search programs, universities, subjects…" oninput="renderCards()" autocomplete="off"></div>
@@ -271,7 +279,7 @@ footer strong{color:rgba(255,255,255,.55)}
     </div>
   </div>
   <div class="notice">
-    <div class="notice-left"><span class="ndot"></span><span>All data auto-updated weekly via the Anthropic API. Always confirm on the official site before applying.</span></div>
+    <div class="notice-left"><span class="ndot"></span><span>Deadlines marked <em style="font-style:normal;border-bottom:1px dashed currentColor">like this</em> are expected dates carried forward from last cycle. Always confirm on the official site before applying.</span></div>
     <span class="notice-date" id="notice-date"></span>
   </div>
   <button class="mob-filter-btn" onclick="toggleSidebar()">⊞ Filters</button>
@@ -279,8 +287,11 @@ footer strong{color:rgba(255,255,255,.55)}
     <aside class="sidebar" id="sidebar-programs">
       <div class="fs">
         <div class="fl">Status</div>
-        <label class="fo"><input type="checkbox" name="status" value="open" onchange="renderCards()"> Still accepting <span class="fc" id="ofc">—</span></label>
-        <label class="fo"><input type="checkbox" name="status" value="closed" onchange="renderCards()"> Closed for 2026 <span class="fc" id="cfc">—</span></label>
+        <label class="fo"><input type="checkbox" name="status" value="open" onchange="renderCards()"> Open now <span class="fc" id="sc-open">—</span></label>
+        <label class="fo"><input type="checkbox" name="status" value="upcoming" onchange="renderCards()"> Opens later <span class="fc" id="sc-upcoming">—</span></label>
+        <label class="fo"><input type="checkbox" name="status" value="rolling" onchange="renderCards()"> Rolling / anytime <span class="fc" id="sc-rolling">—</span></label>
+        <label class="fo"><input type="checkbox" name="status" value="closed" onchange="renderCards()"> Deadline passed <span class="fc" id="sc-closed">—</span></label>
+        <label class="fo"><input type="checkbox" name="status" value="inactive" onchange="renderCards()"> Stopped / unconfirmed <span class="fc" id="sc-inactive">—</span></label>
       </div>
       <hr class="sdiv">
       <div class="fs">
@@ -366,49 +377,70 @@ footer strong{color:rgba(255,255,255,.55)}
 </div>
 
 <footer>
-  <p><strong>SummerScope</strong> — A free, open resource for high school students exploring summer opportunities. Data auto-updated weekly via the Anthropic API.</p>
+  <p><strong>SummerScope</strong> — A free, open resource for high school students exploring summer opportunities.</p>
   <p>All data is sourced from official program websites. Deadlines and costs change year to year — always verify on the official site before applying.</p>
   <p id="footer-meta" style="margin-top:.65rem"></p>
 </footer>
 
+<script src="./summerscope.js"></script>
 <script>
 // ── GLOBALS ────────────────────────────────────────────────────────────────────
 let P = [];  // programs
 let E = [];  // events
+let META = {};
 let aet = 'All';
+
+// Status model, palette of badges and the data loader all live in
+// summerscope.js so index.html and landing.html cannot drift apart again.
 
 // ── LOAD DATA FROM data.json ───────────────────────────────────────────────────
 async function loadData() {
   try {
-    const res = await fetch('./data.json?v=' + Date.now());
-    if (!res.ok) throw new Error('Failed to fetch data.json');
-    const data = await res.json();
+    const loaded = await loadProgramData();
+    P = loaded.programs;
+    E = loaded.events;
+    META = loaded.meta;
 
-    // Convert dlt strings to Date objects
-    P = data.programs.map(p => ({
-      ...p,
-      dlt: new Date(p.dlt + 'T00:00:00')
-    }));
-    E = data.events;
-
-    const meta = data.meta;
-    const lastUpdated = meta.lastUpdated || 'Unknown';
+    const lastUpdated = META.lastUpdated || 'Unknown';
+    const cycle = META.cycle || '';
 
     // Update nav and notice
     document.getElementById('nav-updated').textContent = 'Updated ' + lastUpdated;
     document.getElementById('notice-date').textContent = 'Last updated: ' + lastUpdated;
     document.getElementById('footer-meta').textContent =
-      `Last updated: ${lastUpdated} · Programs: ${P.length} · Events: ${E.length} · Not affiliated with any program listed.`;
+      `Last updated: ${lastUpdated} · ${cycle} cycle · Programs: ${P.length} · Events: ${E.length} · Not affiliated with any program listed.`;
+    if (cycle) {
+      const eyebrow = document.querySelector('.heyebrow');
+      if (eyebrow) eyebrow.textContent = `The complete ${cycle} database`;
+    }
 
-    // Update badge counts
+    // Count by derived status so the sidebar always matches what's rendered
+    const counts = loaded.counts;
+    const inactive = counts.inactive;
+    const takingApps = counts.takingApps;
+
     document.getElementById('pb').textContent = P.length;
     document.getElementById('eb-count').textContent = E.length;
     document.getElementById('tc').textContent = P.length;
     document.getElementById('free-count').textContent = P.filter(p => p.costN === 0).length;
-    const openCount = P.filter(p => !p.closed).length;
-    document.getElementById('oc').textContent = openCount;
-    document.getElementById('ofc').textContent = openCount;
-    document.getElementById('cfc').textContent = P.length - openCount;
+    // The hero stat shows whatever is actionable right now: programs you can
+    // apply to today, or — early in a cycle, when nothing has opened yet — how
+    // many are coming.
+    const heroStat = document.getElementById('oc');
+    if (takingApps > 0) {
+      heroStat.textContent = takingApps;
+      heroStat.parentElement.lastChild.textContent = 'Accepting now';
+    } else {
+      heroStat.textContent = counts.upcoming || 0;
+      heroStat.parentElement.lastChild.textContent = 'Opening soon';
+    }
+
+    const setCount = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n; };
+    setCount('sc-open',     counts.open     || 0);
+    setCount('sc-upcoming', counts.upcoming || 0);
+    setCount('sc-rolling',  counts.rolling  || 0);
+    setCount('sc-closed',   counts.closed   || 0);
+    setCount('sc-inactive', inactive);
 
     // Hide loading, show programs page
     document.getElementById('loading-screen').style.display = 'none';
@@ -441,16 +473,17 @@ function renderCards() {
     if (costs.length && !costs.includes(p.costB)) return false;
     if (grades.length && !grades.some(g => p.grades.includes(parseInt(g)))) return false;
     if (prest.length && !prest.includes(String(p.prestige))) return false;
-    if (stats.length) {
-      if (stats.includes('open') && !stats.includes('closed') && p.closed) return false;
-      if (stats.includes('closed') && !stats.includes('open') && !p.closed) return false;
-    }
+    if (stats.length && !stats.some(v => inFilterBucket(statusOf(p, now), v))) return false;
     return true;
   });
 
-  if (sort === 'prestige') f.sort((a, b) => b.prestige - a.prestige || (a.closed ? 1 : -1) || (a.dlt - b.dlt));
-  else if (sort === 'open') f.sort((a, b) => (a.closed ? 1 : -1) - (b.closed ? 1 : -1) || b.prestige - a.prestige);
-  else if (sort === 'deadline') f.sort((a, b) => ((a.closed ? 1 : 0) - (b.closed ? 1 : 0)) || a.dlt - b.dlt);
+  // Sort keys that used to read the stale `closed` flag now rank by derived
+  // status, so "still open first" means what it says.
+  const rank = p => STATUS_RANK[statusOf(p, now)];
+
+  if (sort === 'prestige') f.sort((a, b) => b.prestige - a.prestige || rank(a) - rank(b) || (a.dlt - b.dlt));
+  else if (sort === 'open') f.sort((a, b) => rank(a) - rank(b) || b.prestige - a.prestige);
+  else if (sort === 'deadline') f.sort((a, b) => rank(a) - rank(b) || a.dlt - b.dlt);
   else if (sort === 'cost-asc') f.sort((a, b) => a.costN - b.costN);
   else if (sort === 'cost-desc') f.sort((a, b) => b.costN - a.costN);
   else if (sort === 'az') f.sort((a, b) => a.name.localeCompare(b.name));
@@ -467,20 +500,32 @@ function renderCards() {
     const stars = '★'.repeat(p.prestige) + '☆'.repeat(5 - p.prestige);
     const fc = p.fmt === 'In-Person' ? 'tip' : p.fmt === 'Online' ? 'ton' : 'thy';
     const gtags = p.grades.map(g => `<span class="tag tg">Gr ${g}</span>`).join('');
+    const st = statusOf(p, now);
+    const meta = STATUS[st];
     const days = Math.ceil((p.dlt - now) / 864e5);
-    let dlc = 'mv', dlt2 = p.dl, barClass = 'cbar-closed';
-    if (p.closed) { dlc = 'mv closed-t'; dlt2 = p.dl + ' — Closed'; barClass = 'cbar-closed'; }
+
+    // Deadline cell: urgency for live deadlines, honest hedging for projected
+    // ones, and no fake date at all for programs that aren't running.
+    let dlc = 'mv', dlt2 = p.dl, barClass = meta.bar;
+    if (st === 'discontinued' || st === 'uncertain') { dlc = 'mv closed-t'; dlt2 = p.dl; }
+    else if (st === 'closed')  { dlc = 'mv closed-t'; dlt2 = p.dl + ' — Closed'; }
+    else if (st === 'rolling') { dlt2 = p.dl; }
     else if (days <= 14 && days >= 0) { dlc = 'mv urgent'; dlt2 = `${p.dl} (${days}d left!)`; barClass = 'cbar-urgent'; }
-    else if (days <= 45 && days >= 0) { dlc = 'mv soon'; dlt2 = `${p.dl} (${days}d)`; barClass = 'cbar-open'; }
-    else { barClass = 'cbar-open'; }
+    else if (days <= 45 && days >= 0) { dlc = 'mv soon'; dlt2 = `${p.dl} (${days}d)`; }
+    if (p.verification === 'projected' && st !== 'discontinued' && st !== 'uncertain' && st !== 'rolling') {
+      dlt2 = `<span class="exp" title="Expected date, carried forward from the previous cycle. Confirm on the official site.">${dlt2}</span>`;
+    }
+
     const costEl = p.costN === 0
       ? `<span class="cv cvf">Free / Full Aid</span>`
       : `<span class="cv cvp">${p.cost}</span>`;
-    const badge = p.isNew
-      ? '<span class="tag tnew" style="flex-shrink:0;align-self:flex-start;margin-top:2px">New</span>'
-      : p.closed
-        ? '<span class="tag tcl" style="flex-shrink:0;align-self:flex-start;margin-top:2px">Closed</span>'
-        : '<span class="tag tf" style="flex-shrink:0;align-self:flex-start;margin-top:2px">Open</span>';
+    // Status always shows. "New" is additive — it used to replace the status
+    // badge, which hid the one fact a student actually needs.
+    const badge =
+      `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end;flex-shrink:0;margin-top:2px">`
+      + `<span class="tag ${meta.tag}" title="${meta.blurb}">${meta.label}</span>`
+      + (p.isNew ? '<span class="tag tnew">New</span>' : '')
+      + `</div>`;
     return `<div class="card" onclick="openM(${p.id})">
       <div class="cbar ${barClass}"></div>
       <div class="ctop">
@@ -510,33 +555,69 @@ function openM(id) {
   if (!p) return;
   const stars = '★'.repeat(p.prestige) + '☆'.repeat(5 - p.prestige);
   const now = new Date();
+  const cycle = META.cycle || '';
+  const st = statusOf(p, now);
+  const meta = STATUS[st];
   const days = Math.ceil((p.dlt - now) / 864e5);
-  const closedN = p.closed
-    ? `<div class="mnotice">⚠️ The 2026 application deadline for this program has passed. ${p.note || 'Check the official website for 2027 opening dates.'}</div>`
-    : '';
-  const urgentN = (!p.closed && days <= 14 && days >= 0)
+
+  let closedN = '';
+  if (st === 'discontinued') {
+    closedN = `<div class="mnotice">🚫 <strong>This program is no longer offered.</strong> ${p.discontinuedReason || ''}`
+      + (p.successor ? ` ${p.successor}` : '')
+      + `<br><span style="opacity:.75;font-size:.9em">Kept on file for reference — last known cycle: ${p.history?.length ? p.history[p.history.length - 1].cycle : '—'}.</span></div>`;
+  } else if (st === 'uncertain') {
+    closedN = `<div class="mnotice">⚠️ <strong>Status unconfirmed for ${cycle}.</strong> ${p.uncertainReason || ''}`
+      + (p.uncertainSource ? `<br><span style="opacity:.75;font-size:.9em">Source: ${p.uncertainSource}</span>` : '') + `</div>`;
+  } else if (st === 'closed') {
+    closedN = `<div class="mnotice">⚠️ The ${cycle} application deadline for this program has passed. ${p.note || 'Check the official website for the next cycle.'}</div>`;
+  }
+
+  const urgentN = (st === 'open' && days <= 14 && days >= 0)
     ? `<div class="murgent">⏰ Deadline in ${days} day${days !== 1 ? 's' : ''}! Apply immediately.</div>`
     : '';
-  const noteN = (!p.closed && p.note) ? `<div class="mnote">ℹ️ ${p.note}</div>` : '';
-  const dlColor = p.closed ? '#9CA3AF' : days <= 14 && days >= 0 ? '#DC2626' : days <= 45 && days >= 0 ? '#D97706' : 'inherit';
+  const projectedN = (p.verification === 'projected' && st !== 'discontinued' && st !== 'uncertain')
+    ? `<div class="mnote">📅 The ${cycle} date below is <strong>expected, not confirmed</strong> — it is carried forward from the ${cycle - 1} cycle. Verify on the official site before planning around it.</div>`
+    : '';
+  const verifiedN = (p.verification === 'verified' && p.lastVerified && st !== 'discontinued' && st !== 'uncertain')
+    ? `<div class="mnote">✅ Confirmed against the program's own materials on ${p.lastVerified}.</div>`
+    : '';
+  const opensN = (st === 'upcoming' && p.opensOn)
+    ? `<div class="mnote">🔓 Applications open ${p.opensOn.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.</div>`
+    : '';
+  const noteN = (st !== 'closed' && st !== 'discontinued' && st !== 'uncertain' && p.note) ? `<div class="mnote">ℹ️ ${p.note}</div>` : '';
+
+  // Previous cycles, so a stale-looking entry can still be sanity-checked.
+  const histN = (p.history && p.history.length)
+    ? `<div class="ms"><div class="msl">Previous cycles</div><div style="font-size:.78rem;color:var(--muted);line-height:1.7">`
+      + p.history.slice().reverse().map(h => `<div><strong style="color:var(--text)">${h.cycle}</strong> — deadline ${h.dl}${h.dates ? ` · ${h.dates}` : ''}</div>`).join('')
+      + `</div></div>`
+    : '';
+
+  const dlColor = (st === 'closed' || st === 'discontinued' || st === 'uncertain') ? '#9CA3AF'
+    : days <= 14 && days >= 0 ? '#DC2626'
+    : days <= 45 && days >= 0 ? '#D97706' : 'inherit';
   document.getElementById('mi').innerHTML = `
     <div class="mh">
       <div class="mhtop">
         <div class="mlog" style="background:${p.color}">${p.logo}</div>
         <div><div class="mtitle">${p.name}</div><div class="mhost">${p.host} · ${p.loc}</div><div class="mstars">${stars}</div></div>
       </div>
-      <div class="mtags2">${p.cat.map(c => `<span class="mtag">${c}</span>`).join('')}<span class="mtag">${p.fmt}</span><span class="mtag">Grades ${p.grades.join(', ')}</span>${p.isNew ? '<span class="mtag" style="background:rgba(168,85,247,.25);color:#E9D5FF">New</span>' : ''}${p.closed ? '<span class="mtag" style="background:rgba(239,68,68,.2);color:#FCA5A5">Closed 2026</span>' : '<span class="mtag" style="background:rgba(52,211,153,.2);color:#6EE7B7">Still open</span>'}</div>
+      <div class="mtags2">${p.cat.map(c => `<span class="mtag">${c}</span>`).join('')}<span class="mtag">${p.fmt}</span><span class="mtag">Grades ${p.grades.join(', ')}</span>${p.isNew ? '<span class="mtag" style="background:rgba(168,85,247,.25);color:#E9D5FF">New</span>' : ''}${MSTATUS_TAG[st]}</div>
     </div>
     <div class="mb">
-      ${closedN}${urgentN}
+      ${closedN}${urgentN}${opensN}${projectedN}${verifiedN}
       <div class="ms"><div class="msl">About this program</div><div class="mdesc">${p.desc}</div></div>
       <div class="ms"><div class="mgrid">
-        <div class="mbox"><div class="mbl">Application Deadline</div><div class="mbv" style="color:${dlColor}">${p.dl}${p.closed ? ' (closed)' : ''}</div></div>
+        <div class="mbox"><div class="mbl">Application Deadline</div><div class="mbv" style="color:${dlColor}">${p.dl}${st === 'closed' ? ' (closed)' : ''}</div></div>
         <div class="mbox"><div class="mbl">Program Dates</div><div class="mbv">${p.dates}</div></div>
         <div class="mbox"><div class="mbl">Cost</div><div class="mbv" style="color:${p.costN === 0 ? '#047857' : 'inherit'}">${p.cost}</div></div>
         <div class="mbox"><div class="mbl">Eligible Grades</div><div class="mbv">${p.grades.map(g => g + 'th').join(', ')}</div></div>
+        ${p.duration ? `<div class="mbox"><div class="mbl">Duration</div><div class="mbv">${p.duration}</div></div>` : ''}
+        ${p.scholarship ? `<div class="mbox"><div class="mbl">Financial Aid</div><div class="mbv">${p.scholarship}</div></div>` : ''}
+        ${p.programType ? `<div class="mbox"><div class="mbl">Program Type</div><div class="mbv">${p.programType}</div></div>` : ''}
+        ${p.acceptsInternational != null ? `<div class="mbox"><div class="mbl">International Students</div><div class="mbv">${p.acceptsInternational ? 'Accepted' : 'Not accepted'}</div></div>` : ''}
       </div></div>
-      ${noteN}
+      ${noteN}${histN}
     </div>
     <div class="mfooter">
       <button class="mclose" onclick="document.getElementById('modal').classList.remove('open')">← Back</button>

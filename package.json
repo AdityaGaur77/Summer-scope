@@ -1,10 +1,11 @@
 {
   "name": "summerscope",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "The complete database of summer programs and events for high school students",
   "type": "module",
   "scripts": {
-    "dev": "npx serve ."
+    "dev": "npx serve .",
+    "roll-cycle": "node scripts/roll-cycle.mjs"
   },
   "devDependencies": {
     "serve": "^14.2.0"

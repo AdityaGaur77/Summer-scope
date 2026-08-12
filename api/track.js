@@ -2,7 +2,27 @@
 // Receives analytics events from the browser and writes them to Supabase.
 // Requires env var: SUPABASE_SERVICE_KEY
 
-const SUPABASE_URL = 'https://fdpwoccrmdyuhelyocpk.supabase.co/rest/v1/events';
+import { SUPABASE_BASE, authHeaders } from './_supabase.js';
+
+const EVENTS_URL = `${SUPABASE_BASE}/events`;
+
+// Only event types the tracker actually emits are accepted. Without this the
+// endpoint is an open write to the analytics table for anyone who finds it.
+const ALLOWED_EVENTS = new Set(['pageview', 'scroll', 'session_end', 'click', 'search']);
+
+/** Keep a single metadata blob from ballooning the row. */
+function safeMetadata(m) {
+  if (!m || typeof m !== 'object' || Array.isArray(m)) return null;
+  const out = {};
+  let n = 0;
+  for (const [k, v] of Object.entries(m)) {
+    if (n++ >= 25) break;
+    if (v === null || ['string', 'number', 'boolean'].includes(typeof v)) {
+      out[String(k).slice(0, 40)] = typeof v === 'string' ? v.slice(0, 300) : v;
+    }
+  }
+  return Object.keys(out).length ? out : null;
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,8 +39,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    // sendBeacon posts a Blob, so depending on the runtime `req.body` can
+    // arrive as a string, a Buffer, or an already-parsed object.
+    let body = req.body;
+    if (Buffer.isBuffer(body)) body = body.toString('utf8');
+    if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = null; } }
     if (!body || !body.event_type) return res.status(400).json({ error: 'missing event_type' });
+    if (!ALLOWED_EVENTS.has(String(body.event_type))) {
+      return res.status(400).json({ error: 'unknown event_type' });
+    }
 
     // Sanitise every field — never trust client input
     const event = {
@@ -41,16 +68,15 @@ export default async function handler(req, res) {
       browser:       body.browser       ? String(body.browser).slice(0, 50)      : null,
       os:            body.os            ? String(body.os).slice(0, 50)            : null,
       search_query:  body.search_query  ? String(body.search_query).slice(0, 200) : null,
-      metadata:      body.metadata && typeof body.metadata === 'object' ? body.metadata : null,
+      metadata:      safeMetadata(body.metadata),
     };
 
-    const r = await fetch(SUPABASE_URL, {
+    const r = await fetch(EVENTS_URL, {
       method: 'POST',
       headers: {
-        apikey:          key,
-        Authorization:   `Bearer ${key}`,
-        'Content-Type':  'application/json',
-        Prefer:          'return=minimal',
+        ...authHeaders(key),
+        'Content-Type': 'application/json',
+        Prefer:         'return=minimal',
       },
       body: JSON.stringify(event),
     });
