@@ -4,7 +4,7 @@
     "version": "3.0.0",
     "programCount": 125,
     "eventCount": 20,
-    "changelog": "v3.0.0 (2026-08-12): rolled the database from the 2026 cycle to 2027. 85 deadlines projected forward, 6 confirmed against source, 16 rolling-admission programs re-dated, 1 marked discontinued, 1 flagged uncertain, 24 programs and 5 events added. Every prior cycle is preserved in each program's history[] array; no records were deleted.",
+    "changelog": "v3.0.0 (2026-08-12): database is on the 2027 cycle. 125 programs — 107 upcoming, 0 open, 16 rolling, 0 closed, 1 discontinued, 1 unconfirmed. 10 deadlines confirmed against source; the rest are carried forward from 2026 and flagged as expected. 12 have a confirmed application-opening date. 24 programs and 5 events added this cycle. Every prior cycle is preserved in each program's history[] array; no records were deleted.",
     "cycle": 2027,
     "activeProgramCount": 124,
     "statusCounts": {
@@ -145,7 +145,7 @@
       "isNew": false,
       "desc": "One of the most prestigious math programs in the world. ~75 students spend 6 weeks exploring deep number theory and proof-based mathematics as practicing mathematicians. Application requires solving a rigorous problem set. Must have completed 9th grade and be at least 14. Free for families earning under $80k.",
       "link": "https://promys.org",
-      "note": "2027 application is closed. Applications for PROMYS 2028 open in January 2028 at promys.org.",
+      "note": "The PROMYS 2027 application launches in January 2027; the deadline has not been published yet and the date shown is last cycle's, rolled forward. Six weeks at Boston University, and free for domestic students with family income under $80,000. You can sign up at promys.org to be notified when the application opens.",
       "history": [
         {
           "cycle": 2026,
@@ -161,7 +161,9 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12",
+      "opensOn": "2027-01-01",
+      "opensOnText": "January 2027"
     },
     {
       "id": 4,
@@ -461,7 +463,7 @@
       "isNew": false,
       "desc": "Sophomores and juniors (must be 16 by July 5) analyze real NASA satellite data alongside NASA scientists. Includes a 2-week residential stay at UT Austin with housing and meals. Virtual science symposium July 20–21. ~215 students selected from ~2,000 applicants (~10%). US citizens only.",
       "link": "https://csr.utexas.edu/education-outreach/high-school-internships/sees/",
-      "note": "2027 deadline closed Feb 22. Must be in 10th or 11th grade. $2,000 cost — scholarship available for financial need.",
+      "note": "SEES has not published its 2027 deadline; applications have historically opened in October and closed in February. If SEES doesn't work out, NASA's wider OSTEM internship programme lists a Summer 2027 deadline of February 26, 2027 — a separate application, also open to high schoolers.",
       "history": [
         {
           "cycle": 2026,
@@ -477,7 +479,7 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12"
     },
     {
       "id": 11,
@@ -498,14 +500,14 @@
       "costN": 0,
       "costB": "Free",
       "dates": "July 2027 (4 weeks)",
-      "dl": "~April 20, 2027",
-      "dlt": "2027-04-20",
+      "dl": "Apr 15, 2027",
+      "dlt": "2027-04-15",
       "closed": false,
       "prestige": 4,
       "isNew": false,
       "desc": "Rising seniors complete free online prerequisite courses, then apply for the 4-week summer session. 14+ tracks including autonomous vehicles, quantum computing, cybersecurity, satellite design, ML, and hardware hacking. Free for families earning under $90k; up to $2,350 for higher incomes. No housing provided.",
       "link": "https://bwsi.mit.edu",
-      "note": "2027 applications are now closed (April 20 deadline passed). Registration for the online prereq courses was required first. Check bwsi.mit.edu in late 2027 for 2028 cycle.",
+      "note": "Two-stage process: self-register for the free online prerequisite course when it opens in early February, complete it, and you are then invited to apply for the summer program by April 15, 2027. No housing is provided — students arrange their own. US students up to 11th grade only.",
       "history": [
         {
           "cycle": 2026,
@@ -519,9 +521,11 @@
           "recordedOn": "2026-08-12"
         }
       ],
-      "verification": "projected",
+      "verification": "verified",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12",
+      "opensOn": "2027-02-01",
+      "opensOnText": "early February 2027"
     },
     {
       "id": 12,
@@ -588,14 +592,14 @@
       "costN": 4750,
       "costB": "3kTo8k",
       "dates": "July – August 2027 (4 weeks)",
-      "dl": "Feb 6, 2027",
-      "dlt": "2027-02-06",
+      "dl": "Feb 8, 2027",
+      "dlt": "2027-02-08",
       "closed": false,
       "prestige": 4,
       "isNew": false,
       "desc": "4-week residential program for students passionate about STEM. 12+ cluster tracks per campus including AI/ML, astrophysics, bioengineering, marine science, robotics, and math. Led by UC faculty. Priority to California residents, but nationally open.",
       "link": "https://cosmos-ucop.ucdavis.edu",
-      "note": "2027 applications closed Feb 6. Apply in January of 9th–11th grade for 2028.",
+      "note": "One application covers all four COSMOS campuses (Davis, Irvine, San Diego, Santa Cruz) — you rank your campus and cluster preferences. Applications open in January and close February 8, 2027. Priority goes to California residents.",
       "history": [
         {
           "cycle": 2026,
@@ -609,9 +613,11 @@
           "recordedOn": "2026-08-12"
         }
       ],
-      "verification": "projected",
+      "verification": "verified",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12",
+      "opensOn": "2027-01-01",
+      "opensOnText": "January 2027"
     },
     {
       "id": 14,
@@ -732,7 +738,7 @@
       "isNew": false,
       "desc": "Academically intensive 2-week program in 8 interdisciplinary tracks including Applied Science, Biological Science, Frontiers of Medicine, International Affairs & Security, Law & Politics, and Sustainability. 1,600+ students from 120+ countries per year. Strong need-based aid.",
       "link": "https://globalscholars.yale.edu",
-      "note": "2027 deadline was January 7. Need-based aid covers full cost for qualifying families. Apply in fall/early winter for 2028.",
+      "note": "The YYGS application opens in September 2026. Applications that include the need-based financial aid portion must be complete by January 6, 2027; the general deadline shown here is last cycle's, rolled forward. Early Action applicants are either admitted or deferred into the Regular Decision pool.",
       "history": [
         {
           "cycle": 2026,
@@ -748,7 +754,9 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12",
+      "opensOn": "2026-09-01",
+      "opensOnText": "September 2026"
     },
     {
       "id": 17,
@@ -822,7 +830,7 @@
       "isNew": false,
       "desc": "Paid 8-week internship at a local nonprofit at ~$18/hr plus a week-long leadership summit in Washington, DC. One of the few fully paid internship programs open to high schoolers. Develops community leadership skills and nonprofit sector experience.",
       "link": "https://about.bankofamerica.com/en/making-an-impact/student-leaders",
-      "note": "2027 deadline was March 9. Check your local Bank of America branch website for city-specific 2028 deadlines.",
+      "note": "Applications open in the autumn, typically around October. A paid eight-week summer internship with a local nonprofit plus a week-long leadership summit in Washington, DC. The deadline shown is last cycle's, rolled forward — confirm on the Bank of America site once the cycle opens.",
       "history": [
         {
           "cycle": 2026,
@@ -838,7 +846,9 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12",
+      "opensOn": "2026-10-01",
+      "opensOnText": "around October 2026"
     },
     {
       "id": 19,
@@ -1364,7 +1374,7 @@
       "isNew": false,
       "desc": "One of the world's most prestigious math summer programs. ~120 students ages 13–18 from around the globe spend 6 weeks in deep, self-directed mathematical exploration. Students choose their own courses from a vast menu of advanced topics — everything from combinatorics and algebraic geometry to mathematical physics. The Qualifying Quiz (a challenging take-home problem set) is the centerpiece of the application. Vibrant community of math-loving peers. Generous financial aid — many students attend free.",
       "link": "https://www.mathcamp.org",
-      "note": "2027 deadline was February 23. Location rotates each year; 2027 is at Champlain College in Burlington, VT. Apply for 2028 in January at mathcamp.org — the Qualifying Quiz opens with the application.",
+      "note": "Mathcamp announces its 2027 dates and location in December 2026, and posts the application and Qualifying Quiz in January 2027. The Quiz is the heart of the application — it is graded on how you reason, not just on final answers, so start it early.",
       "history": [
         {
           "cycle": 2026,
@@ -1380,7 +1390,9 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12",
+      "opensOn": "2027-01-01",
+      "opensOnText": "January 2027"
     },
     {
       "id": 30,
@@ -1455,7 +1467,7 @@
       "isNew": false,
       "desc": "One of the smallest and most competitive research programs in the US — only ~12 students admitted nationally each year (~5% acceptance rate). Students work one-on-one with Texas Tech faculty for 7 weeks on original research in biology, chemistry, CS, physics, engineering, or history. Free: tuition, housing, meals, and weekend activities all covered, plus a $750 stipend upon completion of their research report. Must be at least 17 and a US citizen or permanent resident.",
       "link": "https://www.depts.ttu.edu/honors/academicsandenrichment/affiliatedandhighschool/clark/",
-      "note": "2027 deadline was February 16. Applications open January 2 each year. Only 12 students admitted — among the most selective research experiences available to high schoolers.",
+      "note": "Seven weeks of fully funded faculty-mentored research at Texas Tech, with a $750 completion stipend. The 2027 deadline is expected in early-to-mid February but published dates currently disagree — confirm on depts.ttu.edu/clarkscholars before relying on the date shown. Rising seniors and recent graduates who are 17 by the start date.",
       "history": [
         {
           "cycle": 2026,
@@ -1471,7 +1483,7 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12"
     },
     {
       "id": 32,
@@ -1500,7 +1512,7 @@
       "isNew": false,
       "desc": "Intensive 7-week research program in polymer science and materials science at Stony Brook University. Students conduct original laboratory research under faculty mentors and present results at a formal symposium. Strong record of student publications and competition placements. Must be at least 16 by July 4, 2027, with a GPA of ~95/100 unweighted. Must have completed at least three of: English, math, science, history, and foreign language coursework.",
       "link": "https://www.stonybrook.edu/commcms/garcia/",
-      "note": "2027 applications are closed. Check stonybrook.edu/garcia in January 2028 for the next cycle. Separate from the Simons Program at Stony Brook.",
+      "note": "Seven weeks of polymer-science and materials research at Stony Brook. The 2027 deadline is expected around March 1 but is not yet confirmed. Applicants must be 16 by roughly early July and typically need an unweighted 3.8/4.0 (95/100) GPA.",
       "history": [
         {
           "cycle": 2026,
@@ -1516,7 +1528,7 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12"
     },
     {
       "id": 33,
@@ -1544,7 +1556,7 @@
       "isNew": false,
       "desc": "One of the most prestigious math summer programs in the US, now in its 30th year. Rising 10th and 11th graders explore proof-based abstract algebra, number theory, or algebraic topology — topics rarely taught in high school. Admission requires completing a challenging take-home exam (the SUMaC Admission Exam). Residential program (40 students) and two online sessions (64 students total). Daily problem sets and a heavy mathematical workload modeled on undergraduate courses. No grades or credit — pure mathematical enrichment.",
       "link": "https://sumac.spcs.stanford.edu",
-      "note": "2027 applications are closed. Apply for 2028 at sumac.spcs.stanford.edu — applications typically open in November with a February deadline. Must be in 10th or 11th grade at the time of application.",
+      "note": "Stanford has not published the 2027 deadline; the date shown is last cycle's, rolled forward, and recent cycles have closed anywhere from late February to mid-March. Financial-aid documents are generally due in February. Four weeks, mid-July to mid-August, with both online and residential options.",
       "history": [
         {
           "cycle": 2026,
@@ -1560,7 +1572,7 @@
       ],
       "verification": "projected",
       "cycle": 2027,
-      "lastVerified": "2026-05-13"
+      "lastVerified": "2026-08-12"
     },
     {
       "id": 34,

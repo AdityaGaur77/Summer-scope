@@ -488,7 +488,7 @@ function openM(id){
   const projectedN=(p.verification==='projected'&&st!=='discontinued'&&st!=='uncertain')
     ? `<div class="mnote">📅 The ${cycle} date below is <strong>expected, not confirmed</strong> — carried forward from the previous cycle. Verify on the official site.</div>` : '';
   const opensN=(st==='upcoming'&&p.opensOn)
-    ? `<div class="mnote">🔓 Applications open ${p.opensOn.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}.</div>` : '';
+    ? `<div class="mnote">🔓 Applications open ${opensLabel(p)}.</div>` : '';
   const noteN=(st!=='closed'&&st!=='discontinued'&&st!=='uncertain'&&p.note)?`<div class="mnote">ℹ️ ${p.note}</div>`:'';
   const inactive=(st==='closed'||st==='discontinued'||st==='uncertain');
   document.getElementById('mi').innerHTML=`

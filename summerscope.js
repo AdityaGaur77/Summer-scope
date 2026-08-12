@@ -60,6 +60,19 @@ const MSTATUS_TAG = {
 const STATUS_RANK = { open: 0, rolling: 1, upcoming: 2, closed: 3, uncertain: 4, discontinued: 5 };
 
 /**
+ * How to describe when applications open.
+ * Several programs publish only a month ("the 2027 application launches in
+ * January"). Those are stored as the 1st of that month so the date maths
+ * works, with `opensOnText` carrying the real precision — rendering
+ * "January 1, 2027" for them would invent a deadline-grade date.
+ */
+function opensLabel(p) {
+  if (p.opensOnText) return p.opensOnText;
+  if (!p.opensOn) return '';
+  return p.opensOn.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+/**
  * Fetch data.json and hydrate its date strings.
  * Resolves to { programs, events, meta, counts }.
  */

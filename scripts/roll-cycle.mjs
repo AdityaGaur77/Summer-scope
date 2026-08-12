@@ -141,6 +141,7 @@ if (alreadyRolled) {
 const stats = {
   rolled: 0, verified: 0, discontinued: 0, uncertain: 0,
   rolling: 0, added: 0, eventsAdded: 0, eventsRolled: 0,
+  openings: 0, notes: 0,
 };
 
 // ── 1 + 2. snapshot history, roll dates forward ─────────────────────────────
@@ -239,6 +240,35 @@ for (const u of updates.uncertain ?? []) {
   }
 }
 
+// Programs that have published WHEN the application opens but not yet the
+// deadline. That is the common state in August: "the 2027 application launches
+// in January." Worth recording — it tells a student when to start watching —
+// but it does not make the projected deadline a confirmed one, so
+// `verification` deliberately stays as it is.
+for (const o of updates.openings ?? []) {
+  const hits = findByMatch(data.programs, o.match);
+  if (!hits.length) console.warn(`  ! opening override matched nothing: "${o.match}"`);
+  for (const p of hits) {
+    p.opensOn = o.opensOn;
+    if (o.opensOnText) p.opensOnText = o.opensOnText;
+    if (o.note) p.note = o.note;
+    p.lastVerified = TODAY;
+    stats.openings++;
+  }
+}
+
+// Notes with no date claim attached — an expected window, a caveat, a conflict
+// between sources. Never touches dates or verification.
+for (const n of updates.notes ?? []) {
+  const hits = findByMatch(data.programs, n.match);
+  if (!hits.length) console.warn(`  ! note override matched nothing: "${n.match}"`);
+  for (const p of hits) {
+    p.note = n.note;
+    p.lastVerified = TODAY;
+    stats.notes++;
+  }
+}
+
 for (const v of updates.verified ?? []) {
   const hits = findByMatch(data.programs, v.match);
   if (!hits.length) console.warn(`  ! verified override matched nothing: "${v.match}"`);
@@ -247,6 +277,7 @@ for (const v of updates.verified ?? []) {
     if (v.dlt) p.dlt = v.dlt;
     if (v.dates) p.dates = v.dates;
     if (v.opensOn) p.opensOn = v.opensOn;
+    if (v.opensOnText) p.opensOnText = v.opensOnText;
     if (v.note) p.note = v.note;
     if (v.cost) { p.cost = v.cost; p.costN = v.costN ?? p.costN; p.costB = v.costB ?? p.costB; }
     p.verification = 'verified';
@@ -329,11 +360,23 @@ data.meta = {
     verified: `Checked against the program's own materials on ${TODAY}.`,
     projected: 'Date carried forward from the previous cycle — expected, not confirmed. Verify on the official site.',
   },
-  changelog: `v3.0.0 (${TODAY}): rolled the database from the ${fromCycle} cycle to ${CYCLE}. ` +
-    `${stats.rolled} deadlines projected forward, ${stats.verified} confirmed against source, ` +
-    `${stats.rolling} rolling-admission programs re-dated, ${stats.discontinued} marked discontinued, ` +
-    `${stats.uncertain} flagged uncertain, ${stats.added} programs and ${stats.eventsAdded} events added. ` +
-    `Every prior cycle is preserved in each program's history[] array; no records were deleted.`,
+  // Describes the STATE of the data, not the last run — the script is meant to
+  // be re-run to apply new overrides, and a run-local tally would report
+  // "0 deadlines rolled" on the second pass and read as though nothing is here.
+  changelog: (() => {
+    const n = (f) => data.programs.filter(f).length;
+    const verified = n((p) => p.verification === 'verified');
+    const addedThisCycle = n((p) => p.addedOn && p.cycle === CYCLE && p.isNew);
+    const newEventCount = data.events.filter((e) => e.addedOn).length;
+    return `v3.0.0 (${TODAY}): database is on the ${CYCLE} cycle. ` +
+      `${data.programs.length} programs — ${counts.upcoming ?? 0} upcoming, ${counts.open ?? 0} open, ` +
+      `${counts.rolling ?? 0} rolling, ${counts.closed ?? 0} closed, ` +
+      `${counts.discontinued ?? 0} discontinued, ${counts.uncertain ?? 0} unconfirmed. ` +
+      `${verified} deadlines confirmed against source; the rest are carried forward from ${CYCLE - 1} ` +
+      `and flagged as expected. ${n((p) => p.opensOn)} have a confirmed application-opening date. ` +
+      `${addedThisCycle} programs and ${newEventCount} events added this cycle. ` +
+      `Every prior cycle is preserved in each program's history[] array; no records were deleted.`;
+  })(),
 };
 
 // ── write ───────────────────────────────────────────────────────────────────

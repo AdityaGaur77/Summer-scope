@@ -74,6 +74,70 @@
       "dlt": "2027-02-01",
       "opensOn": "2026-10-01",
       "note": "Shares the single MITES common application with MITES Summer and MOSTEC."
+    },
+    {
+      "match": "COSMOS — CA Summer School for Math & Science",
+      "dl": "Feb 8, 2027",
+      "dlt": "2027-02-08",
+      "opensOn": "2027-01-01",
+      "opensOnText": "January 2027",
+      "note": "One application covers all four COSMOS campuses (Davis, Irvine, San Diego, Santa Cruz) — you rank your campus and cluster preferences. Applications open in January and close February 8, 2027. Priority goes to California residents."
+    },
+    {
+      "match": "MIT Beaver Works Summer Institute",
+      "dl": "Apr 15, 2027",
+      "dlt": "2027-04-15",
+      "opensOn": "2027-02-01",
+      "opensOnText": "early February 2027",
+      "note": "Two-stage process: self-register for the free online prerequisite course when it opens in early February, complete it, and you are then invited to apply for the summer program by April 15, 2027. No housing is provided — students arrange their own. US students up to 11th grade only."
+    }
+  ],
+
+  "openings": [
+    {
+      "_comment": "Application-opening dates that ARE published, for programs whose deadline is not yet announced. Recording these does not promote the projected deadline to verified.",
+      "match": "PROMYS",
+      "opensOn": "2027-01-01",
+      "opensOnText": "January 2027",
+      "note": "The PROMYS 2027 application launches in January 2027; the deadline has not been published yet and the date shown is last cycle's, rolled forward. Six weeks at Boston University, and free for domestic students with family income under $80,000. You can sign up at promys.org to be notified when the application opens."
+    },
+    {
+      "match": "Canada/USA Mathcamp",
+      "opensOn": "2027-01-01",
+      "opensOnText": "January 2027",
+      "note": "Mathcamp announces its 2027 dates and location in December 2026, and posts the application and Qualifying Quiz in January 2027. The Quiz is the heart of the application — it is graded on how you reason, not just on final answers, so start it early."
+    },
+    {
+      "match": "Yale Young Global Scholars (YYGS)",
+      "opensOn": "2026-09-01",
+      "opensOnText": "September 2026",
+      "note": "The YYGS application opens in September 2026. Applications that include the need-based financial aid portion must be complete by January 6, 2027; the general deadline shown here is last cycle's, rolled forward. Early Action applicants are either admitted or deferred into the Regular Decision pool."
+    },
+    {
+      "match": "Bank of America Student Leaders",
+      "opensOn": "2026-10-01",
+      "opensOnText": "around October 2026",
+      "note": "Applications open in the autumn, typically around October. A paid eight-week summer internship with a local nonprofit plus a week-long leadership summit in Washington, DC. The deadline shown is last cycle's, rolled forward — confirm on the Bank of America site once the cycle opens."
+    }
+  ],
+
+  "notes": [
+    {
+      "_comment": "Context only — no date claim. Used where sources disagree or nothing is published yet.",
+      "match": "Clark Scholars Program",
+      "note": "Seven weeks of fully funded faculty-mentored research at Texas Tech, with a $750 completion stipend. The 2027 deadline is expected in early-to-mid February but published dates currently disagree — confirm on depts.ttu.edu/clarkscholars before relying on the date shown. Rising seniors and recent graduates who are 17 by the start date."
+    },
+    {
+      "match": "SUMaC (Stanford University Mathematics Camp)",
+      "note": "Stanford has not published the 2027 deadline; the date shown is last cycle's, rolled forward, and recent cycles have closed anywhere from late February to mid-March. Financial-aid documents are generally due in February. Four weeks, mid-July to mid-August, with both online and residential options."
+    },
+    {
+      "match": "Garcia Scholars Program",
+      "note": "Seven weeks of polymer-science and materials research at Stony Brook. The 2027 deadline is expected around March 1 but is not yet confirmed. Applicants must be 16 by roughly early July and typically need an unweighted 3.8/4.0 (95/100) GPA."
+    },
+    {
+      "match": "NASA SEES Internship",
+      "note": "SEES has not published its 2027 deadline; applications have historically opened in October and closed in February. If SEES doesn't work out, NASA's wider OSTEM internship programme lists a Summer 2027 deadline of February 26, 2027 — a separate application, also open to high schoolers."
     }
   ],
 

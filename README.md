@@ -130,9 +130,19 @@ The updates file has four sections:
 | Section | What it does |
 |---|---|
 | `verified` | Confirmed dates for this cycle. Sets `verification: "verified"`. |
+| `openings` | The application-opening date is published but the deadline isn't — the usual state in late summer. Sets `opensOn`; deliberately leaves the deadline `projected`. |
+| `notes` | Context with no date claim: an expected window, a caveat, sources that disagree. Touches neither dates nor verification. |
 | `discontinued` | Programs that have stopped. Marked and kept, never deleted. |
 | `uncertain` | Ran before, next cycle unannounced. No date is invented. |
 | `newPrograms` / `newEvents` | Added with fresh IDs and an `isNew` flag. |
+
+Use `opensOnText` alongside `opensOn` when a program has only announced a month
+("the 2027 application launches in January"). The date is stored as the 1st so
+the maths works; `opensOnText` carries the real precision, so the UI says
+"January 2027" rather than inventing "January 1, 2027".
+
+Re-running with new overrides is safe and order-independent: applying them
+incrementally produces byte-identical output to a single clean run.
 
 ---
 

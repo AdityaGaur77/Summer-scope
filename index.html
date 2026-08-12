@@ -582,7 +582,7 @@ function openM(id) {
     ? `<div class="mnote">✅ Confirmed against the program's own materials on ${p.lastVerified}.</div>`
     : '';
   const opensN = (st === 'upcoming' && p.opensOn)
-    ? `<div class="mnote">🔓 Applications open ${p.opensOn.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.</div>`
+    ? `<div class="mnote">🔓 Applications open ${opensLabel(p)}.</div>`
     : '';
   const noteN = (st !== 'closed' && st !== 'discontinued' && st !== 'uncertain' && p.note) ? `<div class="mnote">ℹ️ ${p.note}</div>` : '';
 
