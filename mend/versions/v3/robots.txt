@@ -1,0 +1,4 @@
+# Meridian Therapeutics is a fictional company used to test data pipelines.
+# Nothing here should be indexed, cached, or treated as a real drug pipeline.
+User-agent: *
+Disallow: /

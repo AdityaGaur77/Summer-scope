@@ -1,0 +1,63 @@
+{
+  "identifier": "release_readiness",
+  "title": "Release readiness",
+  "blueprint": "mend_source",
+  "description": "The interlock. A source is releasable only when the schema validates, the scraper has been verified by a re-run, tests pass, and a human has approved. Human approval sits at the top level on purpose: everything below it can be satisfied by the agent, and that is exactly why it must not be the last word on its own.",
+  "rules": [
+    {
+      "identifier": "schema_valid",
+      "title": "Records validate against the record schema",
+      "level": "Bronze",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          { "property": "last_conformance", "operator": ">=", "value": 0.99 }
+        ]
+      }
+    },
+    {
+      "identifier": "source_healthy",
+      "title": "Source is healthy, not degraded",
+      "level": "Bronze",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          { "property": "health", "operator": "=", "value": "healthy" }
+        ]
+      }
+    },
+    {
+      "identifier": "scraper_verified",
+      "title": "Scraper verified by a re-run since its last heal",
+      "level": "Silver",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          { "relation": "scraper", "property": "verified", "operator": "=", "value": true }
+        ]
+      }
+    },
+    {
+      "identifier": "not_release_blocked",
+      "title": "Release not blocked by degraded data",
+      "level": "Silver",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          { "property": "release_blocked", "operator": "=", "value": false }
+        ]
+      }
+    },
+    {
+      "identifier": "human_approved",
+      "title": "A human approved the open change request",
+      "level": "Gold",
+      "query": {
+        "combinator": "and",
+        "conditions": [
+          { "property": "$identifier", "operator": "relatedTo", "blueprint": "mend_change_request", "value": "verified" }
+        ]
+      }
+    }
+  ]
+}

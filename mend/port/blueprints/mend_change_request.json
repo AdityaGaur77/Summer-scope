@@ -1,0 +1,25 @@
+{
+  "identifier": "mend_change_request",
+  "title": "Change request",
+  "icon": "Alert",
+  "description": "Opened by telemetry, not by a person. A SigNoz alert on conformance or unmapped fields writes one of these; the agent picks it up and proposes; a human approves or rejects. `rejected` is a first-class outcome — the interlock exists so that a plausible-looking repair can be turned down and escalated rather than shipped.",
+  "schema": {
+    "properties": {
+      "type": { "type": "string", "title": "Type", "enum": ["REPAIR", "EVOLVE"], "enumColors": { "REPAIR": "orange", "EVOLVE": "blue" } },
+      "status": { "type": "string", "title": "Status", "enum": ["proposed", "rejected", "approved", "verified", "escalated"], "enumColors": { "proposed": "yellow", "rejected": "red", "approved": "blue", "verified": "green", "escalated": "purple" }, "default": "proposed" },
+      "detected_at": { "type": "string", "format": "date-time", "title": "Detected" },
+      "opened_by": { "type": "string", "title": "Opened by", "default": "telemetry", "description": "Nobody files these by hand. That is the claim." },
+      "signals": { "type": "object", "title": "Signals", "description": "The raw numbers that opened it, so a human can disagree with the agent's reading of them." },
+      "diagnosis": { "type": "string", "title": "Diagnosis", "format": "markdown" },
+      "proposal": { "type": "object", "title": "Proposal", "description": "scraper_config_diff / schema_diff / ui_diff / test_diff." },
+      "verification": { "type": "object", "title": "Verification", "description": "Filled in only by a re-run. Absent = not releasable." },
+      "mttr_seconds": { "type": "number", "title": "MTTR (s)", "description": "detected_at to the verified re-run." }
+    },
+    "required": ["type", "status"]
+  },
+  "relations": {
+    "source": { "target": "mend_source", "title": "Source", "many": false, "required": false },
+    "detected_in_run": { "target": "mend_run", "title": "Detected in run", "many": false, "required": false },
+    "verified_in_run": { "target": "mend_run", "title": "Verified in run", "many": false, "required": false }
+  }
+}

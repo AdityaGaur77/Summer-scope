@@ -1,0 +1,28 @@
+{
+  "identifier": "mend_run",
+  "title": "Run",
+  "icon": "Deployment",
+  "description": "One scrape of one source. Carries the numbers the whole factory routes on. run_id matches run.id in SigNoz, so an entity here links straight to its trace.",
+  "schema": {
+    "properties": {
+      "run_id": { "type": "string", "title": "Run ID" },
+      "started_at": { "type": "string", "format": "date-time", "title": "Started" },
+      "rows_returned": { "type": "number", "title": "Rows returned", "description": "Rows MATCHED, not rows valid. Stays flat during a silent failure." },
+      "rows_expected_min": { "type": "number", "title": "Row floor" },
+      "schema_conformance": { "type": "number", "title": "Schema conformance", "description": "0–1." },
+      "field_null_rate": { "type": "object", "title": "Field null rate", "description": "field -> 0–1." },
+      "unmapped_fields_seen": { "type": "array", "title": "Unmapped fields", "items": { "type": "string" } },
+      "failure_class": { "type": "string", "title": "Failure class", "enum": ["none", "selector_drift", "schema_extension", "row_count_collapse", "empty_result", "fetch_error", "upstream_shape_change"], "enumColors": { "none": "green", "selector_drift": "orange", "schema_extension": "blue", "row_count_collapse": "orange", "empty_result": "red", "fetch_error": "red", "upstream_shape_change": "purple" } },
+      "route": { "type": "string", "title": "Route", "enum": ["none", "repair", "evolve", "escalate"], "enumColors": { "none": "green", "repair": "orange", "evolve": "blue", "escalate": "purple" } },
+      "source_generator": { "type": "string", "title": "Page generator", "description": "The source page's <meta name=\"generator\">, when it publishes one." },
+      "scraper_config_version": { "type": "string", "title": "Scraper config version" },
+      "trace_url": { "type": "string", "format": "url", "title": "SigNoz trace" },
+      "artifact_url": { "type": "string", "format": "url", "title": "Run artefact" }
+    },
+    "required": ["run_id", "rows_returned", "schema_conformance"]
+  },
+  "relations": {
+    "source": { "target": "mend_source", "title": "Source", "many": false, "required": false },
+    "scraper": { "target": "mend_scraper", "title": "Scraper", "many": false, "required": false }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "identifier": "mend_scraper",
+  "title": "Scraper",
+  "icon": "Cloud",
+  "description": "A Bright Data collector plus the selector set it runs. config_version is bumped on every heal, which is how a run is traced back to the exact selectors that produced it.",
+  "schema": {
+    "properties": {
+      "collector_id": { "type": "string", "title": "Collector ID", "description": "Bright Data Scraper Studio c_* identifier." },
+      "config_version": { "type": "string", "title": "Config version", "description": "Bumped on every heal, e.g. 2026-08-22.1" },
+      "row_selector": { "type": "string", "title": "Row selector", "description": "What rows_returned counts." },
+      "field_selectors": { "type": "object", "title": "Field selectors", "description": "field -> CSS selector. The object a REPAIR actually edits." },
+      "heal_count": { "type": "number", "title": "Times healed", "default": 0 },
+      "last_healed_at": { "type": "string", "format": "date-time", "title": "Last healed" },
+      "verified": { "type": "boolean", "title": "Verified after last heal", "default": false, "description": "Set only by a re-run that measured conformance. Never set by the agent asserting success." }
+    },
+    "required": ["collector_id", "config_version"]
+  },
+  "relations": {
+    "source": { "target": "mend_source", "title": "Source", "many": false, "required": false }
+  }
+}

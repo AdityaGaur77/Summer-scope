@@ -1,0 +1,108 @@
+/* Meridian Web 2.4.0 — August 2026 refresh.
+   New type stack, warmer palette, and the pipeline table rebuilt around status
+   pills. From the front-end side this was a cosmetic release. */
+:root {
+  --ink: #101a20;
+  --ink-soft: #5d6f78;
+  --rule: #e6ebee;
+  --rule-strong: #c9d4d9;
+  --paper: #ffffff;
+  --wash: #f7f9fa;
+  --accent: #0b5f6b;
+  --accent-soft: #e6f2f3;
+  --amber: #9a6410;
+  --amber-soft: #fdf3e3;
+  --slate-soft: #eef1f3;
+  --warn: #8a5a12;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.15; letter-spacing: -0.022em; }
+h1 { font-size: 2.4rem; margin: 0 0 .35em; }
+h2 { font-size: 1.3rem; margin: 0 0 .7em; }
+
+.masthead { border-bottom: 1px solid var(--rule); background: rgba(255,255,255,.92); position: sticky; top: 0; z-index: 20; backdrop-filter: saturate(1.6) blur(8px); }
+.nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 24px; flex-wrap: wrap; }
+.nav__brand { font-size: 1.1rem; font-weight: 650; text-decoration: none; color: var(--ink); letter-spacing: -0.03em; }
+.nav__brand-mark { color: var(--ink-soft); font-weight: 400; margin-left: .4em; }
+.nav__links { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; font-size: .9rem; }
+.nav__links a { text-decoration: none; color: var(--ink-soft); padding: 6px 12px; border-radius: 999px; }
+.nav__links a:hover { background: var(--wash); color: var(--ink); }
+.nav__link--current { background: var(--accent-soft) !important; color: var(--accent) !important; }
+
+main { padding: 52px 0 72px; }
+.hero { max-width: 48rem; margin-bottom: 44px; }
+.hero__lede { font-size: 1.12rem; color: var(--ink-soft); }
+.button { display: inline-block; background: var(--ink); color: #fff; text-decoration: none; padding: 11px 22px; border-radius: 999px; font-size: .93rem; font-weight: 550; }
+.panel { border-top: 1px solid var(--rule); padding-top: 32px; margin-top: 36px; }
+.panel__note { color: var(--ink-soft); font-size: .9rem; }
+.stat-row { list-style: none; display: flex; flex-wrap: wrap; gap: 14px; padding: 0; margin: 0 0 16px; }
+.stat { display: flex; flex-direction: column; background: var(--wash); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 22px; min-width: 9rem; }
+.stat__num { font-size: 2rem; font-weight: 640; line-height: 1.1; letter-spacing: -0.03em; }
+.stat__label { font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-soft); }
+.teaser-list { list-style: none; padding: 0; margin: 0; }
+.teaser-list a { display: flex; gap: 16px; align-items: baseline; padding: 12px 14px; border-radius: 10px; text-decoration: none; color: var(--ink); flex-wrap: wrap; }
+.teaser-list a:hover { background: var(--wash); }
+.teaser-list span { color: var(--ink-soft); flex: 1; }
+.teaser-list em { font-style: normal; color: var(--accent); font-size: .86rem; font-weight: 550; }
+
+.pipeline-intro { max-width: 48rem; margin-bottom: 30px; }
+.pipeline-shell { border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; background: var(--paper); }
+.pipeline-scroll { overflow-x: auto; }
+.pipeline { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .89rem; min-width: 60rem; }
+.pipeline th, .pipeline td { text-align: left; padding: 13px 18px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.pipeline__head th { background: var(--wash); font-size: .73rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 600; border-bottom: 1px solid var(--rule-strong); }
+.pipeline tbody tr:last-child td { border-bottom: 0; }
+.pipeline tbody tr:hover { background: var(--wash); }
+.pipeline .program-code a { font-weight: 620; text-decoration: none; white-space: nowrap; }
+.pipeline .compound { color: var(--ink-soft); }
+.pipeline .partner { white-space: nowrap; }
+
+/* The merged Development status cell. */
+.status-cell { white-space: nowrap; }
+.pill { display: inline-block; border-radius: 999px; padding: 3px 11px; font-size: .77rem; font-weight: 560; letter-spacing: .01em; }
+.pill--stage { background: var(--accent-soft); color: var(--accent); }
+.pill--enroll { background: var(--slate-soft); color: var(--ink-soft); margin-left: 6px; }
+[data-stage="phase-3"].pill--stage, [data-stage="marketed"].pill--stage { background: var(--amber-soft); color: var(--amber); }
+
+/* Archived rows still render through the pre-refresh partial. */
+.pipeline-row--archived td { color: var(--ink-soft); }
+.status-cell--legacy .phase { font-weight: 620; color: var(--ink); }
+.status-cell--legacy .status { color: var(--ink-soft); margin-left: 8px; }
+.pipeline .target { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.crumb { font-size: .85rem; color: var(--ink-soft); }
+.program-detail { max-width: 46rem; }
+.program-detail__lede { font-size: 1.08rem; color: var(--ink-soft); }
+.facts { display: grid; grid-template-columns: 13rem 1fr; gap: 0; margin: 30px 0; font-size: .93rem; }
+.facts dt { color: var(--ink-soft); padding: 11px 0; border-top: 1px solid var(--rule); font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; }
+.facts dd { margin: 0; padding: 11px 0; border-top: 1px solid var(--rule); }
+.back { font-size: .9rem; }
+
+.site-footer { border-top: 1px solid var(--rule); background: var(--wash); padding: 32px 0 44px; }
+.disclosure { max-width: 62rem; font-size: .87rem; color: var(--warn); background: var(--amber-soft); border: 1px solid #f0dfc0; border-radius: 12px; padding: 14px 18px; margin: 0 0 14px; }
+.colophon { font-size: .79rem; color: var(--ink-soft); margin: 0; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Meridian Web 2.4.3 — molecular targets are now published on the pipeline and on
+   each programme page. Appended to the 2.4.0 sheet; nothing else changed. */
+.target-symbol {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  background: var(--slate-soft);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+.facts dd.target {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .88rem;
+}

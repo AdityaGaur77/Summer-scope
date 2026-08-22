@@ -1,0 +1,15 @@
+
+/* Meridian Web 2.4.3 — molecular targets are now published on the pipeline and on
+   each programme page. Appended to the 2.4.0 sheet; nothing else changed. */
+.target-symbol {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  background: var(--slate-soft);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+.facts dd.target {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .88rem;
+}

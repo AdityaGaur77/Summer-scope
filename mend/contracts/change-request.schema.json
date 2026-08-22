@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mend.dev/schemas/change-request/1",
+  "title": "Mend ChangeRequest",
+  "description": "Opened by telemetry, not by a person. SigNoz fires on a conformance or unmapped-field condition, the alert webhook writes one of these into Port, and the agent picks it up from there.",
+  "type": "object",
+  "required": ["type", "run_id", "source_id", "detected_at", "signals", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "enum": ["REPAIR", "EVOLVE"],
+      "description": "Routed from failure_class, never chosen freehand."
+    },
+    "run_id": { "type": "string", "minLength": 1 },
+    "source_id": { "type": "string", "minLength": 1 },
+    "detected_at": { "type": "string", "format": "date-time" },
+    "signals": {
+      "type": "object",
+      "description": "The raw numbers that opened the request. Present so a human can disagree with the agent's reading of them.",
+      "required": ["rows_returned", "schema_conformance"],
+      "additionalProperties": false,
+      "properties": {
+        "rows_returned": { "type": "integer", "minimum": 0 },
+        "rows_previous": { "type": ["integer", "null"], "minimum": 0 },
+        "rows_expected_min": { "type": ["integer", "null"], "minimum": 0 },
+        "schema_conformance": { "type": "number", "minimum": 0, "maximum": 1 },
+        "schema_conformance_previous": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "field_null_rate": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "unmapped_fields_seen": { "type": "array", "items": { "type": "string" } },
+        "failure_class": {
+          "enum": [
+            "none",
+            "selector_drift",
+            "schema_extension",
+            "row_count_collapse",
+            "empty_result",
+            "fetch_error",
+            "upstream_shape_change"
+          ]
+        },
+        "source_generator": {
+          "type": ["string", "null"],
+          "description": "The page's <meta name=\"generator\"> value, if it publishes one. Corroborating evidence for a redesign, never the diagnosis on its own."
+        }
+      }
+    },
+    "diagnosis": {
+      "type": ["string", "null"],
+      "description": "The agent's reading of the signals, in prose. Must cite the numbers it relied on."
+    },
+    "proposal": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "scraper_config_diff": { "type": ["string", "null"] },
+        "schema_diff": { "type": ["string", "null"] },
+        "ui_diff": { "type": ["string", "null"] },
+        "test_diff": { "type": ["string", "null"] }
+      }
+    },
+    "verification": {
+      "type": ["object", "null"],
+      "description": "Filled in only after a re-run. A proposal with no verification block is never releasable — 'repair succeeded' is a measurement, not a claim.",
+      "additionalProperties": false,
+      "properties": {
+        "rerun_run_id": { "type": ["string", "null"] },
+        "rows_after": { "type": ["integer", "null"] },
+        "conformance_after": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "field_null_rate_after": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "verified": { "type": ["boolean", "null"] }
+      }
+    },
+    "status": {
+      "enum": ["proposed", "rejected", "approved", "verified", "escalated"],
+      "description": "rejected is a first-class outcome: the interlock exists so a human can turn down a plausible repair and have the factory escalate rather than ship."
+    },
+    "mttr_seconds": {
+      "type": ["number", "null"],
+      "description": "detected_at to the verified re-run. Only set once verification.verified is true."
+    }
+  }
+}
