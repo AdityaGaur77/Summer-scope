@@ -1,0 +1,24 @@
+{
+  "identifier": "mend_source",
+  "title": "Source",
+  "icon": "Globe",
+  "description": "A page or API Mend pulls drug-programme data from. `controlled` marks a source we author ourselves — it is set on Meridian so the catalogue itself discloses that our break is our own.",
+  "schema": {
+    "properties": {
+      "name": { "type": "string", "title": "Name" },
+      "url": { "type": "string", "format": "url", "title": "Canonical URL", "description": "Never version-qualified. Activating a new page version must not change this." },
+      "controlled": { "type": "boolean", "title": "Controlled source", "default": false, "description": "true = we author this page. Disclosure, in the catalogue rather than only in the README." },
+      "has_api": { "type": "boolean", "title": "Has an API", "default": false, "description": "false is the whole point. Sources with APIs do not need Mend." },
+      "health": { "type": "string", "title": "Health", "enum": ["healthy", "degraded", "failed", "unknown"], "enumColors": { "healthy": "green", "degraded": "orange", "failed": "red", "unknown": "lightGray" }, "default": "unknown" },
+      "last_good_run_at": { "type": "string", "format": "date-time", "title": "Last good run" },
+      "last_conformance": { "type": "number", "title": "Last schema conformance", "description": "0–1. Mirrors the newest run." },
+      "rows_expected_min": { "type": "number", "title": "Expected row floor" },
+      "release_blocked": { "type": "boolean", "title": "Release blocked", "default": false, "description": "Set while health is degraded or failed. Downstream consumers must not publish from a blocked source." }
+    },
+    "required": ["name", "url"]
+  },
+  "relations": {
+    "record_schema": { "target": "mend_record_schema", "title": "Record schema", "many": false, "required": false },
+    "scraper": { "target": "mend_scraper", "title": "Scraper", "many": false, "required": false }
+  }
+}

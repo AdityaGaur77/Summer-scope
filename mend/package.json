@@ -1,0 +1,17 @@
+{
+  "name": "mend-meridian",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Meridian Therapeutics \u2014 the controlled break surface for Mend. A fictional biotech pipeline site in three versions.",
+  "scripts": {
+    "site:build": "node scripts/build.mjs",
+    "site:activate": "node scripts/activate.mjs",
+    "site:serve": "node scripts/serve.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,216 @@
+{
+  "title": "Mend — source health",
+  "description": "Built around one contrast: rows_returned stays flat while schema_conformance falls. Every other panel exists to explain that first one. Nothing on this dashboard is an error rate.",
+  "tags": ["mend", "long-tail", "data-quality"],
+  "version": "v4",
+  "layout": [
+    { "i": "1", "x": 0, "y": 0, "w": 12, "h": 7 },
+    { "i": "2", "x": 0, "y": 7, "w": 6, "h": 6 },
+    { "i": "3", "x": 6, "y": 7, "w": 6, "h": 6 },
+    { "i": "4", "x": 0, "y": 13, "w": 4, "h": 5 },
+    { "i": "5", "x": 4, "y": 13, "w": 4, "h": 5 },
+    { "i": "6", "x": 8, "y": 13, "w": 4, "h": 5 }
+  ],
+  "widgets": [
+    {
+      "id": "1",
+      "title": "Rows returned vs schema conformance",
+      "description": "The pitch. A silent failure holds the row count steady and drops conformance — a flat line and a cliff on the same time axis. If these ever move together, the failure was loud and this dashboard was not needed.",
+      "panelTypes": "graph",
+      "yAxisUnit": "none",
+      "query": {
+        "queryType": "builder",
+        "builder": {
+          "queryFormulas": [],
+          "queryData": [
+            {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "max",
+              "aggregateAttribute": { "key": "mend.rows_returned", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "max",
+              "spaceAggregation": "max",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [{ "key": "source.id", "type": "tag", "dataType": "string" }],
+              "expression": "A",
+              "legend": "rows · {{source.id}}",
+              "stepInterval": 60,
+              "disabled": false
+            },
+            {
+              "queryName": "B",
+              "dataSource": "metrics",
+              "aggregateOperator": "min",
+              "aggregateAttribute": { "key": "mend.schema_conformance", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "min",
+              "spaceAggregation": "min",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [{ "key": "source.id", "type": "tag", "dataType": "string" }],
+              "expression": "B",
+              "legend": "conformance · {{source.id}}",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          ]
+        }
+      },
+      "thresholds": [
+        { "index": "conformance-floor", "keyIndex": 0, "moveThreshold": 0.85, "thresholdValue": 0.85, "thresholdLabel": "alert floor 0.85", "thresholdUnit": "none", "thresholdColor": "Red", "thresholdOperator": "<" }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Field null rate",
+      "description": "Which field went quiet. During the Meridian v2 break this shows phase climbing to 0.95 while every other field stays at zero — the diagnosis, before the agent writes a word of it.",
+      "panelTypes": "graph",
+      "yAxisUnit": "percentunit",
+      "query": {
+        "queryType": "builder",
+        "builder": {
+          "queryFormulas": [],
+          "queryData": [
+            {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "max",
+              "aggregateAttribute": { "key": "mend.field_null_rate", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "max",
+              "spaceAggregation": "max",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [
+                { "key": "source.id", "type": "tag", "dataType": "string" },
+                { "key": "field", "type": "tag", "dataType": "string" }
+              ],
+              "expression": "A",
+              "legend": "{{source.id}} · {{field}}",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3",
+      "title": "Unmapped fields seen",
+      "description": "A field the schema has never heard of. Not a break — a requirement change. This is the panel that routes to EVOLVE instead of REPAIR.",
+      "panelTypes": "graph",
+      "yAxisUnit": "none",
+      "query": {
+        "queryType": "builder",
+        "builder": {
+          "queryFormulas": [],
+          "queryData": [
+            {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "max",
+              "aggregateAttribute": { "key": "mend.unmapped_fields", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "max",
+              "spaceAggregation": "max",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [
+                { "key": "source.id", "type": "tag", "dataType": "string" },
+                { "key": "field", "type": "tag", "dataType": "string" }
+              ],
+              "expression": "A",
+              "legend": "{{source.id}} · {{field}}",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4",
+      "title": "Runs by failure class",
+      "description": "Routing, counted. upstream_shape_change appearing here means a run was escalated rather than auto-repaired.",
+      "panelTypes": "graph",
+      "yAxisUnit": "none",
+      "query": {
+        "queryType": "builder",
+        "builder": {
+          "queryFormulas": [],
+          "queryData": [
+            {
+              "queryName": "A",
+              "dataSource": "traces",
+              "aggregateOperator": "count",
+              "aggregateAttribute": { "key": "", "type": "", "dataType": "" },
+              "filters": {
+                "op": "AND",
+                "items": [
+                  { "key": { "key": "name", "type": "tag", "dataType": "string" }, "op": "=", "value": "mend.scrape" }
+                ]
+              },
+              "groupBy": [{ "key": "failure_class", "type": "tag", "dataType": "string" }],
+              "expression": "A",
+              "legend": "{{failure_class}}",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5",
+      "title": "MTTR",
+      "description": "Detection to verified re-run. Set only when a repair is measured, never when one is claimed.",
+      "panelTypes": "value",
+      "yAxisUnit": "s",
+      "query": {
+        "queryType": "builder",
+        "builder": {
+          "queryFormulas": [],
+          "queryData": [
+            {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "avg",
+              "aggregateAttribute": { "key": "mend.mttr_seconds", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "avg",
+              "spaceAggregation": "avg",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [],
+              "expression": "A",
+              "legend": "MTTR",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6",
+      "title": "Run duration",
+      "description": "Here to show a healthy-looking run. During a silent failure this panel stays boring, which is the point — nothing a conventional dashboard watches moves at all.",
+      "panelTypes": "graph",
+      "yAxisUnit": "ms",
+      "query": {
+        "queryType": "builder",
+        "builder": {
+          "queryFormulas": [],
+          "queryData": [
+            {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "p95",
+              "aggregateAttribute": { "key": "mend.run_duration_ms", "type": "Histogram", "dataType": "float64" },
+              "timeAggregation": "p95",
+              "spaceAggregation": "p95",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [{ "key": "source.id", "type": "tag", "dataType": "string" }],
+              "expression": "A",
+              "legend": "p95 · {{source.id}}",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

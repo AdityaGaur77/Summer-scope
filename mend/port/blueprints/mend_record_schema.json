@@ -1,0 +1,16 @@
+{
+  "identifier": "mend_record_schema",
+  "title": "Record schema",
+  "icon": "BlankPage",
+  "description": "The JSON Schema a source's records are validated against. Version is bumped by EVOLVE and never by REPAIR — a repair that changes the schema is not a repair.",
+  "schema": {
+    "properties": {
+      "version": { "type": "number", "title": "Version", "default": 1 },
+      "fields": { "type": "array", "title": "Mapped fields", "items": { "type": "string" } },
+      "json_schema": { "type": "object", "title": "JSON Schema", "description": "Contents of contracts/record.schema.json." },
+      "source_of_truth": { "type": "string", "format": "url", "title": "Schema file in git" }
+    },
+    "required": ["version"]
+  },
+  "relations": {}
+}

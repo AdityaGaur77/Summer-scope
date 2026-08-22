@@ -1,0 +1,11 @@
+# mend/ is the Meridian break surface for the Mend project — a deliberately
+# fictional biotech pipeline site. It has nothing to do with SummerScope and
+# must not be served from summerscope.vercel.app, which vercel.json would
+# otherwise do: outputDirectory is ".", so every file in the repo root is
+# published as static output.
+#
+# This only affects deployments rooted at the repo root. Vercel reads
+# .vercelignore from a project's configured Root Directory, so a separate Mend
+# project with Root Directory = mend reads mend/.vercelignore (absent) and
+# deploys normally.
+mend/

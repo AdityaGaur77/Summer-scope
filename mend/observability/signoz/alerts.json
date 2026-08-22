@@ -1,0 +1,128 @@
+{
+  "description": "Three alert rules. Note what is absent: error rate, HTTP status, exception count. A Mend run that returns 200 OK with the right number of rows and a null phase field trips none of those, which is the argument the project is making.",
+  "alerts": [
+    {
+      "alert": "Mend — schema conformance falling",
+      "alertType": "METRIC_BASED_ALERT",
+      "ruleType": "threshold_rule",
+      "description": "Conformance below 0.85 across two consecutive evaluations. This is the sensor for a silent failure: rows keep arriving, they are just wrong. Opens a REPAIR change request in Port.",
+      "severity": "critical",
+      "labels": {
+        "mend_route": "repair",
+        "runbook_url": "https://github.com/<org>/<repo>/blob/main/mend/contracts/telemetry.md#failure_class--route"
+      },
+      "annotations": {
+        "summary": "{{$labels.source_id}} conformance {{$value}} — rows still arriving, fields going null",
+        "action": "Open a REPAIR ChangeRequest per contracts/change-request.schema.json"
+      },
+      "evalWindow": "5m",
+      "frequency": "1m",
+      "condition": {
+        "compositeQuery": {
+          "queryType": "builder",
+          "panelType": "graph",
+          "builderQueries": {
+            "A": {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "min",
+              "aggregateAttribute": { "key": "mend.schema_conformance", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "min",
+              "spaceAggregation": "min",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [{ "key": "source.id", "type": "tag", "dataType": "string" }],
+              "expression": "A",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          }
+        },
+        "op": "4",
+        "target": 0.85,
+        "matchType": "2",
+        "targetUnit": "none"
+      }
+    },
+    {
+      "alert": "Mend — unmapped field appeared",
+      "alertType": "METRIC_BASED_ALERT",
+      "ruleType": "threshold_rule",
+      "description": "The source published a field the record schema does not declare. Nothing is broken. This is a requirement change and it must not route to REPAIR — it opens an EVOLVE change request, which extends the schema, the scraper, the UI and the tests, and opens a PR.",
+      "severity": "info",
+      "labels": { "mend_route": "evolve" },
+      "annotations": {
+        "summary": "{{$labels.source_id}} is publishing {{$labels.field}}, which the schema does not know",
+        "action": "Open an EVOLVE ChangeRequest — extend schema.version, do not patch selectors"
+      },
+      "evalWindow": "5m",
+      "frequency": "1m",
+      "condition": {
+        "compositeQuery": {
+          "queryType": "builder",
+          "panelType": "graph",
+          "builderQueries": {
+            "A": {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "max",
+              "aggregateAttribute": { "key": "mend.unmapped_fields", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "max",
+              "spaceAggregation": "max",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [
+                { "key": "source.id", "type": "tag", "dataType": "string" },
+                { "key": "field", "type": "tag", "dataType": "string" }
+              ],
+              "expression": "A",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          }
+        },
+        "op": "1",
+        "target": 0,
+        "matchType": "1",
+        "targetUnit": "none"
+      }
+    },
+    {
+      "alert": "Mend — source returned no rows",
+      "alertType": "METRIC_BASED_ALERT",
+      "ruleType": "threshold_rule",
+      "description": "The loud failure. Present as a guard so nobody can say we only handle the subtle case — but this is explicitly not the demo path, because everyone's break-and-heal demo already fails this way.",
+      "severity": "critical",
+      "labels": { "mend_route": "repair" },
+      "annotations": {
+        "summary": "{{$labels.source_id}} returned 0 rows",
+        "action": "failure_class=empty_result — check fetch before touching selectors"
+      },
+      "evalWindow": "5m",
+      "frequency": "1m",
+      "condition": {
+        "compositeQuery": {
+          "queryType": "builder",
+          "panelType": "graph",
+          "builderQueries": {
+            "A": {
+              "queryName": "A",
+              "dataSource": "metrics",
+              "aggregateOperator": "max",
+              "aggregateAttribute": { "key": "mend.rows_returned", "type": "Gauge", "dataType": "float64" },
+              "timeAggregation": "max",
+              "spaceAggregation": "max",
+              "filters": { "op": "AND", "items": [] },
+              "groupBy": [{ "key": "source.id", "type": "tag", "dataType": "string" }],
+              "expression": "A",
+              "stepInterval": 60,
+              "disabled": false
+            }
+          }
+        },
+        "op": "3",
+        "target": 1,
+        "matchType": "1",
+        "targetUnit": "none"
+      }
+    }
+  ]
+}
