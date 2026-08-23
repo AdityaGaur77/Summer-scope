@@ -1,0 +1,44 @@
+{
+  "_readme": "Copy to identity.json (gitignored) and fill in. Only add a field if you want the agent hunting for it -- every value here is a search term, so listing your full address means that address gets typed into a search engine. Start with name/city/email/handles; add phone and address once the matching looks right to you.",
+
+  "consent": {
+    "selfScan": true,
+    "subjectIsMe": true,
+    "acknowledgedAt": "2026-01-01",
+    "note": "This identity is my own. I am scanning for my own exposure in order to get it removed."
+  },
+
+  "subject": {
+    "names": ["Jane Q. Public", "Jane Public"],
+    "aliases": ["janeqp"],
+    "usernames": {
+      "github": ["janeqp"],
+      "twitter": ["janeqp"],
+      "reddit": ["jane_q_public"]
+    },
+    "emails": ["jane@example.com"],
+    "phones": ["+1 555 010 1234"],
+    "addresses": [],
+    "locations": [{ "city": "Springfield", "region": "IL", "country": "US" }],
+    "employers": ["Example Corp"],
+    "schools": ["Springfield High School"],
+    "domains": ["janepublic.example"],
+    "birthYear": null
+  },
+
+  "contact": {
+    "email": "jane@example.com",
+    "note": "Reply address used in drafted removal requests. Consider a dedicated alias."
+  },
+
+  "jurisdiction": "US-CA",
+
+  "scan": {
+    "channels": ["web", "brokers", "github"],
+    "maxResultsPerQuery": 8,
+    "maxPagesPerRun": 60,
+    "minConfidence": 0.45,
+    "minGapMs": 1500,
+    "concurrency": 2
+  }
+}

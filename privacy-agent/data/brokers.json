@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "note": "Seed registry. Opt-out routes change often, so treat every entry as a lead, not gospel: `node privacy-agent/agent.mjs registry --verify` probes each URL live and stamps `probe` with what it actually got back. searchUrl patterns marked \"pattern-guess\" are inferred from public URL shapes and are the first thing to break.",
+  "entries": [
+    {
+      "id": "truepeoplesearch",
+      "name": "TruePeopleSearch",
+      "host": "truepeoplesearch.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "age"],
+      "searchUrl": "https://www.truepeoplesearch.com/results?name={nameQuery}&citystatezip={city}%2C+{state}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.truepeoplesearch.com/removal",
+        "method": "web-form",
+        "requires": ["listing URL", "email address for confirmation"],
+        "notes": "Find your record first, paste its URL into the removal form, confirm from the emailed link."
+      }
+    },
+    {
+      "id": "fastpeoplesearch",
+      "name": "FastPeopleSearch",
+      "host": "fastpeoplesearch.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "age"],
+      "searchUrl": "https://www.fastpeoplesearch.com/name/{firstLower}-{lastLower}_{citySlug}-{stateSlug}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.fastpeoplesearch.com/removal",
+        "method": "web-form",
+        "requires": ["listing URL", "email address for confirmation"],
+        "notes": "Same operator family as TruePeopleSearch; removing from one does not remove from the other."
+      }
+    },
+    {
+      "id": "spokeo",
+      "name": "Spokeo",
+      "host": "spokeo.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "email_address", "relatives", "age"],
+      "searchUrl": "https://www.spokeo.com/{first}-{last}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.spokeo.com/optout",
+        "method": "web-form",
+        "requires": ["profile URL", "email address for confirmation"],
+        "notes": "Spokeo rebuilds profiles from upstream feeds; re-check every few months."
+      }
+    },
+    {
+      "id": "whitepages",
+      "name": "Whitepages",
+      "host": "whitepages.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "age"],
+      "searchUrl": "https://www.whitepages.com/name/{first}-{last}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.whitepages.com/suppression-requests",
+        "method": "web-form",
+        "requires": ["listing URL", "phone number for verification"],
+        "notes": "Verification call or text to the number on the listing is common."
+      }
+    },
+    {
+      "id": "radaris",
+      "name": "Radaris",
+      "host": "radaris.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "employment"],
+      "searchUrl": "https://radaris.com/p/{first}/{last}/",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://radaris.com/control/privacy",
+        "method": "account-claim",
+        "requires": ["listing URL", "account or phone verification"],
+        "notes": "Radaris asks you to claim the profile before it will hide it."
+      }
+    },
+    {
+      "id": "thatsthem",
+      "name": "ThatsThem",
+      "host": "thatsthem.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "email_address"],
+      "searchUrl": "https://thatsthem.com/name/{first}-{last}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://thatsthem.com/optout",
+        "method": "web-form",
+        "requires": ["listing URL or email address"],
+        "notes": "Also indexes email addresses and IPs, not just names."
+      }
+    },
+    {
+      "id": "nuwber",
+      "name": "Nuwber",
+      "host": "nuwber.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "age"],
+      "searchUrl": "https://nuwber.com/search?name={nameQuery}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://nuwber.com/removal/link",
+        "method": "web-form",
+        "requires": ["listing URL", "email address for confirmation"],
+        "notes": null
+      }
+    },
+    {
+      "id": "cyberbackgroundchecks",
+      "name": "CyberBackgroundChecks",
+      "host": "cyberbackgroundchecks.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives"],
+      "searchUrl": "https://www.cyberbackgroundchecks.com/people/{firstLower}-{lastLower}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.cyberbackgroundchecks.com/removal",
+        "method": "web-form",
+        "requires": ["listing URL", "email address for confirmation"],
+        "notes": null
+      }
+    },
+    {
+      "id": "searchpeoplefree",
+      "name": "SearchPeopleFree",
+      "host": "searchpeoplefree.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives"],
+      "searchUrl": "https://www.searchpeoplefree.com/find/{firstLower}-{lastLower}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.searchpeoplefree.com/opt-out",
+        "method": "web-form",
+        "requires": ["listing URL", "email address for confirmation"],
+        "notes": null
+      }
+    },
+    {
+      "id": "usphonebook",
+      "name": "USPhoneBook",
+      "host": "usphonebook.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["phone_number", "street_address"],
+      "searchUrl": "https://www.usphonebook.com/{firstLower}-{lastLower}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.usphonebook.com/opt-out",
+        "method": "web-form",
+        "requires": ["listing URL", "phone verification"],
+        "notes": null
+      }
+    },
+    {
+      "id": "clustrmaps",
+      "name": "ClustrMaps",
+      "host": "clustrmaps.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "relatives"],
+      "searchUrl": "https://clustrmaps.com/persons/{first}-{last}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://clustrmaps.com/bl/opt-out",
+        "method": "web-form",
+        "requires": ["listing URL"],
+        "notes": "Publishes address history keyed to residences, so a removal is per-address."
+      }
+    },
+    {
+      "id": "peekyou",
+      "name": "PeekYou",
+      "host": "peekyou.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["email_address", "employment", "photo"],
+      "searchUrl": "https://www.peekyou.com/{firstLower}_{lastLower}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://www.peekyou.com/about/contact/optout/",
+        "method": "web-form",
+        "requires": ["profile URL"],
+        "notes": "Aggregates social profiles rather than public records."
+      }
+    },
+    {
+      "id": "peoplefinders",
+      "name": "PeopleFinders",
+      "host": "peoplefinders.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "public_records"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://www.peoplefinders.com/opt-out",
+        "method": "web-form",
+        "requires": ["name", "listing selection", "email address"],
+        "notes": "Search is paywalled; use the opt-out flow's own search to locate your record."
+      }
+    },
+    {
+      "id": "beenverified",
+      "name": "BeenVerified",
+      "host": "beenverified.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "public_records"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://www.beenverified.com/app/optout/search",
+        "method": "web-form",
+        "requires": ["name", "listing selection", "email address for confirmation"],
+        "notes": null
+      }
+    },
+    {
+      "id": "intelius",
+      "name": "Intelius",
+      "host": "intelius.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "relatives", "public_records"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://www.intelius.com/opt-out/",
+        "method": "web-form",
+        "requires": ["name", "listing selection", "email address"],
+        "notes": "Part of the PeopleConnect family (Intelius, US Search, ZabaSearch, Classmates); a suppression there may cover siblings."
+      }
+    },
+    {
+      "id": "instantcheckmate",
+      "name": "Instant Checkmate",
+      "host": "instantcheckmate.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "public_records"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://www.instantcheckmate.com/opt-out/",
+        "method": "web-form",
+        "requires": ["name", "listing selection", "email address"],
+        "notes": null
+      }
+    },
+    {
+      "id": "socialcatfish",
+      "name": "Social Catfish",
+      "host": "socialcatfish.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["photo", "email_address", "employment"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://socialcatfish.com/opt-out/",
+        "method": "web-form",
+        "requires": ["profile URL or email address"],
+        "notes": "Reverse-image and reverse-email search; worth checking if your photo is the exposure."
+      }
+    },
+    {
+      "id": "mylife",
+      "name": "MyLife",
+      "host": "mylife.com",
+      "type": "broker",
+      "region": "US",
+      "exposes": ["street_address", "phone_number", "age", "public_records"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://www.mylife.com/privacy-policy/",
+        "method": "email",
+        "email": "privacy@mylife.com",
+        "requires": ["full name", "listing URL", "written deletion request"],
+        "notes": "MyLife publishes a \"reputation score\"; the written request route is more reliable than the form."
+      }
+    },
+    {
+      "id": "acxiom",
+      "name": "Acxiom",
+      "host": "acxiom.com",
+      "type": "data-aggregator",
+      "region": "US",
+      "exposes": ["marketing profile"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://isapps.acxiom.com/optout/optout.aspx",
+        "method": "web-form",
+        "requires": ["name", "address", "email"],
+        "notes": "Upstream supplier: opting out here reduces what smaller brokers can re-import later."
+      }
+    },
+    {
+      "id": "lexisnexis",
+      "name": "LexisNexis",
+      "host": "lexisnexis.com",
+      "type": "data-aggregator",
+      "region": "US",
+      "exposes": ["public_records", "street_address"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://optout.lexisnexis.com/",
+        "method": "web-form",
+        "requires": ["identity verification", "sometimes ID document"],
+        "notes": "Suppression is narrow by statute; expect to qualify under a specific category."
+      }
+    },
+    {
+      "id": "google-results-about-you",
+      "name": "Google \"Results about you\"",
+      "host": "google.com",
+      "type": "index",
+      "region": "global",
+      "exposes": ["search visibility"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://myactivity.google.com/results-about-you",
+        "method": "web-form",
+        "requires": ["Google account", "the URLs to report"],
+        "notes": "De-indexes results containing your contact details. Removes the path to the page, not the page: do the source removal too."
+      }
+    },
+    {
+      "id": "bing-content-removal",
+      "name": "Bing content removal",
+      "host": "bing.com",
+      "type": "index",
+      "region": "global",
+      "exposes": ["search visibility"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://www.bing.com/webmasters/tools/contentremoval",
+        "method": "web-form",
+        "requires": ["the URLs to report"],
+        "notes": "Use after the source page is down, to flush the cached copy."
+      }
+    },
+    {
+      "id": "archive-org",
+      "name": "Internet Archive (Wayback Machine)",
+      "host": "web.archive.org",
+      "type": "archive",
+      "region": "global",
+      "exposes": ["historical copies"],
+      "searchUrl": "https://web.archive.org/web/*/{nameQuery}",
+      "searchUrlConfidence": "pattern-guess",
+      "optOut": {
+        "url": "https://help.archive.org/help/how-do-i-request-to-remove-something-from-the-wayback-machine/",
+        "method": "email",
+        "email": "info@archive.org",
+        "requires": ["the archived URLs", "why the content is personal data"],
+        "notes": "Handled case by case. Worth doing only after the live page is gone, or the crawler re-adds it."
+      }
+    },
+    {
+      "id": "haveibeenpwned",
+      "name": "Have I Been Pwned",
+      "host": "haveibeenpwned.com",
+      "type": "breach-index",
+      "region": "global",
+      "exposes": ["breach membership"],
+      "searchUrl": null,
+      "optOut": {
+        "url": "https://haveibeenpwned.com/",
+        "method": "manual-check",
+        "requires": ["your email address"],
+        "notes": "Not a removal target -- a check. If your address appears in a breach, that dump is where brokers keep re-sourcing you, so rotate the password and treat the exposure as permanent."
+      }
+    }
+  ]
+}

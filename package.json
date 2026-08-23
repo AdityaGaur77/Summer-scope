@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "npx serve .",
-    "roll-cycle": "node scripts/roll-cycle.mjs"
+    "roll-cycle": "node scripts/roll-cycle.mjs",
+    "privacy": "node privacy-agent/agent.mjs",
+    "privacy:scan": "node privacy-agent/agent.mjs scan",
+    "privacy:report": "node privacy-agent/agent.mjs report",
+    "privacy:test": "node --test privacy-agent/test/agent.test.mjs privacy-agent/test/integration.test.mjs"
   },
   "devDependencies": {
     "serve": "^14.2.0"

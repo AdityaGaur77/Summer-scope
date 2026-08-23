@@ -3,3 +3,7 @@ node_modules/
 .env.local
 .DS_Store
 *.log
+
+# privacy-agent: the subject file and everything a scan produces
+privacy-agent/identity.json
+privacy-agent/out/

@@ -30,6 +30,22 @@ summerscope/
 
 ---
 
+## Also in this repo: `privacy-agent/`
+
+A self-contained CLI agent, unrelated to the program database. It searches the
+internet for **your own** personal data, ranks how badly each page exposes you,
+drafts the removal requests, and re-checks later to confirm the takedown held.
+Internet access is routed through [Agent Reach](https://github.com/Panniantong/agent-reach).
+
+```bash
+node privacy-agent/agent.mjs init
+node privacy-agent/agent.mjs scan --dry-run
+```
+
+See [privacy-agent/README.md](privacy-agent/README.md).
+
+---
+
 ## The program data model
 
 ### Status is computed, never stored
