@@ -269,6 +269,17 @@ Each of these was over- or under-counting real visits:
 | Active time stopped at the first tab switch and never resumed | resumes, and `/api/analytics` keeps the **longest** duration per session instead of averaging the partials |
 | Visitors were counted from pageview rows alone | counted across every event type — a pageview can be lost while the same visit's clicks and scrolls arrive |
 
+`/api/collect` reaches the function through a rewrite, and a rewrite is a single
+point of failure for every number on the dashboard: if it is ever missing or
+misconfigured the response is a 404, the browser reports nothing, and tracking
+stops site-wide with no symptom at all. So the first event of each page goes by
+`fetch` rather than `sendBeacon` — a beacon is fire-and-forget and cannot report
+a status — and a 404 or 405 switches the session to `/api/track` and re-sends.
+Only those two codes trigger it: they mean the event was definitively not
+recorded, so the re-send is a recovery. Anything else, a rejected promise
+included, is left alone, because a request that may have been recorded must
+never be sent twice.
+
 The bot filter is at ingest, not at read time, so the numbers are right
 retroactively too — but only for events recorded after it went in. The dashboard
 says so under the lifetime totals rather than leaving it implied.

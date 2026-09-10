@@ -36,7 +36,10 @@
   if (window.__ssInsights) return;
   window.__ssInsights = true;
 
+  // /api/collect is a rewrite in vercel.json; api/track.js is the function's
+  // own path and answers there too.
   var ENDPOINT = '/api/collect';
+  var FALLBACK = '/api/track';
   var pageStart = Date.now();
 
   // Automation is not an audience. navigator.webdriver is set by Selenium,
@@ -163,22 +166,59 @@
     } catch (_) {}
   }
 
+  /**
+   * The first event of a page goes by fetch rather than beacon, so its status
+   * code is visible.
+   *
+   * The endpoint reaches the function through a rewrite, and a rewrite is a
+   * single point of failure for every number on the dashboard: if it is ever
+   * missing or misconfigured the response is a 404, the browser reports nothing,
+   * and tracking stops site-wide with no symptom at all. A beacon cannot tell us
+   * this — it is fire-and-forget by design. A 404 or 405 means the event was
+   * definitively not recorded, so re-sending it to the function's own path is a
+   * recovery, not a double count. Any other outcome, including a rejected
+   * promise, is left alone: a request that may have been recorded must never be
+   * sent twice.
+   */
+  function probe(payload) {
+    try {
+      fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true,
+        credentials: 'omit',
+      }).then(function (res) {
+        if (res && (res.status === 404 || res.status === 405)) {
+          ENDPOINT = FALLBACK;
+          post(payload);
+        }
+      }).catch(function () {});
+    } catch (_) {}
+  }
+
   // Events raised before the page is activated (a prerender) are held here and
   // flushed once a human actually looks at it.
   var queue = [];
   var live = false;
+  var probed = false;
 
   function send(data) {
     try {
       var payload = JSON.stringify(Object.assign(base(), data));
       if (!live) { queue.push(payload); return; }
-      post(payload);
+      dispatch(payload);
     } catch (_) { /* never break the page for a metric */ }
+  }
+
+  function dispatch(payload) {
+    if (!probed) { probed = true; probe(payload); return; }
+    post(payload);
   }
 
   function flush() {
     live = true;
-    while (queue.length) post(queue.shift());
+    while (queue.length) dispatch(queue.shift());
   }
 
   // ── 1. PAGEVIEW ───────────────────────────────────────────────────────────
