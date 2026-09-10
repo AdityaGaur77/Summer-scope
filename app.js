@@ -344,7 +344,10 @@
       setText('mn-programs-count', P.length);
       setText('mn-events-count', E.length);
       setText('tc', P.length);
-      setText('free-count', P.filter(function (p) { return p.costN === 0; }).length);
+      // Counted from the cost band, which is the authoritative field. Counting
+      // costN === 0 included every program whose cost simply is not a single
+      // number, and claimed 60 free programs where there are 45.
+      setText('free-count', P.filter(function (p) { return p.costB === 'Free'; }).length);
 
       // Count the subject areas rather than hardcoding "8" — the file has
       // nine, and Arts had no filter checkbox at all until this rewrite.
@@ -427,8 +430,18 @@
       open: function (a, b) { return rank(a) - rank(b) || b.prestige - a.prestige; },
       deadline: function (a, b) { return rank(a) - rank(b) || a.dlt - b.dlt; },
       'deadline-desc': function (a, b) { return rank(a) - rank(b) || b.dlt - a.dlt; },
-      'cost-asc': function (a, b) { return a.costN - b.costN || byName(a, b); },
-      'cost-desc': function (a, b) { return b.costN - a.costN || byName(a, b); },
+      // A null costN is "varies", not "free": it goes last whichever way the
+      // sort runs, instead of leading a low-to-high list at an implied $0.
+      'cost-asc': function (a, b) {
+        if ((a.costN == null) !== (b.costN == null)) return a.costN == null ? 1 : -1;
+        if (a.costN == null) return byName(a, b);
+        return a.costN - b.costN || byName(a, b);
+      },
+      'cost-desc': function (a, b) {
+        if ((a.costN == null) !== (b.costN == null)) return a.costN == null ? 1 : -1;
+        if (a.costN == null) return byName(a, b);
+        return b.costN - a.costN || byName(a, b);
+      },
       newest: function (a, b) {
         return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0)
           || added(b).localeCompare(added(a)) || byName(a, b);
@@ -596,7 +609,7 @@
             + (p.isNew ? '<span class="tag tnew">New</span>' : '')
           + '</div>'
         + '</div>'
-        + '<p class="cdesc">' + esc(p.desc.substring(0, 130)) + '…</p>'
+        + '<p class="cdesc">' + esc(p.desc.length > 130 ? p.desc.slice(0, 130) + '…' : p.desc) + '</p>'
         + '<div class="tags">'
           + p.cat.map(function (c) { return '<span class="tag tc">' + esc(c) + '</span>'; }).join('')
           + '<span class="tag ' + fmtClass + '">' + esc(p.fmt) + '</span>'
@@ -610,7 +623,7 @@
             + p.grades.map(function (x) { return x + 'th'; }).join(', ') + '</div></div>'
         + '</div>'
         + '<div class="cfoot">'
-          + (p.costN === 0
+          + (p.costB === 'Free'
               ? '<span class="cv cvf">Free / Full Aid</span>'
               : '<span class="cv">' + esc(p.cost) + '</span>')
           + (link ? '<button type="button" class="abtn" data-visit="' + esc(link) + '">Visit Site →</button>' : '')
@@ -667,7 +680,9 @@
     var boxes = [
       ['Application Deadline', esc(p.dl) + (st === 'closed' ? ' (closed)' : '')],
       ['Program Dates', esc(p.dates)],
-      ['Cost', esc(p.cost)],
+      ['Cost', p.costB === 'Free'
+        ? '<span style="color:var(--green)">' + esc(p.cost) + '</span>'
+        : esc(p.cost)],
       ['Eligible Grades', p.grades.map(function (x) { return x + 'th'; }).join(', ')],
       ['Where', esc(p.loc)],
       ['Format', esc(p.fmt)],
