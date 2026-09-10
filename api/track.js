@@ -1,5 +1,11 @@
 // SummerScope Analytics — Vercel Serverless Function
-// Receives analytics events from the browser and writes them to Supabase.
+//
+// Receives visit events from the browser and writes them to Supabase.
+// Reached at BOTH /api/track and /api/collect — the second is a rewrite in
+// vercel.json, and it is the one the browser actually calls, because request
+// paths containing "track" are matched by the blocklists that ship with uBlock
+// Origin, Brave and Safari. See the header of ss-insights.js.
+//
 // Requires env var: SUPABASE_SERVICE_KEY
 
 import { SUPABASE_BASE, authHeaders } from './_supabase.js';
@@ -9,6 +15,63 @@ const EVENTS_URL = `${SUPABASE_BASE}/events`;
 // Only event types the tracker actually emits are accepted. Without this the
 // endpoint is an open write to the analytics table for anyone who finds it.
 const ALLOWED_EVENTS = new Set(['pageview', 'scroll', 'session_end', 'click', 'search']);
+
+/**
+ * Crawlers, previewers and monitors are not visitors.
+ *
+ * Nothing filtered these before, so every Googlebot pass, every uptime check and
+ * every Slack/Discord/WhatsApp link unfurl was one more "unique visitor" in the
+ * dashboard — on a low-traffic site that is not a rounding error, it is most of
+ * the traffic. Dropping them at ingest keeps the events table itself clean, so
+ * the numbers are right retroactively as well as going forward.
+ *
+ * The list is a generic pass for anything that calls itself a bot, crawler or
+ * spider, plus the named agents that do not.
+ *
+ * The terms are deliberately narrow. Several search companies also ship a real
+ * browser, and their readers are exactly this site's audience — `duckduckgo`
+ * would have dropped every DuckDuckGo Browser visit, `pinterest` every visit
+ * from the Pinterest in-app browser, and a bare `search` or `preview` catches
+ * things nobody can predict. Where the crawler's own name already contains
+ * "bot" or "spider", the generic term is enough and the brand is left out.
+ */
+const BOT_UA = new RegExp([
+  'bot\\b', 'bot/', 'crawl', 'spider', 'slurp', 'monitor', 'scrap',
+  'headless', 'phantom', 'selenium', 'puppeteer', 'playwright', 'lighthouse',
+  'curl/', 'wget', 'python-requests', 'httpclient', 'okhttp', 'axios', 'go-http',
+  'java/', 'libwww', 'apache-httpclient', 'node-fetch', 'got \\(', 'guzzle',
+  'unfurl', 'embedly', 'quora link', 'outbrain', 'validator', 'archiver',
+  'facebookexternalhit', 'facebookcatalog', 'whatsapp/', 'skypeuripreview',
+  'vkshare', 'bingpreview', 'ahrefs', 'semrush', 'mj12', 'seznam',
+  'gtmetrix', 'pingdom', 'uptimerobot', 'pagespeed', 'dataprovider', 'siteaudit',
+].join('|'), 'i');
+
+/** A request with no user agent at all is never a browser either. */
+function isBot(ua) {
+  if (!ua || ua.length < 12) return true;
+  return BOT_UA.test(ua);
+}
+
+/**
+ * Reject writes posted from somewhere other than this deployment.
+ *
+ * The endpoint used to answer `Access-Control-Allow-Origin: *`, which is an open
+ * invitation to inflate someone else's numbers from a browser console. Requests
+ * that carry no Origin at all are still accepted: some browsers omit it on
+ * sendBeacon, and dropping those would lose real visits to fix a hypothetical.
+ */
+function isForeignOrigin(req) {
+  const origin = req.headers.origin;
+  if (!origin) return false;
+  const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(':')[0];
+  if (!host) return false;
+  let originHost;
+  try { originHost = new URL(origin).hostname; } catch { return true; }
+  if (originHost === 'localhost' || originHost === '127.0.0.1') return false;
+  const bare = host.replace(/^www\./, '');
+  return !(originHost === host || originHost === 'www.' + bare
+           || originHost === bare || originHost.endsWith('.' + bare));
+}
 
 /** Keep a single metadata blob from ballooning the row. */
 function safeMetadata(m) {
@@ -25,12 +88,18 @@ function safeMetadata(m) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // The tracker is same-origin, so there is nothing to grant cross-origin.
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Cache-Control', 'no-store');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
+
+  // Filtered requests get 204, not an error: the browser must not retry, and a
+  // crawler should see nothing interesting here.
+  if (isBot(req.headers['user-agent'])) return res.status(204).end();
+  if (isForeignOrigin(req)) return res.status(204).end();
 
   const key = process.env.SUPABASE_SERVICE_KEY;
   if (!key) {

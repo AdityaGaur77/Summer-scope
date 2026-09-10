@@ -142,16 +142,37 @@ export default async function handler(req, res) {
     const clickEvts  = events.filter(e => e.event_type === 'click');
     const searchEvts = events.filter(e => e.event_type === 'search');
 
-    const visitorSet = new Set(pageviews.map(e => e.visitor_id).filter(Boolean));
-    const sessionSet = new Set(pageviews.map(e => e.session_id).filter(Boolean));
+    // Visitors and sessions are counted across EVERY event type, not just
+    // pageviews. A pageview can be lost — a beacon dropped as the tab closes, a
+    // blocker that catches the first request of the page but not a later one —
+    // while the same visitor's clicks and scrolls arrive. Someone who left any
+    // trace at all visited, so counting only pageview rows undercounts people.
+    const visitorSet = new Set(events.map(e => e.visitor_id).filter(Boolean));
+    const sessionSet = new Set(events.map(e => e.session_id).filter(Boolean));
+    // Sessions that produced a pageview — the denominator for anything measured
+    // per page rather than per visit.
+    const pvSessionSet = new Set(pageviews.map(e => e.session_id).filter(Boolean));
 
-    // Average session duration, ignoring implausible outliers.
-    const durations = sessionEnd.map(e => e.duration_ms).filter(v => v > 0 && v < 3600000);
+    // One duration per session, keeping the longest.
+    //
+    // The tracker now reports active time again when a reader comes back to the
+    // tab after switching away, so a single visit can produce several
+    // session_end rows: 20s, then 90s, then 240s. Averaging those rows would
+    // drag every engaged visit down towards its own first partial reading. The
+    // last and largest is the one that describes the visit.
+    const perSession = new Map();
+    for (const e of sessionEnd) {
+      const ms = Number(e.duration_ms);
+      if (!(ms > 0) || ms >= 3600000) continue;      // implausible outliers out
+      const key = e.session_id || ('anon:' + e.created_at);
+      perSession.set(key, Math.max(perSession.get(key) || 0, ms));
+    }
+    const durations = [...perSession.values()].sort((a, b) => a - b);
     const avgDurationSec = durations.length
       ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length / 1000)
       : 0;
     const medianDurationSec = durations.length
-      ? Math.round(durations.slice().sort((a, b) => a - b)[Math.floor(durations.length / 2)] / 1000)
+      ? Math.round(durations[Math.floor(durations.length / 2)] / 1000)
       : 0;
 
     // Returning vs new, counted by VISITOR not by pageview. The old version
@@ -180,14 +201,15 @@ export default async function handler(req, res) {
       pageviewsByDay.push({ date: d, count: byDayMap[d] || 0 });
     }
 
-    // Engagement
-    const pagesPerSession = sessionSet.size
-      ? Math.round((pageviews.length / sessionSet.size) * 100) / 100
+    // Engagement. Denominated in sessions that produced a pageview: a session
+    // known only from a click cannot have a pages-per-session or a bounce.
+    const pagesPerSession = pvSessionSet.size
+      ? Math.round((pageviews.length / pvSessionSet.size) * 100) / 100
       : 0;
     const sessionPageCounts = {};
     for (const e of pageviews) if (e.session_id) sessionPageCounts[e.session_id] = (sessionPageCounts[e.session_id] || 0) + 1;
     const singlePage = Object.values(sessionPageCounts).filter(n => n === 1).length;
-    const bounceRate = sessionSet.size ? Math.round((singlePage / sessionSet.size) * 1000) / 10 : 0;
+    const bounceRate = pvSessionSet.size ? Math.round((singlePage / pvSessionSet.size) * 1000) / 10 : 0;
 
     // When people visit — useful for scheduling posts.
     const byHour = Array.from({ length: 24 }, (_, h) => ({ label: String(h).padStart(2, '0') + ':00', count: 0 }));
@@ -208,7 +230,7 @@ export default async function handler(req, res) {
       return {
         label: m + '%',
         count: sessions.size,
-        pct: sessionSet.size ? Math.round((sessions.size / sessionSet.size) * 1000) / 10 : 0,
+        pct: pvSessionSet.size ? Math.round((sessions.size / pvSessionSet.size) * 1000) / 10 : 0,
       };
     });
 
@@ -246,6 +268,12 @@ export default async function handler(req, res) {
         pages_per_session: pagesPerSession,
         bounce_rate_pct: bounceRate,
         total_events: events.length,
+        // Sessions that produced at least one pageview. The denominator behind
+        // pages_per_session, bounce_rate_pct and every scroll-depth share.
+        sessions_with_pageview: pvSessionSet.size,
+        // Visits whose duration could be measured at all — an average over 3
+        // sessions and one over 300 deserve different amounts of trust.
+        measured_sessions: durations.length,
       },
 
       pageviews_by_day: pageviewsByDay,
