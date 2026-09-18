@@ -65,7 +65,7 @@
     var light = theme === 'light';
     document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', light ? '#0D1926' : '#0E1725');
+    if (meta) meta.setAttribute('content', light ? '#0D1926' : '#252220');
     var btn = $('theme-btn');
     if (btn) {
       btn.textContent = light ? '☾' : '☀';

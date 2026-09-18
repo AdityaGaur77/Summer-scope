@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SummerScope — Analytics</title>
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#0E1725">
+<meta name="theme-color" content="#252220">
 <!-- Same key as the site, applied before first paint for the same reason. -->
 <script>
   try { if (localStorage.getItem('_ss_theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
@@ -20,10 +20,11 @@
    both run through the dataviz validator against the surface they actually sit
    on. Dark is the default here, as it is on the site.
 
-   DARK, categorical, surface #121D2E — the same eight hues stepped for a dark
+   DARK, categorical, surface #2A2725 — the same eight hues stepped for a dark
    ground: lightness band PASS · chroma floor PASS · CVD separation PASS (worst
    adjacent #c98500↔#199e70 ΔE 8.4 protan) · normal-vision floor PASS (worst
-   19.3) · contrast PASS (all eight ≥ 3:1).
+   19.3) · contrast PASS (all eight ≥ 3:1). Re-validated when the surface moved
+   from navy to warm neutral; the eight series colours needed no change.
 
    LIGHT, categorical, surface #ffffff — unchanged: CVD PASS (worst adjacent
    ΔE 9.1 protan) · normal-vision PASS (19.6) · contrast WARN on aqua, yellow
@@ -32,7 +33,7 @@
 
    The ordinal ramp is one blue hue in both modes, running light→dark on the
    light surface and dark→light on the dark one, each validated with --ordinal
-   (light end 2.11:1 light, 2.09:1 dark).
+   (nearest-step contrast 2.11:1 light, 2.75:1 dark).
 
    Slot ORDER is the CVD-safety mechanism, so the dark steps keep the light
    ordering exactly — the same hue stays --s1 in both modes, which is what
@@ -40,17 +41,21 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{
   color-scheme:dark;
-  --surface:#121D2E; --bg:#0A111B; --navy:#0E1725; --raised:#182740;
-  --ink:#E9EEF6; --ink-2:#B7C3D4; --ink-3:#8195AD;
-  --line:#233247; --grid:#1D2B3F;
+  /* Warm neutral, matching the site — see the palette note at the top of
+     styles.css for why the navy scale went. */
+  --surface:#2A2725; --bg:#1B1916; --navy:#252220; --raised:#33312E;
+  --ink:#DCDAD8; --ink-2:#AAA7A4; --ink-3:#84817E;
+  --line:#423F3C; --grid:#332F2C;
 
   --s1:#d95926; --s2:#3987e5; --s3:#199e70; --s4:#c98500;
   --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
 
-  /* ordinal ramp — one hue, dark→light on a dark ground */
-  --o1:#184f95; --o2:#256abf; --o3:#3987e5; --o4:#86b6ef;
+  /* Ordinal ramp — one hue, dark→light on a dark ground. Re-stepped when the
+     surface lightened: the old dark end (#184f95) fell to 1.83:1 against it,
+     under the 2:1 floor an ordinal ramp's nearest step has to clear. */
+  --o1:#256abf; --o2:#3987e5; --o3:#6da7ec; --o4:#9ec5f4;
 
-  --banner-bg:#3A2E0B; --banner-bd:#5B4A16; --banner-fg:#FDE68A;
+  --banner-bg:#3A3220; --banner-bd:#54492F; --banner-fg:#DEC48A;
   --gutter:1rem;
 }
 :root[data-theme="light"]{
@@ -615,7 +620,7 @@ function applyTheme(theme) {
   btn.textContent = light ? '☾' : '☀';
   btn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', light ? '#0D1926' : '#0E1725');
+  if (meta) meta.setAttribute('content', light ? '#0D1926' : '#252220');
 }
 function currentTheme() {
   try { return localStorage.getItem('_ss_theme') === 'light' ? 'light' : 'dark'; } catch (_) { return 'dark'; }
