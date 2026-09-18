@@ -19,54 +19,83 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
+/* ── THE DARK PALETTE ─────────────────────────────────────────────────────────
+   Rebuilt after the first attempt read as a generic dark dashboard and was
+   tiring to read. Two measured faults, both fixed here:
+
+   1. NEAR-WHITE ON NEAR-BLACK. #E9EEF6 on #0A111B is 16.3:1. Well past the
+      point where extra contrast stops helping, and far enough past it that
+      light text haloes against the ground — the specific thing that aches
+      after a few minutes. Body text now lands 9–12.6:1 on every surface it
+      actually sits on: still crisp, no glare.
+
+   2. IT WAS NOT GREY, IT WAS NAVY. Every "neutral" ran hue 257° at chroma up
+      to 0.051 — a blue scale wearing grey's name, which is most of why it
+      looked machine-made. The greys are now chroma 0.006 at hue 70°: a warm
+      neutral that belongs with the light theme's cream and terracotta, and
+      reads like a dimmed room rather than a console.
+
+   Everything below is generated perceptually in OKLCH, then verified: body and
+   secondary text contrast, accent and status colours on both grounds, ink on
+   the accent fill, every tag chip against its own label AND against the card
+   it sits on, and a real ΔL step between every pair of surfaces that share an
+   edge. Adjust a value and re-check the whole set — these numbers hold each
+   other up.
+   ───────────────────────────────────────────────────────────────────────── */
 :root{
   color-scheme:dark;
 
-  --bg:#0A111B;
-  --bg-2:#0E1725;          /* nav + hero + footer ground */
-  --card:#121D2E;
-  --card-2:#182740;        /* raised surface inside a card */
-  --text:#E9EEF6;
-  --muted:#94A3B8;
-  --faint:#64748B;
-  --accent:#F08A5D;
-  --accent-2:#F5A57F;
-  --accent-ink:#20100A;    /* text on an accent fill */
-  --border:#233247;
-  --border-2:#2E4160;      /* hover / focus border */
-  --tag-bg:#1B2942;
-  --green:#34D399;
-  --amber:#FBBF24;
-  --red:#F87171;
+  --bg:#1B1916;            /* page ground — lifted off black to kill the halo */
+  --bg-2:#252220;          /* nav + hero + footer band */
+  --card:#2A2725;
+  --card-2:#33312E;        /* raised surface inside a card */
+  --text:#DCDAD8;          /* deliberately not #fff: 12.6:1 on the page, not 16 */
+  --muted:#AAA7A4;
+  --faint:#84817E;
+  --accent:#DD8E68;        /* the brand terracotta, chroma dropped so it sits
+                              on the ground instead of buzzing against it */
+  --accent-2:#EDA885;
+  --accent-ink:#21120A;    /* text on an accent fill — 7.0:1 */
+  --border:#423F3C;
+  --border-2:#575552;      /* hover / focus border */
+  --tag-bg:#3F3A35;
+  --green:#6FC193;
+  --amber:#E5B46E;
+  --red:#DD817A;
   --shadow:0 6px 24px rgba(0,0,0,.45);
   --shadow-lg:0 20px 50px rgba(0,0,0,.55);
-  --scrim:rgba(3,7,13,.72);
+  --scrim:rgba(10,9,8,.72);
 
   /* On dark, hero/nav sit just above the page ground rather than below it. */
   --on-dark:var(--text);
-  --on-dark-muted:#9FB0C6;
-  --on-dark-faint:#6C7E96;
-  --on-dark-line:rgba(255,255,255,.08);
-  --on-dark-fill:rgba(255,255,255,.06);
-  --on-dark-fill-2:rgba(255,255,255,.12);
+  --on-dark-muted:#AAA7A4;
+  --on-dark-faint:#84817E;
+  --on-dark-line:rgba(255,255,255,.07);
+  --on-dark-fill:rgba(255,255,255,.05);
+  --on-dark-fill-2:rgba(255,255,255,.10);
 
-  /* Tag palette. Each pair is defined once per theme so every badge class
-     below is theme-agnostic. */
-  --t-indigo-bg:#1E2A54;  --t-indigo-fg:#B4C4FF;
-  --t-emerald-bg:#0F3A2E; --t-emerald-fg:#6EE7B7;
-  --t-blue-bg:#12314F;    --t-blue-fg:#93C5FD;
-  --t-violet-bg:#2C2154;  --t-violet-fg:#C4B5FD;
-  --t-yellow-bg:#3A2E0B;  --t-yellow-fg:#FCD34D;
-  --t-red-bg:#42191C;     --t-red-fg:#FCA5A5;
-  --t-fuchsia-bg:#3A1741; --t-fuchsia-fg:#F0ABFC;
-  --t-orange-bg:#3B2210;  --t-orange-fg:#FDBA74;
-  --t-slate-bg:#22303F;   --t-slate-fg:#CBD5E1;
-  --t-sky-bg:#0D3450;     --t-sky-fg:#7DD3FC;
+  /* Tag palette. Ten saturated pills on a dark ground is its own kind of
+     noise, so each hue keeps its identity at a fraction of the chroma: the
+     chip reads as a tinted grey and its label carries the colour. */
+  --t-indigo-bg:#343A50;  --t-indigo-fg:#ADBBF2;
+  --t-emerald-bg:#294233; --t-emerald-fg:#92CEAA;
+  --t-blue-bg:#293D4F;    --t-blue-fg:#92C4EE;
+  --t-violet-bg:#3E364D;  --t-violet-fg:#C5B3EA;
+  --t-yellow-bg:#433A22;  --t-yellow-fg:#D2BC82;
+  --t-red-bg:#4E3330;     --t-red-fg:#EDAAA4;
+  --t-fuchsia-bg:#473345; --t-fuchsia-fg:#DCABD6;
+  --t-orange-bg:#4C3627;  --t-orange-fg:#E7B18C;
+  --t-slate-bg:#3F3A35;   --t-slate-fg:#C2BDB7;
+  --t-sky-bg:#23404B;     --t-sky-fg:#84C9E5;
 
-  --notice-bg:#3A2E0B;    --notice-bd:#5B4A16;  --notice-fg:#FDE68A;
-  --alert-bg:#3A1A1D;     --alert-bd:#5C2A2E;   --alert-fg:#FCA5A5;
-  --warn-bg:#3B2411;      --warn-bd:#5C3A1B;    --warn-fg:#FDBA74;
-  --good-bg:#0F2E24;      --good-bd:#1C5344;    --good-fg:#6EE7B7;
+  --bar-upcoming:#8A6A3A;
+  --bar-rolling:#3E6B80;
+  --bar-inactive:#4A4744;
+
+  --notice-bg:#3A3220;    --notice-bd:#54492F;  --notice-fg:#DEC48A;
+  --alert-bg:#42302D;     --alert-bd:#5E4340;   --alert-fg:#E8A8A2;
+  --warn-bg:#40332A;      --warn-bd:#5C4838;    --warn-fg:#E2B091;
+  --good-bg:#26382E;      --good-bd:#375046;    --good-fg:#8FC9A8;
 
   --sw:238px;              /* sidebar width */
   --nh:56px;               /* nav height */
@@ -116,6 +145,10 @@
   --t-orange-bg:#FFEDD5;  --t-orange-fg:#9A3412;
   --t-slate-bg:#F3F4F6;   --t-slate-fg:#4B5563;
   --t-sky-bg:#E0F2FE;     --t-sky-fg:#075985;
+
+  --bar-upcoming:linear-gradient(90deg,#F59E0B,#FBBF24);
+  --bar-rolling:linear-gradient(90deg,#0EA5E9,#38BDF8);
+  --bar-inactive:linear-gradient(90deg,#64748B,#94A3B8);
 
   --notice-bg:#FFFBEB;    --notice-bd:#FDE68A;  --notice-fg:#92400E;
   --alert-bg:#FEF2F2;     --alert-bd:#FECACA;   --alert-fg:#991B1B;
@@ -363,9 +396,11 @@ nav:not(.mobnav){
 .cbar-open{background:var(--green)}
 .cbar-closed{background:var(--red)}
 .cbar-urgent{background:var(--amber)}
-.cbar-upcoming{background:linear-gradient(90deg,#F59E0B,#FBBF24)}
-.cbar-rolling{background:linear-gradient(90deg,#0EA5E9,#38BDF8)}
-.cbar-inactive{background:linear-gradient(90deg,#64748B,#94A3B8)}
+/* Tokenised, not hardcoded: on dark these were bright gradients tuned for a
+   white page, and three of them across every card is most of the glare. */
+.cbar-upcoming{background:var(--bar-upcoming)}
+.cbar-rolling{background:var(--bar-rolling)}
+.cbar-inactive{background:var(--bar-inactive)}
 .ctop{display:flex;gap:.6rem;align-items:flex-start}
 .clog{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:.8rem;color:#fff;flex-shrink:0;letter-spacing:-.02em;

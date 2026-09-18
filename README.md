@@ -55,6 +55,31 @@ The choice is stored under `_ss_theme` and applied by a small inline script in
 `<head>` **before first paint** — anything later shows dark-mode readers a flash
 of white page. Both pages share the key, so the choice carries between them.
 
+### Why the dark palette looks the way it does
+
+The first version was a navy scale with near-white text, and it was tiring to
+read. Two measurable faults, both fixed:
+
+| | Was | Now |
+|---|---|---|
+| Body contrast | 16.3:1 (#E9EEF6 on #0A111B) | 9–12.6:1 on every surface |
+| "Neutral" greys | hue 257°, chroma up to 0.051 — a blue scale | hue 70°, chroma 0.006 — warm neutral |
+
+Past roughly 13:1 the extra contrast stops buying legibility and light text
+starts to halo against the ground; that glow is what aches after a few minutes.
+And the greys were never grey — a navy scale wearing grey's name is most of why
+it read as machine-made. Warm neutral also belongs with the light theme's cream
+and terracotta, so the two modes are now the same design at two brightnesses.
+
+The palette is generated perceptually in OKLCH and every pair is checked: body
+and secondary text, accent and status colours on both grounds, ink on the accent
+fill, each tag chip against its own label *and* against the card beneath it, and
+a real lightness step between every two surfaces that share an edge. **Change one
+value and re-check the set** — the numbers hold each other up. The full token
+block with its reasoning is at the top of `styles.css`; `dashboard.html` carries
+the same scale plus its own chart palette, which is validated separately against
+the surface it sits on.
+
 ## Filters
 
 Every facet is derived from fields `data.json` already carries. None of them is
