@@ -1,0 +1,595 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SummerScope — the site's stylesheet.
+   Extracted from index.html/landing.html, which each carried their own copy
+   and drifted apart. One file means a mobile fix or a colour change lands on
+   every page at once.
+
+   Two things shape everything below:
+
+   1. DARK IS THE DEFAULT. The tokens on bare :root are the dark palette, and
+      :root[data-theme="light"] overrides them. It is deliberately NOT keyed to
+      prefers-color-scheme: the site opens dark for everyone, and the nav toggle
+      (persisted in localStorage) is the only thing that changes it.
+
+   2. MOBILE IS THE BASE. Every rule outside a media query targets a phone.
+      Wider screens add to it in min-width blocks. The old sheet did the
+      opposite — desktop first, with a single 680px block undoing it — which is
+      why the phone layout kept regressing.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  color-scheme:dark;
+
+  --bg:#0A111B;
+  --bg-2:#0E1725;          /* nav + hero + footer ground */
+  --card:#121D2E;
+  --card-2:#182740;        /* raised surface inside a card */
+  --text:#E9EEF6;
+  --muted:#94A3B8;
+  --faint:#64748B;
+  --accent:#F08A5D;
+  --accent-2:#F5A57F;
+  --accent-ink:#20100A;    /* text on an accent fill */
+  --border:#233247;
+  --border-2:#2E4160;      /* hover / focus border */
+  --tag-bg:#1B2942;
+  --green:#34D399;
+  --amber:#FBBF24;
+  --red:#F87171;
+  --shadow:0 6px 24px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 50px rgba(0,0,0,.55);
+  --scrim:rgba(3,7,13,.72);
+
+  /* On dark, hero/nav sit just above the page ground rather than below it. */
+  --on-dark:var(--text);
+  --on-dark-muted:#9FB0C6;
+  --on-dark-faint:#6C7E96;
+  --on-dark-line:rgba(255,255,255,.08);
+  --on-dark-fill:rgba(255,255,255,.06);
+  --on-dark-fill-2:rgba(255,255,255,.12);
+
+  /* Tag palette. Each pair is defined once per theme so every badge class
+     below is theme-agnostic. */
+  --t-indigo-bg:#1E2A54;  --t-indigo-fg:#B4C4FF;
+  --t-emerald-bg:#0F3A2E; --t-emerald-fg:#6EE7B7;
+  --t-blue-bg:#12314F;    --t-blue-fg:#93C5FD;
+  --t-violet-bg:#2C2154;  --t-violet-fg:#C4B5FD;
+  --t-yellow-bg:#3A2E0B;  --t-yellow-fg:#FCD34D;
+  --t-red-bg:#42191C;     --t-red-fg:#FCA5A5;
+  --t-fuchsia-bg:#3A1741; --t-fuchsia-fg:#F0ABFC;
+  --t-orange-bg:#3B2210;  --t-orange-fg:#FDBA74;
+  --t-slate-bg:#22303F;   --t-slate-fg:#CBD5E1;
+  --t-sky-bg:#0D3450;     --t-sky-fg:#7DD3FC;
+
+  --notice-bg:#3A2E0B;    --notice-bd:#5B4A16;  --notice-fg:#FDE68A;
+  --alert-bg:#3A1A1D;     --alert-bd:#5C2A2E;   --alert-fg:#FCA5A5;
+  --warn-bg:#3B2411;      --warn-bd:#5C3A1B;    --warn-fg:#FDBA74;
+  --good-bg:#0F2E24;      --good-bd:#1C5344;    --good-fg:#6EE7B7;
+
+  --sw:238px;              /* sidebar width */
+  --nh:56px;               /* nav height */
+  --mnh:58px;              /* mobile bottom bar height */
+  --gutter:1rem;
+  --r:12px;                /* standard corner */
+  --tap:44px;              /* minimum touch target */
+}
+
+:root[data-theme="light"]{
+  color-scheme:light;
+
+  --bg:#F5F4F0;
+  --bg-2:#0D1926;
+  --card:#FFFFFF;
+  --card-2:#F5F4F0;
+  --text:#111827;
+  --muted:#5A6472;
+  --faint:#8A93A0;
+  --accent:#C2410C;
+  --accent-2:#9A3412;
+  --accent-ink:#FFFFFF;
+  --border:#E2DFD8;
+  --border-2:#C9C5BB;
+  --tag-bg:#EDEBE4;
+  --green:#047857;
+  --amber:#B45309;
+  --red:#DC2626;
+  --shadow:0 3px 16px rgba(0,0,0,.07);
+  --shadow-lg:0 20px 48px rgba(0,0,0,.18);
+  --scrim:rgba(15,23,42,.5);
+
+  --on-dark:#FFFFFF;
+  --on-dark-muted:rgba(255,255,255,.62);
+  --on-dark-faint:rgba(255,255,255,.4);
+  --on-dark-line:rgba(255,255,255,.08);
+  --on-dark-fill:rgba(255,255,255,.08);
+  --on-dark-fill-2:rgba(255,255,255,.16);
+
+  --t-indigo-bg:#EEF2FF;  --t-indigo-fg:#3730A3;
+  --t-emerald-bg:#ECFDF5; --t-emerald-fg:#065F46;
+  --t-blue-bg:#EFF6FF;    --t-blue-fg:#1D4ED8;
+  --t-violet-bg:#F5F3FF;  --t-violet-fg:#5B21B6;
+  --t-yellow-bg:#FEF9C3;  --t-yellow-fg:#713F12;
+  --t-red-bg:#FEE2E2;     --t-red-fg:#991B1B;
+  --t-fuchsia-bg:#FDF4FF; --t-fuchsia-fg:#7E22CE;
+  --t-orange-bg:#FFEDD5;  --t-orange-fg:#9A3412;
+  --t-slate-bg:#F3F4F6;   --t-slate-fg:#4B5563;
+  --t-sky-bg:#E0F2FE;     --t-sky-fg:#075985;
+
+  --notice-bg:#FFFBEB;    --notice-bd:#FDE68A;  --notice-fg:#92400E;
+  --alert-bg:#FEF2F2;     --alert-bd:#FECACA;   --alert-fg:#991B1B;
+  --warn-bg:#FFF7ED;      --warn-bd:#FED7AA;    --warn-fg:#9A3412;
+  --good-bg:#ECFDF5;      --good-bd:#A7F3D0;    --good-fg:#065F46;
+}
+
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+body{
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);
+  font-size:15px;line-height:1.6;
+  /* The bottom bar is fixed, so the page needs room to scroll past it. */
+  padding-bottom:calc(var(--mnh) + env(safe-area-inset-bottom));
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+body.no-scroll{overflow:hidden}
+
+button,input,select,textarea{font-family:inherit;color:inherit}
+/* 16px is the threshold below which iOS Safari zooms the viewport on focus. */
+input,select,textarea{font-size:16px}
+a{color:var(--accent)}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* The nav is sticky at the top and the bar is fixed at the bottom, so anything
+   the browser scrolls to on its own — a Tab through the cards, a focused chip,
+   an in-page anchor — lands underneath one of them. scroll-margin reserves the
+   clearance so a focused control is always actually on screen. */
+a,button,input,select,summary,[tabindex],.card,.ecard{
+  scroll-margin-top:calc(var(--nh) + .5rem);
+  scroll-margin-bottom:calc(var(--mnh) + .75rem);
+}
+
+.skip-link{position:absolute;left:0;top:0;z-index:900;background:var(--accent);color:var(--accent-ink);
+  padding:.6rem 1rem;border-radius:0 0 8px 0;font-weight:600;font-size:.85rem;
+  transform:translateY(-200%);transition:transform .12s}
+.skip-link:focus{transform:translateY(0)}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--border-2)}
+
+/* ── NAV ─────────────────────────────────────────────────────────────────── */
+/* :not(.mobnav) matters. The phone bottom bar is also a <nav>, and while its own
+   rules set position:fixed and bottom:0, an unscoped `top:0` here still applied
+   to it — a box with both top:0 and bottom:0 stretches over the whole viewport,
+   which silently covered the entire page with an invisible bar. */
+nav:not(.mobnav){
+  background:var(--bg-2);min-height:var(--nh);
+  display:flex;align-items:center;gap:.5rem;
+  padding:.4rem var(--gutter);padding-top:calc(.4rem + env(safe-area-inset-top));
+  position:sticky;top:0;z-index:100;
+  border-bottom:1px solid var(--on-dark-line);
+}
+.logo{font-family:'Lora',serif;font-size:1.18rem;color:var(--on-dark);letter-spacing:-.01em;
+  display:flex;align-items:center;gap:.45rem;cursor:pointer;flex-shrink:0;user-select:none;
+  min-height:var(--tap);padding-right:.25rem}
+.ldot{width:7px;height:7px;background:var(--accent);border-radius:50%;flex-shrink:0}
+/* Desktop gets the tab row in the nav; on a phone the bottom bar has it. */
+.nav-tabs{display:none;gap:2px;margin-left:1rem}
+.ntab{color:var(--on-dark-muted);padding:.4rem .85rem;border-radius:8px;cursor:pointer;
+  font-size:.82rem;font-weight:500;border:none;background:none;transition:background .15s,color .15s}
+.ntab:hover{color:var(--on-dark);background:var(--on-dark-fill)}
+.ntab.active{color:var(--on-dark);background:var(--on-dark-fill-2)}
+.nbadge{background:var(--accent);color:var(--accent-ink);font-size:.62rem;font-weight:700;
+  padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;display:inline-block}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.nav-updated{display:none;font-size:.72rem;color:var(--on-dark-faint);align-items:center;gap:.4rem}
+.update-dot{width:5px;height:5px;background:var(--green);border-radius:50%;flex-shrink:0}
+.icon-btn{width:var(--tap);height:var(--tap);display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--on-dark-line);background:var(--on-dark-fill);border-radius:10px;
+  color:var(--on-dark);cursor:pointer;font-size:1rem;line-height:1;transition:background .15s,border-color .15s}
+.icon-btn:hover{background:var(--on-dark-fill-2);border-color:var(--on-dark-fill-2)}
+
+/* ── LOADING / EMPTY ─────────────────────────────────────────────────────── */
+.loading-screen{display:flex;align-items:center;justify-content:center;min-height:55vh;
+  flex-direction:column;gap:1rem;color:var(--muted);padding:2rem 1rem;text-align:center}
+.spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── HERO ────────────────────────────────────────────────────────────────── */
+.hero{background:var(--bg-2);padding:1.5rem var(--gutter) 1.35rem;color:var(--on-dark)}
+.heyebrow{font-size:.65rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+  text-transform:uppercase;margin-bottom:.5rem}
+.hero h1{font-family:'Lora',serif;font-size:1.75rem;line-height:1.12;letter-spacing:-.025em;
+  margin-bottom:.5rem;max-width:20ch}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hsub{color:var(--on-dark-muted);font-size:.88rem;margin-bottom:1.1rem;max-width:52ch}
+.sbar{display:flex;position:relative;max-width:540px}
+.sbar input{flex:1;min-width:0;padding:.7rem 2.4rem .7rem 1rem;border-radius:10px;
+  border:1.5px solid var(--on-dark-line);background:var(--on-dark-fill);color:var(--on-dark);
+  outline:none;transition:border-color .15s,background .15s}
+/* type=search draws its own clear button in Safari; .sclear is ours and works
+   in every browser, so suppress the native one rather than showing two. */
+.sbar input::-webkit-search-cancel-button,
+.sbar input::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
+.sbar input{-webkit-appearance:none;appearance:none}
+.sbar input::placeholder{color:var(--on-dark-faint)}
+.sbar input:focus{border-color:var(--accent);background:var(--on-dark-fill-2)}
+.sclear{position:absolute;right:.35rem;top:50%;transform:translateY(-50%);
+  width:32px;height:32px;border:none;background:none;color:var(--on-dark-faint);
+  cursor:pointer;font-size:1.1rem;border-radius:8px;display:none}
+.sbar.has-value .sclear{display:block}
+.sclear:hover{color:var(--on-dark);background:var(--on-dark-fill)}
+.hstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem 1rem;margin-top:1.15rem;max-width:420px}
+.hs{font-size:.72rem;color:var(--on-dark-faint)}
+.hs strong{display:block;font-size:1.15rem;font-weight:600;color:var(--on-dark);line-height:1.2;margin-bottom:1px}
+
+/* ── NOTICE BAR ──────────────────────────────────────────────────────────── */
+.notice{background:var(--card);border-bottom:1px solid var(--border);
+  padding:.55rem var(--gutter);display:flex;align-items:flex-start;gap:.5rem;
+  font-size:.74rem;color:var(--muted);line-height:1.5}
+.notice-left{display:flex;align-items:flex-start;gap:.55rem;flex:1}
+.ndot{width:5px;height:5px;background:var(--green);border-radius:50%;flex-shrink:0;margin-top:.45rem}
+.notice-date{display:none;font-size:.7rem;color:var(--faint);flex-shrink:0}
+
+/* ── PAGES ───────────────────────────────────────────────────────────────── */
+.page{display:none}
+.page.active{display:block}
+.layout{display:block}
+
+/* ── FILTER PANEL ────────────────────────────────────────────────────────────
+   One markup tree, two presentations: a bottom sheet on a phone, a docked
+   column from 900px up. Doing it with one element means the filter state can
+   never differ between the two. */
+.sidebar{
+  position:fixed;left:0;right:0;bottom:0;z-index:600;
+  max-height:88dvh;display:flex;flex-direction:column;
+  background:var(--card);border-top:1px solid var(--border);
+  border-radius:18px 18px 0 0;box-shadow:var(--shadow-lg);
+  transform:translateY(101%);transition:transform .24s ease;
+  visibility:hidden;
+}
+.sidebar.open{transform:translateY(0);visibility:visible}
+.sb-backdrop{position:fixed;inset:0;background:var(--scrim);z-index:599;
+  opacity:0;visibility:hidden;transition:opacity .2s}
+.sb-backdrop.open{opacity:1;visibility:visible}
+.sb-head{display:flex;align-items:center;gap:.75rem;padding:.85rem var(--gutter) .7rem;
+  border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-head h2{font-size:.95rem;font-weight:600}
+.sb-grip{position:absolute;top:.45rem;left:50%;transform:translateX(-50%);
+  width:36px;height:4px;border-radius:2px;background:var(--border-2)}
+.sb-close{margin-left:auto;width:36px;height:36px;border:none;background:var(--card-2);
+  border-radius:9px;color:var(--muted);font-size:1.1rem;cursor:pointer;flex-shrink:0}
+.sb-close:hover{color:var(--text)}
+.sb-body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:.9rem var(--gutter) 1rem;flex:1}
+.sb-foot{flex-shrink:0;display:flex;gap:.6rem;padding:.7rem var(--gutter);
+  padding-bottom:calc(.7rem + env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);background:var(--card)}
+.sb-apply{flex:1;min-height:var(--tap);border:none;border-radius:11px;background:var(--accent);
+  color:var(--accent-ink);font-size:.9rem;font-weight:700;cursor:pointer}
+.sb-reset{min-height:var(--tap);padding:0 1.1rem;border:1px solid var(--border);
+  border-radius:11px;background:var(--card-2);color:var(--muted);font-size:.88rem;
+  font-weight:600;cursor:pointer}
+.sb-reset:hover{color:var(--text);border-color:var(--border-2)}
+
+/* Collapsible filter groups — six of them stacked open is a long scroll on a
+   phone, so each one is a <details> and only Status starts open. */
+.fs{border-bottom:1px solid var(--border);padding:.1rem 0}
+.fs:last-of-type{border-bottom:none}
+.fs>summary{display:flex;align-items:center;gap:.5rem;cursor:pointer;list-style:none;
+  padding:.75rem .1rem;font-size:.7rem;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);min-height:var(--tap)}
+.fs>summary::-webkit-details-marker{display:none}
+.fs>summary::after{content:'⌄';margin-left:auto;font-size:1rem;color:var(--faint);
+  transition:transform .18s;line-height:0}
+.fs[open]>summary::after{transform:rotate(180deg)}
+.fs>summary .fs-on{font-size:.62rem;font-weight:700;background:var(--accent);color:var(--accent-ink);
+  border-radius:20px;padding:1px 6px;letter-spacing:0}
+.fs-list{padding:0 .1rem .6rem}
+.fo{display:flex;align-items:center;gap:.6rem;padding:.5rem .1rem;cursor:pointer;
+  font-size:.88rem;color:var(--text);user-select:none;min-height:var(--tap);border-radius:8px}
+.fo:hover{background:var(--card-2)}
+.fo input[type=checkbox]{accent-color:var(--accent);width:17px;height:17px;cursor:pointer;flex-shrink:0}
+.fc{margin-left:auto;font-size:.7rem;color:var(--muted);background:var(--tag-bg);
+  padding:1px 7px;border-radius:20px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.fhint{font-size:.7rem;color:var(--faint);line-height:1.45;padding:.1rem .1rem .55rem}
+
+/* ── MAIN COLUMN ─────────────────────────────────────────────────────────── */
+.main{min-width:0;padding:.85rem var(--gutter) 1.5rem}
+
+/* Quick chips: the six filters worth one tap, scrollable on a phone. */
+.quick{display:flex;gap:.45rem;overflow-x:auto;scrollbar-width:none;
+  padding:.15rem .1rem .7rem;margin:0 calc(var(--gutter) * -1);
+  padding-left:var(--gutter);padding-right:var(--gutter);
+  scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+.quick::-webkit-scrollbar{display:none}
+.qchip{flex-shrink:0;scroll-snap-align:start;min-height:36px;padding:.3rem .8rem;
+  border-radius:20px;border:1px solid var(--border);background:var(--card);
+  color:var(--muted);font-size:.8rem;font-weight:500;cursor:pointer;white-space:nowrap;
+  transition:background .13s,border-color .13s,color .13s}
+.qchip:hover{border-color:var(--border-2);color:var(--text)}
+.qchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+
+/* Active filters, each individually removable. */
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem}
+.chips:empty{display:none}
+.chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.76rem;font-weight:500;
+  background:var(--tag-bg);color:var(--text);border:1px solid var(--border);
+  border-radius:20px;padding:.2rem .3rem .2rem .65rem}
+.chip button{width:22px;height:22px;border:none;border-radius:50%;background:transparent;
+  color:var(--muted);cursor:pointer;font-size:.9rem;line-height:1;display:grid;place-items:center}
+.chip button:hover{background:var(--border);color:var(--text)}
+.chip-clear{font-size:.76rem;font-weight:600;color:var(--accent);background:none;border:none;
+  cursor:pointer;padding:.25rem .4rem;min-height:30px}
+
+.rbar{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem}
+.rc{font-size:.8rem;color:var(--muted);min-width:0}
+.rc strong{color:var(--text);font-weight:600}
+.ssel{margin-left:auto;flex-shrink:0;max-width:52vw;font-size:.8rem;padding:.42rem .55rem;
+  border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);
+  cursor:pointer;outline:none;min-height:38px}
+.filter-btn{display:flex;align-items:center;gap:.4rem;flex-shrink:0;min-height:38px;
+  padding:.35rem .8rem;border:1px solid var(--border);border-radius:9px;background:var(--card);
+  color:var(--text);font-size:.8rem;font-weight:600;cursor:pointer}
+.filter-btn .fs-on{background:var(--accent);color:var(--accent-ink);border-radius:20px;
+  padding:0 6px;font-size:.68rem}
+
+.unknown-note{background:var(--notice-bg);border:1px solid var(--notice-bd);color:var(--notice-fg);
+  border-radius:10px;padding:.55rem .8rem;font-size:.76rem;line-height:1.5;margin-bottom:.8rem}
+
+/* ── PROGRAM GRID + CARDS ────────────────────────────────────────────────── */
+.grid{display:grid;grid-template-columns:1fr;gap:.75rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:1rem;cursor:pointer;display:flex;flex-direction:column;gap:.6rem;
+  position:relative;overflow:hidden;text-align:left;width:100%;
+  transition:border-color .15s,box-shadow .15s,transform .12s}
+.card:hover{border-color:var(--border-2);box-shadow:var(--shadow)}
+@media(hover:hover){.card:hover{transform:translateY(-1px)}}
+.card:active{transform:scale(.995)}
+.cbar{position:absolute;top:0;left:0;right:0;height:3px}
+.cbar-open{background:var(--green)}
+.cbar-closed{background:var(--red)}
+.cbar-urgent{background:var(--amber)}
+.cbar-upcoming{background:linear-gradient(90deg,#F59E0B,#FBBF24)}
+.cbar-rolling{background:linear-gradient(90deg,#0EA5E9,#38BDF8)}
+.cbar-inactive{background:linear-gradient(90deg,#64748B,#94A3B8)}
+.ctop{display:flex;gap:.6rem;align-items:flex-start}
+.clog{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.8rem;color:#fff;flex-shrink:0;letter-spacing:-.02em;
+  text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.ctitle{font-weight:600;font-size:.92rem;line-height:1.3}
+.chost{font-size:.74rem;color:var(--muted);margin-top:1px}
+.cstars{font-size:10px;color:var(--amber);display:block;margin-top:2px;letter-spacing:1px}
+.cbadges{display:flex;flex-direction:column;gap:3px;align-items:flex-end;flex-shrink:0;margin-top:2px}
+.cdesc{font-size:.81rem;color:var(--muted);line-height:1.5}
+.tags{display:flex;flex-wrap:wrap;gap:.3rem}
+.tag{font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:.02em}
+.tc{background:var(--t-indigo-bg);color:var(--t-indigo-fg)}
+.tip{background:var(--t-emerald-bg);color:var(--t-emerald-fg)}
+.ton{background:var(--t-blue-bg);color:var(--t-blue-fg)}
+.thy{background:var(--t-violet-bg);color:var(--t-violet-fg)}
+.tg{background:var(--t-yellow-bg);color:var(--t-yellow-fg)}
+.tf{background:var(--t-emerald-bg);color:var(--t-emerald-fg)}
+.tcl{background:var(--t-red-bg);color:var(--t-red-fg)}
+.tnew{background:var(--t-fuchsia-bg);color:var(--t-fuchsia-fg)}
+.tup{background:var(--t-yellow-bg);color:var(--t-yellow-fg)}
+.trl{background:var(--t-sky-bg);color:var(--t-sky-fg)}
+.tdc{background:var(--t-slate-bg);color:var(--t-slate-fg)}
+.tun{background:var(--t-orange-bg);color:var(--t-orange-fg)}
+/* "expected date, not confirmed" marker */
+.exp{border-bottom:1px dashed currentColor;cursor:help}
+.cmeta{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.mi{font-size:.78rem;min-width:0}
+.ml{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--faint);margin-bottom:1px}
+.mv{font-weight:500;overflow-wrap:anywhere}
+.urgent{color:var(--red)}
+.soon{color:var(--amber)}
+.closed-t{color:var(--faint)}
+.cfoot{padding-top:.6rem;border-top:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;gap:.6rem}
+.cv{font-size:.82rem;font-weight:600}
+.cvf{color:var(--green)}
+.abtn{flex-shrink:0;font-size:.79rem;font-weight:600;min-height:38px;padding:.35rem .85rem;
+  border-radius:9px;background:var(--accent);color:var(--accent-ink);border:none;cursor:pointer}
+.abtn:hover{background:var(--accent-2)}
+
+.nores{text-align:center;padding:2.5rem 1rem;color:var(--muted);grid-column:1/-1}
+.nores h3{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:.4rem}
+.nores button{margin-top:1rem;min-height:var(--tap);padding:.5rem 1.2rem;border:none;
+  border-radius:10px;background:var(--accent);color:var(--accent-ink);font-weight:700;cursor:pointer}
+
+/* ── EVENTS ──────────────────────────────────────────────────────────────── */
+.ehero{background:var(--bg-2);padding:1.4rem var(--gutter) 1.2rem;color:var(--on-dark);
+  border-bottom:1px solid var(--on-dark-line)}
+.ehero h2{font-family:'Lora',serif;font-size:1.55rem;letter-spacing:-.02em;margin-bottom:.35rem}
+.ehero p{color:var(--on-dark-muted);font-size:.85rem;max-width:60ch}
+.ebar{background:var(--card);border-bottom:1px solid var(--border);
+  padding:.65rem var(--gutter);display:flex;gap:.45rem;align-items:center;
+  overflow-x:auto;scrollbar-width:none}
+.ebar::-webkit-scrollbar{display:none}
+.elabel{font-size:.72rem;color:var(--faint);font-weight:600;flex-shrink:0}
+.efbtn{flex-shrink:0;font-size:.8rem;font-weight:500;min-height:36px;padding:.3rem .85rem;
+  border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);
+  cursor:pointer;white-space:nowrap;transition:background .13s,border-color .13s,color .13s}
+.efbtn:hover{border-color:var(--border-2);color:var(--text)}
+.efbtn.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.ebody{padding:1rem var(--gutter) 1.5rem}
+.esec{margin-bottom:1.6rem}
+.eslabel{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.7rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.egrid{display:grid;grid-template-columns:1fr;gap:.75rem}
+.ecard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:1rem;cursor:pointer;text-align:left;width:100%;
+  transition:border-color .15s,box-shadow .15s,transform .12s}
+.ecard:hover{border-color:var(--border-2);box-shadow:var(--shadow)}
+@media(hover:hover){.ecard:hover{transform:translateY(-1px)}}
+.etype{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:.6rem}
+.eh{background:var(--t-indigo-bg);color:var(--t-indigo-fg)}
+.ec{background:var(--t-orange-bg);color:var(--t-orange-fg)}
+.ea{background:var(--t-fuchsia-bg);color:var(--t-fuchsia-fg)}
+.ef2{background:var(--t-sky-bg);color:var(--t-sky-fg)}
+.etitle{font-weight:600;font-size:.92rem;margin-bottom:.18rem;line-height:1.3}
+.eorg{font-size:.76rem;color:var(--muted);margin-bottom:.55rem}
+.edesc{font-size:.81rem;color:var(--muted);line-height:1.5;margin-bottom:.8rem}
+.emeta{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.emi{font-size:.78rem;min-width:0}
+.eml{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--faint);margin-bottom:1px}
+.emv{font-weight:500;overflow-wrap:anywhere}
+.efoot{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  margin-top:.8rem;padding-top:.6rem;border-top:1px solid var(--border)}
+.eprize{font-size:.78rem;font-weight:600;color:var(--amber);min-width:0}
+.ebtn{flex-shrink:0;font-size:.79rem;font-weight:600;min-height:38px;padding:.35rem .85rem;
+  border-radius:9px;background:var(--accent);color:var(--accent-ink);border:none;cursor:pointer}
+.ebtn:hover{background:var(--accent-2)}
+
+/* ── PROGRAM MODAL ───────────────────────────────────────────────────────────
+   A full-height sheet on a phone (sticky header and footer, only the body
+   scrolls) and a centred dialog from 700px up. */
+.mbg{position:fixed;inset:0;background:var(--scrim);z-index:700;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .18s}
+.mbg.open{opacity:1;visibility:visible}
+.modal{background:var(--card);border-radius:18px 18px 0 0;width:100%;max-width:600px;
+  max-height:94dvh;display:flex;flex-direction:column;overflow:hidden;
+  transform:translateY(2rem);transition:transform .22s ease}
+.mbg.open .modal{transform:translateY(0)}
+.mh{background:var(--bg-2);padding:1.25rem var(--gutter) 1.1rem;flex-shrink:0;position:relative}
+.mhtop{display:flex;align-items:flex-start;gap:.8rem;margin-bottom:.8rem;padding-right:2.5rem}
+.mlog{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:1rem;color:#fff;flex-shrink:0;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.mtitle{font-family:'Lora',serif;font-size:1.25rem;letter-spacing:-.02em;line-height:1.22;color:var(--on-dark)}
+.mhost{color:var(--on-dark-muted);font-size:.79rem;margin-top:.18rem}
+.mstars{color:var(--amber);font-size:.82rem;margin-top:.15rem}
+.mtags2{display:flex;gap:.35rem;flex-wrap:wrap}
+.mtag{background:var(--on-dark-fill-2);color:var(--on-dark);font-size:.69rem;font-weight:500;
+  padding:2px 9px;border-radius:20px}
+.mx{position:absolute;top:.85rem;right:.75rem;width:36px;height:36px;border:none;border-radius:50%;
+  background:var(--on-dark-fill-2);color:var(--on-dark);font-size:1.1rem;cursor:pointer;
+  display:grid;place-items:center;line-height:1}
+.mb{padding:1.1rem var(--gutter);overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;flex:1}
+.ms{margin-bottom:1.15rem}
+.msl{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:.4rem}
+.mdesc{font-size:.87rem;line-height:1.65}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.mbox{background:var(--card-2);border:1px solid var(--border);border-radius:9px;padding:.6rem .75rem;min-width:0}
+.mbl{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--faint);margin-bottom:.2rem}
+.mbv{font-size:.85rem;font-weight:500;overflow-wrap:anywhere}
+.mhist{font-size:.81rem;color:var(--muted);line-height:1.7}
+.mhist strong{color:var(--text)}
+.mfooter{flex-shrink:0;display:flex;align-items:center;gap:.75rem;
+  padding:.75rem var(--gutter);padding-bottom:calc(.75rem + env(safe-area-inset-bottom));
+  background:var(--card);border-top:1px solid var(--border)}
+.mclose{font-size:.85rem;color:var(--muted);cursor:pointer;border:none;background:none;
+  min-height:var(--tap);padding:0 .2rem}
+.mclose:hover{color:var(--text)}
+.mapp{flex:1;min-height:var(--tap);padding:.5rem 1rem;background:var(--accent);color:var(--accent-ink);
+  border:none;border-radius:11px;font-size:.88rem;font-weight:700;cursor:pointer}
+.mapp:hover{background:var(--accent-2)}
+.mnotice,.mnote,.murgent,.mgood{border-radius:9px;padding:.6rem .85rem;font-size:.8rem;
+  line-height:1.55;margin-bottom:.9rem}
+/* A confirmed date is good news and must not wear the same amber as "expected,
+   not confirmed" — they were visually identical, which is the one distinction
+   this whole data model exists to make. */
+.mgood{background:var(--good-bg);border:1px solid var(--good-bd);color:var(--good-fg)}
+.mnotice{background:var(--alert-bg);border:1px solid var(--alert-bd);color:var(--alert-fg)}
+.mnote{background:var(--notice-bg);border:1px solid var(--notice-bd);color:var(--notice-fg)}
+.murgent{background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn-fg)}
+.mb .mnote:last-child,.mb .mgood:last-child{margin-bottom:0}
+
+/* ── MOBILE BOTTOM BAR ───────────────────────────────────────────────────── */
+.mobnav{position:fixed;top:auto;left:0;right:0;bottom:0;z-index:500;display:flex;
+  background:var(--bg-2);border:none;border-top:1px solid var(--on-dark-line);
+  min-height:0;padding:0;padding-bottom:env(safe-area-inset-bottom)}
+.mobnav button{flex:1;min-height:var(--mnh);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;border:none;background:none;
+  color:var(--on-dark-faint);font-size:.66rem;font-weight:600;cursor:pointer;padding:.3rem}
+.mobnav button .mn-ico{font-size:1.05rem;line-height:1.1}
+.mobnav button.active{color:var(--accent)}
+.mn-count{font-size:.6rem;font-weight:700;background:var(--accent);color:var(--accent-ink);
+  border-radius:20px;padding:0 5px;margin-left:3px}
+
+/* ── BACK TO TOP ─────────────────────────────────────────────────────────── */
+.totop{position:fixed;right:var(--gutter);z-index:450;
+  bottom:calc(var(--mnh) + env(safe-area-inset-bottom) + .7rem);
+  width:var(--tap);height:var(--tap);border-radius:50%;border:1px solid var(--border);
+  background:var(--card);color:var(--text);box-shadow:var(--shadow);cursor:pointer;
+  font-size:1.05rem;opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s}
+.totop.show{opacity:1;visibility:visible}
+
+/* ── FOOTER ──────────────────────────────────────────────────────────────── */
+footer{background:var(--bg-2);padding:1.4rem var(--gutter);margin-top:1.5rem;
+  color:var(--on-dark-faint);font-size:.75rem;border-top:1px solid var(--on-dark-line);line-height:1.6}
+footer p{margin-bottom:.3rem}
+footer strong{color:var(--on-dark-muted)}
+
+/* ═══ 480px — two-up stat and card grids ═══════════════════════════════════ */
+@media(min-width:480px){
+  .hstats{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none}
+  .grid,.egrid{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+}
+
+/* ═══ 700px — the modal becomes a centred dialog ═══════════════════════════ */
+@media(min-width:700px){
+  :root{--gutter:1.5rem}
+  .hero{padding:2.2rem var(--gutter) 1.9rem}
+  .hero h1{font-size:2.3rem}
+  .mbg{align-items:flex-start;padding:2.5rem 1rem 2rem;overflow-y:auto}
+  .modal{border-radius:14px;max-height:none}
+  .mb{overflow:visible}
+  .notice-date{display:block}
+  .notice{align-items:center;justify-content:space-between}
+}
+
+/* ═══ 900px — filters dock, bottom bar retires ═════════════════════════════ */
+@media(min-width:900px){
+  body{padding-bottom:0}
+  .nav-tabs{display:flex}
+  .nav-updated{display:flex}
+  .mobnav{display:none}
+  .totop{bottom:1.25rem}
+  /* No bottom bar up here, so only the sticky nav needs clearance. */
+  a,button,input,select,summary,[tabindex],.card,.ecard{scroll-margin-bottom:1rem}
+
+  .layout{display:flex;align-items:flex-start;min-height:60vh}
+  .main{flex:1;padding:1.1rem 1.25rem 2rem}
+
+  .sidebar{
+    position:sticky;top:var(--nh);left:auto;right:auto;bottom:auto;
+    width:var(--sw);flex-shrink:0;height:calc(100dvh - var(--nh));max-height:none;
+    transform:none;visibility:visible;border-radius:0;box-shadow:none;
+    border-top:none;border-right:1px solid var(--border);
+  }
+  .sb-backdrop,.sb-grip,.sb-close,.filter-btn{display:none}
+  .sb-head{padding:1rem 1rem .7rem}
+  .sb-body{padding:.4rem 1rem 1rem}
+  .sb-foot{padding:.7rem 1rem;border-top:1px solid var(--border)}
+  .sb-apply{display:none}
+  .sb-reset{flex:1}
+  .fo{font-size:.83rem;min-height:34px;padding:.32rem .2rem}
+  .grid,.egrid{grid-template-columns:repeat(auto-fill,minmax(296px,1fr))}
+  .ssel{max-width:none}
+}
+
+@media(min-width:1100px){
+  .hero{padding:2.6rem 2rem 2.2rem}
+  .hero h1{font-size:2.5rem}
+}

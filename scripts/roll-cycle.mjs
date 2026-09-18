@@ -131,6 +131,18 @@ function deriveStatus(p, today) {
 const data = JSON.parse(readFileSync(DATA, 'utf8'));
 const updates = existsSync(UPDATES_PATH) ? JSON.parse(readFileSync(UPDATES_PATH, 'utf8')) : {};
 
+/**
+ * The date a fact was actually checked — NOT the date this script last ran.
+ *
+ * Every override used to stamp `lastVerified = TODAY`, so re-running the script
+ * six months later, with the same updates file and nothing re-checked, moved
+ * every verified program's date to that day. The modal prints it as "Confirmed
+ * against the program's own materials on <date>", so the site was claiming a
+ * freshness nobody had established. Prefer the entry's own date, then the date
+ * the updates file says its facts were compiled, and only then today.
+ */
+const verifiedOn = (entry) => (entry && entry.lastVerified) || updates.compiledOn || TODAY;
+
 const fromCycle = data.meta?.cycle ?? CYCLE - 1;
 const alreadyRolled = data.meta?.cycle === CYCLE;
 
@@ -195,6 +207,11 @@ for (const p of data.programs) {
     p.desc = bumpYearsInText(p.desc, 1);
     if (p.note) p.note = bumpYearsInText(p.note, 1);
     if (p.startDate) p.startDate = bumpYearsInText(p.startDate, 1);
+    // `duration` was missing from this list, so 13 programs rolled to the 2027
+    // cycle kept describing a 2026 run under "Duration" in the modal. Every
+    // free-text field that can carry a year has to be rolled, or the record
+    // half-moves to the new cycle.
+    if (p.duration) p.duration = bumpYearsInText(p.duration, 1);
 
     p.verification = 'projected';
     p.isNew = false; // "New" means new to the database, not new to this cycle.
@@ -209,8 +226,8 @@ for (const d of updates.discontinued ?? []) {
   for (const p of findByMatch(data.programs, d.match)) {
     p.status = 'discontinued';
     p.verification = 'verified';
-    p.lastVerified = TODAY;
-    p.discontinuedOn = d.discontinuedOn ?? TODAY;
+    p.lastVerified = verifiedOn(d);
+    p.discontinuedOn = d.discontinuedOn ?? verifiedOn(d);
     p.discontinuedReason = d.reason;
     if (d.successor) p.successor = d.successor;
     p.note = d.reason + (d.successor ? ` ${d.successor}` : '');
@@ -227,7 +244,7 @@ for (const u of updates.uncertain ?? []) {
   for (const p of findByMatch(data.programs, u.match)) {
     p.status = 'uncertain';
     p.verification = 'verified';
-    p.lastVerified = TODAY;
+    p.lastVerified = verifiedOn(u);
     p.uncertainReason = u.reason;
     if (u.source) p.uncertainSource = u.source;
     p.note = u.reason;
@@ -252,7 +269,7 @@ for (const o of updates.openings ?? []) {
     p.opensOn = o.opensOn;
     if (o.opensOnText) p.opensOnText = o.opensOnText;
     if (o.note) p.note = o.note;
-    p.lastVerified = TODAY;
+    p.lastVerified = verifiedOn(o);
     stats.openings++;
   }
 }
@@ -264,7 +281,7 @@ for (const n of updates.notes ?? []) {
   if (!hits.length) console.warn(`  ! note override matched nothing: "${n.match}"`);
   for (const p of hits) {
     p.note = n.note;
-    p.lastVerified = TODAY;
+    p.lastVerified = verifiedOn(n);
     stats.notes++;
   }
 }
@@ -281,7 +298,7 @@ for (const v of updates.verified ?? []) {
     if (v.note) p.note = v.note;
     if (v.cost) { p.cost = v.cost; p.costN = v.costN ?? p.costN; p.costB = v.costB ?? p.costB; }
     p.verification = 'verified';
-    p.lastVerified = TODAY;
+    p.lastVerified = verifiedOn(v);
     delete p.status; // let the dates decide
     stats.verified++;
   }
@@ -298,7 +315,7 @@ for (const np of updates.newPrograms ?? []) {
     isNew: true,
     cycle: CYCLE,
     verification: np.verification ?? 'projected',
-    lastVerified: TODAY,
+    lastVerified: verifiedOn(np),
     addedOn: TODAY,
     history: [],
   };
@@ -309,6 +326,12 @@ for (const np of updates.newPrograms ?? []) {
 
 // ── 4. recompute closed/status from the dates ───────────────────────────────
 for (const p of data.programs) {
+  // costB is the authority on price; costN is only a sort key. A cost that is
+  // not a single number has to be null, never 0 — the card used to print
+  // "Free / Full Aid" from a zero, so 15 commercial programs were advertised to
+  // students as free. Enforced here so a future overrides file cannot reopen it.
+  if (p.costB === 'Varies' && p.costN === 0) p.costN = null;
+
   if (p.status === undefined) delete p.status;
   const s = deriveStatus(p, TODAY);
   p.closed = s === 'closed' || s === 'discontinued';

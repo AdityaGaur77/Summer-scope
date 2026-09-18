@@ -1,51 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SummerScope — Analytics</title>
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0E1725">
+<!-- Same key as the site, applied before first paint for the same reason. -->
+<script>
+  try { if (localStorage.getItem('_ss_theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
-   Palette — validated with the dataviz validator against this page's white
-   card surface (#ffffff), categorical mode:
-     lightness band PASS · chroma floor PASS · CVD separation PASS (worst
-     adjacent ΔE 9.1 protan) · normal-vision floor PASS (worst 19.6)
-     contrast WARN on aqua/yellow/magenta → relief is satisfied because every
-     breakdown ships a visible numeric label and a table view.
-   The previous palette failed four of those five checks — #A78BFA and
-   #60A5FA were ΔE 0.3 apart under deuteranopia, i.e. the same color.
+   Palette — both modes selected, neither an automatic flip of the other, and
+   both run through the dataviz validator against the surface they actually sit
+   on. Dark is the default here, as it is on the site.
+
+   DARK, categorical, surface #121D2E — the same eight hues stepped for a dark
+   ground: lightness band PASS · chroma floor PASS · CVD separation PASS (worst
+   adjacent #c98500↔#199e70 ΔE 8.4 protan) · normal-vision floor PASS (worst
+   19.3) · contrast PASS (all eight ≥ 3:1).
+
+   LIGHT, categorical, surface #ffffff — unchanged: CVD PASS (worst adjacent
+   ΔE 9.1 protan) · normal-vision PASS (19.6) · contrast WARN on aqua, yellow
+   and magenta, where the relief rule is satisfied because every breakdown
+   prints its value and every chart has a table view.
+
+   The ordinal ramp is one blue hue in both modes, running light→dark on the
+   light surface and dark→light on the dark one, each validated with --ordinal
+   (light end 2.11:1 light, 2.09:1 dark).
+
+   Slot ORDER is the CVD-safety mechanism, so the dark steps keep the light
+   ordering exactly — the same hue stays --s1 in both modes, which is what
+   stops a series changing colour when the theme does.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{
-  --surface:#ffffff; --bg:#F5F4F0; --navy:#0D1926;
-  --ink:#111827; --ink-2:#52514E; --ink-3:#9CA3AF;
+  color-scheme:dark;
+  --surface:#121D2E; --bg:#0A111B; --navy:#0E1725; --raised:#182740;
+  --ink:#E9EEF6; --ink-2:#B7C3D4; --ink-3:#8195AD;
+  --line:#233247; --grid:#1D2B3F;
+
+  --s1:#d95926; --s2:#3987e5; --s3:#199e70; --s4:#c98500;
+  --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+
+  /* ordinal ramp — one hue, dark→light on a dark ground */
+  --o1:#184f95; --o2:#256abf; --o3:#3987e5; --o4:#86b6ef;
+
+  --banner-bg:#3A2E0B; --banner-bd:#5B4A16; --banner-fg:#FDE68A;
+  --gutter:1rem;
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --surface:#ffffff; --bg:#F5F4F0; --navy:#0D1926; --raised:#F5F4F0;
+  --ink:#111827; --ink-2:#52514E; --ink-3:#6B7280;
   --line:#E2DFD8; --grid:#F1EFEA;
 
   --s1:#eb6834; --s2:#2a78d6; --s3:#1baf7a; --s4:#eda100;
   --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
 
-  /* ordinal ramp (one hue, light→dark) — validated with --ordinal */
   --o1:#86b6ef; --o2:#5598e7; --o3:#2a78d6; --o4:#184f95;
+
+  --banner-bg:#FFFBEB; --banner-bd:#FDE68A; --banner-fg:#92400E;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;min-height:100vh}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;
+  min-height:100dvh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+button,input,select{font-family:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--s1);outline-offset:2px;border-radius:4px}
 
 /* NAV */
-nav{background:var(--navy);min-height:58px;display:flex;align-items:center;justify-content:space-between;padding:.5rem 1.75rem;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06);gap:1rem;flex-wrap:wrap}
+nav{background:var(--navy);min-height:58px;display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem var(--gutter);padding-top:calc(.5rem + env(safe-area-inset-top));
+  position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06);gap:.6rem;flex-wrap:wrap}
 .logo{font-family:'Lora',serif;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:.4rem}
 .ldot{width:7px;height:7px;background:var(--s1);border-radius:50%}
-.nav-right{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
-.range-tabs{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px}
-.rtab{padding:.25rem .7rem;border-radius:6px;border:none;background:none;color:rgba(255,255,255,.55);font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+/* On a phone the controls take their own full-width row under the logo; from
+   700px they sit back beside it. */
+.nav-right{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;width:100%;justify-content:space-between}
+@media(min-width:700px){.nav-right{width:auto;justify-content:flex-end;gap:.9rem}}
+.range-tabs{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px;
+  overflow-x:auto;scrollbar-width:none;max-width:100%}
+.range-tabs::-webkit-scrollbar{display:none}
+.rtab{flex-shrink:0;min-height:34px;padding:.3rem .7rem;border-radius:6px;border:none;background:none;color:rgba(255,255,255,.55);font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
 .rtab:hover{color:#fff}
 .rtab.active{background:rgba(255,255,255,.18);color:#fff}
-.refresh-btn{padding:.3rem .9rem;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.65);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s}
-.refresh-btn:hover{border-color:rgba(255,255,255,.35);color:#fff}
+.refresh-btn,.theme-btn{min-height:34px;padding:.3rem .9rem;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.65);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s}
+.refresh-btn:hover,.theme-btn:hover{border-color:rgba(255,255,255,.35);color:#fff}
+.theme-btn{padding:.3rem .7rem}
 .updated{font-size:.7rem;color:rgba(255,255,255,.35)}
 
-main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
+main{max-width:1200px;margin:0 auto;padding:1.1rem var(--gutter) 3rem}
 /* Refetch holds the previous render at reduced opacity — no skeleton flash. */
 #content.reloading{opacity:.45;transition:opacity .12s}
 
@@ -57,34 +106,36 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
 .empty-sub{font-size:.82rem;color:var(--ink-3);max-width:380px;line-height:1.5}
 
 /* ── LIFETIME BAND ───────────────────────────────────────────────────────── */
-.life{background:var(--navy);border-radius:14px;padding:1.35rem 1.5rem;margin-bottom:1.4rem;color:#fff}
+.life{background:var(--navy);border:1px solid var(--line);border-radius:14px;padding:1.2rem var(--gutter);margin-bottom:1.4rem;color:#fff}
 .life-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
 .life-title{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)}
 .life-since{font-size:.7rem;color:rgba(255,255,255,.35)}
-.life-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:1.5rem}
-@media(max-width:760px){.life-grid{grid-template-columns:1fr 1fr}}
+.life-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(min-width:760px){.life-grid{grid-template-columns:1.5fr 1fr 1fr 1fr;gap:1.5rem}}
 .life-item .ll{font-size:.68rem;color:rgba(255,255,255,.45);margin-bottom:.28rem}
 /* Hero figure: same sans as everything else, proportional figures. */
-.life-hero{font-size:2.9rem;font-weight:600;line-height:1;letter-spacing:-.02em}
+.life-hero{font-size:2.4rem;font-weight:600;line-height:1;letter-spacing:-.02em}
+@media(min-width:760px){.life-hero{font-size:2.9rem}}
 .life-val{font-size:1.5rem;font-weight:600;line-height:1;letter-spacing:-.01em}
 .life-sub{font-size:.68rem;color:rgba(255,255,255,.35);margin-top:.3rem}
 .life-note{margin-top:.9rem;font-size:.68rem;color:rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.09);padding-top:.7rem}
 
 /* ── STAT TILES ──────────────────────────────────────────────────────────── */
-.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:.7rem;margin-bottom:1.1rem}
-@media(max-width:1000px){.stats-row{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:560px){.stats-row{grid-template-columns:1fr 1fr}}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.1rem}
+@media(min-width:560px){.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.stats-row{grid-template-columns:repeat(6,1fr)}}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.9rem 1rem;position:relative;overflow:hidden}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--s1))}
 .stat-label{font-size:.63rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.35rem}
-.stat-val{font-size:1.5rem;font-weight:600;color:var(--navy);line-height:1;letter-spacing:-.01em}
+.stat-val{font-size:1.5rem;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-.01em}
 .stat-sub{font-size:.68rem;color:var(--ink-3);margin-top:.3rem}
 
 .section-label{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:1.5rem 0 .75rem}
 
-.card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:1.25rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:1rem}
+@media(min-width:700px){.card{padding:1.25rem}}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:1rem}
-.card-title{font-size:.82rem;font-weight:600;color:var(--navy)}
+.card-title{font-size:.82rem;font-weight:600;color:var(--ink)}
 .card-sub{font-size:.7rem;color:var(--ink-3);font-weight:400;margin-top:2px}
 /* Every chart has a table-view twin so no value is reachable only by hover. */
 .tbtn{font-size:.66rem;color:var(--ink-2);background:none;border:1px solid var(--line);border-radius:6px;padding:.15rem .5rem;cursor:pointer;font-family:inherit;flex-shrink:0}
@@ -98,27 +149,32 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
 .chart-wrap{position:relative}
 
 .g1{margin-bottom:.85rem}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:.85rem}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:.85rem}
-@media(max-width:1000px){.g4{grid-template-columns:1fr 1fr}}
-@media(max-width:860px){.g3{grid-template-columns:1fr}}
-@media(max-width:600px){.g4{grid-template-columns:1fr}}
-@media(max-width:600px){.g2{grid-template-columns:1fr}}
+.g2,.g3,.g4{display:grid;grid-template-columns:1fr;gap:.85rem;margin-bottom:.85rem}
+/* A grid item defaults to min-width:auto, so a card whose contents have an
+   intrinsic minimum (a bar row is a nowrap label plus three fixed-width cells)
+   pushes its track wider than 1fr and the page scrolls sideways on a phone. */
+.g1,.g2>*,.g3>*,.g4>*,.stats-row>*,.card{min-width:0}
+@media(min-width:600px){.g2{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(min-width:860px){.g3{grid-template-columns:1fr 1fr 1fr}}
+@media(min-width:1000px){.g4{grid-template-columns:repeat(4,1fr)}}
 
 /* ── BAR LISTS ───────────────────────────────────────────────────────────── */
 /* Horizontal bars with the value always printed — this is the "relief" the
    palette's contrast WARN requires, and it beats a donut for close values. */
 .t-row{display:flex;align-items:center;gap:.65rem;padding:.4rem 0;border-bottom:1px solid var(--grid)}
 .t-row:last-child{border-bottom:none}
-.t-num{font-size:.68rem;color:#D1D5DB;width:16px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.t-num{font-size:.68rem;color:var(--ink-3);width:16px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
 .t-label{flex:1;font-size:.79rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t-bar-wrap{width:70px;height:6px;background:var(--grid);border-radius:3px;flex-shrink:0;overflow:hidden}
 .t-bar{height:100%;border-radius:3px;background:var(--s1)}
 .t-count{font-size:.75rem;font-weight:600;color:var(--ink-2);min-width:34px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
-.t-empty{font-size:.79rem;color:#D1D5DB;padding:.5rem 0}
+.t-empty{font-size:.79rem;color:var(--ink-3);padding:.5rem 0}
 
-.banner{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;font-size:.75rem;border-radius:10px;padding:.6rem .9rem;margin-bottom:1rem;line-height:1.5}
+.banner{background:var(--banner-bg);border:1px solid var(--banner-bd);color:var(--banner-fg);font-size:.75rem;border-radius:10px;padding:.6rem .9rem;margin-bottom:1rem;line-height:1.5}
+.tbtn{min-height:32px}
+/* A wide table stays inside its card instead of stretching the page. */
+.tview table{min-width:260px}
+@media(min-width:700px){:root{--gutter:1.75rem}}
 </style>
 </head>
 <body>
@@ -135,6 +191,7 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
       <button class="rtab" data-days="all">All time</button>
     </div>
     <span class="updated" id="updated"></span>
+    <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch theme">☀</button>
     <button class="refresh-btn" id="refresh">↻ Refresh</button>
   </div>
 </nav>
@@ -162,6 +219,10 @@ main{max-width:1200px;margin:0 auto;padding:1.5rem 1.75rem 3rem}
     <div id="trunc-banner"></div>
 
     <div class="section-label" id="range-label">Selected range</div>
+    <p style="font-size:.72rem;color:var(--ink-3);margin:-.35rem 0 .75rem;line-height:1.5">
+      Visitors and sessions count anyone who left any event — a page view, a click, a scroll —
+      because a page view can be lost while the same visit's later events arrive.
+    </p>
     <div class="stats-row" id="stats"></div>
 
     <div class="section-label">Visits over time</div>
@@ -236,12 +297,20 @@ if (!PW) { window.location.href = '/'; }
 let rangeDays = '7';
 let charts = {};
 let firstLoad = true;
+let lastData = null;   // so the theme toggle can redraw without another fetch
 
-const CSS = getComputedStyle(document.documentElement);
-const c = n => CSS.getPropertyValue(n).trim();
-const SERIES = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'].map(c);
-const ORDINAL = ['--o1','--o2','--o3','--o4'].map(c);
-const INK3 = c('--ink-3'), GRID = c('--grid'), SURFACE = c('--surface');
+// Read at render time, never cached at load: the theme toggle changes every one
+// of these, and a chart drawn from a stale copy keeps the old theme's colours on
+// a canvas that cannot inherit CSS.
+const c = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let SERIES, ORDINAL, INK3, GRID, SURFACE;
+function readTheme() {
+  SERIES  = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'].map(c);
+  ORDINAL = ['--o1','--o2','--o3','--o4'].map(c);
+  INK3 = c('--ink-3'); GRID = c('--grid'); SURFACE = c('--surface');
+  Chart.defaults.color = INK3;
+}
+readTheme();
 
 const nf = n => (n == null ? '—' : Number(n).toLocaleString());
 function fmtDur(sec) {
@@ -258,17 +327,18 @@ function fmtDate(iso) {
 // ── Chart.js shared look: hairline solid grid, recessive axes, thin marks ──
 Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
 Chart.defaults.font.size = 11;
-Chart.defaults.color = INK3;
-const AXES = {
+// Functions, not constants — same reason as the palette above.
+const axes = () => ({
   x: { grid: { display: false }, border: { color: GRID }, ticks: { color: INK3, maxRotation: 0, autoSkipPadding: 12 } },
   y: { grid: { color: GRID, drawTicks: false }, border: { display: false },
        ticks: { color: INK3, precision: 0, maxTicksLimit: 6, callback: v => Number(v).toLocaleString() },
        beginAtZero: true },
-};
-const TOOLTIP = {
-  backgroundColor: '#0D1926', padding: 10, cornerRadius: 8, displayColors: false,
+});
+const tooltip = () => ({
+  backgroundColor: c('--navy') || '#0D1926', borderColor: c('--line'), borderWidth: 1,
+  padding: 10, cornerRadius: 8, displayColors: false,
   titleFont: { weight: '600', size: 12 }, bodyFont: { size: 12 },
-};
+});
 
 function killChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
@@ -328,6 +398,7 @@ async function load() {
     }
     const d = await r.json();
     if (d.error) throw new Error(d.error);
+    lastData = d;
     render(d);
     firstLoad = false;
   } catch (e) {
@@ -342,6 +413,7 @@ async function load() {
 }
 
 function render(d) {
+  readTheme();
   document.getElementById('loading').style.display = 'none';
   const content = document.getElementById('content');
   content.style.display = 'block';
@@ -360,9 +432,9 @@ function render(d) {
       <div class="life-sub">${L.avg_pageviews_per_day != null ? nf(L.avg_pageviews_per_day) + ' per day on average' : ''}</div>
     </div>
     <div class="life-item">
-      <div class="ll">Unique visitors</div>
+      <div class="ll">Visitors</div>
       <div class="life-val">${nf(L.unique_visitors)}</div>
-      <div class="life-sub">${L.distinct_counts_capped ? 'at least — see note' : 'by visitor ID'}</div>
+      <div class="life-sub">${L.distinct_counts_capped ? 'at least — see note' : 'distinct visitor IDs'}</div>
     </div>
     <div class="life-item">
       <div class="ll">Sessions</div>
@@ -377,15 +449,17 @@ function render(d) {
 
   // Say plainly where the number came from and whether it is exact.
   const note = document.getElementById('life-note');
+  const BOTS = ' Crawlers, link previewers and uptime monitors are dropped at ingest, so these are people, not requests — '
+    + 'events recorded before that filter went in (2026-09-10) still include them.';
   if (L.source === 'sql_rollup') {
-    note.textContent = 'Exact, from the permanent rollup tables — these totals survive even if old raw events are deleted.';
+    note.textContent = 'Exact, from the permanent rollup tables — these totals survive even if old raw events are deleted.' + BOTS;
   } else if (L.distinct_counts_capped) {
     note.innerHTML = 'Page-view and event totals are exact. Unique visitors and sessions are a <strong>minimum</strong>: '
       + 'they were counted from the most recent ' + nf(d.detail_row_cap) + ' page views. '
-      + 'Apply <code>supabase/schema.sql</code> to get exact lifetime uniques.';
+      + 'Apply <code>supabase/schema.sql</code> to get exact lifetime uniques.' + BOTS;
   } else {
     note.innerHTML = 'Exact, counted from the full event history. Applying <code>supabase/schema.sql</code> makes this cheaper as the table grows '
-      + 'and preserves the totals if you ever prune old events.';
+      + 'and preserves the totals if you ever prune old events.' + BOTS;
   }
 
   // Truncation is surfaced, never silent.
@@ -400,12 +474,19 @@ function render(d) {
   document.getElementById('range-label').textContent = 'Selected range — ' + rangeName;
   document.getElementById('line-sub').textContent = rangeName;
 
+  // Each sub-line says what the figure was measured over. "Avg time" across
+  // three sessions and across three hundred are not the same claim, and a bounce
+  // rate is only over the sessions that produced a page view at all.
+  const measured = s.measured_sessions;
+  const pvSessions = s.sessions_with_pageview != null ? s.sessions_with_pageview : s.unique_sessions;
   document.getElementById('stats').innerHTML = [
     { label: 'Page views',      val: nf(s.total_pageviews),   sub: rangeName,                       accent: SERIES[0] },
-    { label: 'Unique visitors', val: nf(s.unique_visitors),   sub: `${nf(s.new_visitors)} new · ${nf(s.returning_visitors)} returning`, accent: SERIES[1] },
+    { label: 'Visitors',        val: nf(s.unique_visitors),   sub: `${nf(s.new_visitors)} new · ${nf(s.returning_visitors)} returning`, accent: SERIES[1] },
     { label: 'Sessions',        val: nf(s.unique_sessions),   sub: `${s.pages_per_session} pages each`, accent: SERIES[2] },
-    { label: 'Avg time',        val: fmtDur(s.avg_duration_sec), sub: `median ${fmtDur(s.median_duration_sec)}`, accent: SERIES[3] },
-    { label: 'Bounce rate',     val: s.bounce_rate_pct + '%', sub: 'one-page sessions',             accent: SERIES[4] },
+    { label: 'Avg time',        val: fmtDur(s.avg_duration_sec),
+      sub: measured != null ? `median ${fmtDur(s.median_duration_sec)} · ${nf(measured)} measured` : `median ${fmtDur(s.median_duration_sec)}`,
+      accent: SERIES[3] },
+    { label: 'Bounce rate',     val: s.bounce_rate_pct + '%', sub: `of ${nf(pvSessions)} viewing sessions`, accent: SERIES[4] },
     { label: 'Total events',    val: nf(s.total_events),      sub: 'all interactions',              accent: SERIES[6] },
   ].map(x => `
     <div class="stat" style="--accent:${x.accent}">
@@ -427,7 +508,9 @@ function render(d) {
         label: 'Page views',
         data: days.map(x => x.count),
         borderColor: SERIES[0],
-        backgroundColor: 'rgba(235,104,52,.10)',   // ~10% wash, never a saturated block
+        // ~10% wash of whatever --s1 currently is, never a saturated block and
+        // never a hardcoded rgba that survives a theme change.
+        backgroundColor: SERIES[0] + '1a',
         borderWidth: 2, tension: .32, fill: true,
         pointRadius: days.map((_, i) => (i === peak || i === days.length - 1 ? 4.5 : 0)),
         pointBackgroundColor: SERIES[0],
@@ -440,12 +523,12 @@ function render(d) {
       interaction: { mode: 'index', intersect: false },   // crosshair-style hover
       plugins: {
         legend: { display: false },
-        tooltip: { ...TOOLTIP, callbacks: {
+        tooltip: { ...tooltip(), callbacks: {
           title: i => days[i[0].dataIndex] ? fmtDate(days[i[0].dataIndex].date) : '',
           label: i => nf(i.parsed.y) + ' page views',
         } },
       },
-      scales: AXES,
+      scales: axes(),
     },
   });
   renderTable('tv-line', ['Date', 'Page views'], days.map(x => [x.date, nf(x.count)]));
@@ -467,8 +550,8 @@ function render(d) {
       }] },
       options: {
         responsive: true,
-        plugins: { legend: { display: false }, tooltip: { ...TOOLTIP, callbacks: { label: i => nf(i.parsed.y) + ' ' + unit } } },
-        scales: AXES,
+        plugins: { legend: { display: false }, tooltip: { ...tooltip(), callbacks: { label: i => nf(i.parsed.y) + ' ' + unit } } },
+        scales: axes(),
       },
     });
     renderTable(tableId, ['Bucket', 'Page views'], rows.map(r => [r.label, nf(r.count)]));
@@ -490,10 +573,10 @@ function render(d) {
     }] },
     options: {
       responsive: true,
-      plugins: { legend: { display: false }, tooltip: { ...TOOLTIP, callbacks: {
+      plugins: { legend: { display: false }, tooltip: { ...tooltip(), callbacks: {
         label: i => `${nf(i.parsed.y)} sessions · ${sd[i.dataIndex].pct}% of all`,
       } } },
-      scales: AXES,
+      scales: axes(),
     },
   });
   renderTable('tv-scroll', ['Depth', 'Sessions', 'Share'], sd.map(x => [x.label, nf(x.count), x.pct + '%']));
@@ -523,6 +606,28 @@ document.getElementById('range-tabs').addEventListener('click', e => {
   load();
 });
 document.getElementById('refresh').addEventListener('click', load);
+
+// Theme toggle — shares _ss_theme with the site, so the choice carries across.
+function applyTheme(theme) {
+  const light = theme === 'light';
+  document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
+  const btn = document.getElementById('theme-btn');
+  btn.textContent = light ? '☾' : '☀';
+  btn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', light ? '#0D1926' : '#0E1725');
+}
+function currentTheme() {
+  try { return localStorage.getItem('_ss_theme') === 'light' ? 'light' : 'dark'; } catch (_) { return 'dark'; }
+}
+applyTheme(currentTheme());
+document.getElementById('theme-btn').addEventListener('click', () => {
+  const next = currentTheme() === 'light' ? 'dark' : 'light';
+  try { localStorage.setItem('_ss_theme', next); } catch (_) {}
+  applyTheme(next);
+  // Canvases cannot inherit CSS, so the charts have to be drawn again.
+  if (lastData) render(lastData);
+});
 
 load();
 </script>
