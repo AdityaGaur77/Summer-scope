@@ -55,23 +55,39 @@ The choice is stored under `_ss_theme` and applied by a small inline script in
 `<head>` **before first paint** — anything later shows dark-mode readers a flash
 of white page. Both pages share the key, so the choice carries between them.
 
-### Why the dark palette looks the way it does
+### Why the palette looks the way it does
 
-The first version was a navy scale with near-white text, and it was tiring to
-read. Two measurable faults, both fixed:
+It took three attempts, and the first two failed for the same underlying
+reason: **the greyscale was carrying the brand hue.**
 
-| | Was | Now |
-|---|---|---|
-| Body contrast | 16.3:1 (#E9EEF6 on #0A111B) | 9–12.6:1 on every surface |
-| "Neutral" greys | hue 257°, chroma up to 0.051 — a blue scale | hue 70°, chroma 0.006 — warm neutral |
+| Attempt | Greys | Accent | Why it failed |
+|---|---|---|---|
+| 1 | hue 257°, chroma up to 0.051 | blue | A navy scale wearing grey's name. Read as a stock AI dashboard, and body text at 16.3:1 haloed against the ground. |
+| 2 | hue 70°, chroma 0.006 | terracotta | Warm beige under terracotta is a recognisable existing product's palette, not this one's. |
+| 3 | hue 197°, chroma 0.004 | deep teal | Current. |
 
-Past roughly 13:1 the extra contrast stops buying legibility and light text
-starts to halo against the ground; that glow is what aches after a few minutes.
-And the greys were never grey — a navy scale wearing grey's name is most of why
-it read as machine-made. Warm neutral also belongs with the light theme's cream
-and terracotta, so the two modes are now the same design at two brightnesses.
+Two things carry over from the first fix and still hold. Body text sits
+9–13:1 on dark and 13–17:1 on light: past roughly 13:1 on a dark ground the
+extra contrast stops buying legibility and light text starts to halo, which is
+the glow that aches after a few minutes. And a "neutral" that is really a tinted
+scale is most of what makes a palette look machine-made.
 
-The palette is generated perceptually in OKLCH and every pair is checked: body
+What is new in the third attempt is that the neutrals no longer try to say
+anything. At chroma 0.004 there is no visible cast in either direction, so the
+whole identity rests on one accent — deep teal at 197°, far from both of the
+hues that failed, and far enough from the semantic green at 155° that "this is
+interactive" and "this program is free" never read as the same colour.
+
+The light theme is the same construction from the other end: the same neutral
+scale, the same teal at the lightness that clears 4.5:1 on white. Its nav and
+hero band used to be a near-black navy slab — the loudest thing on the page, and
+a leftover from a palette that no longer exists. It is now a soft teal panel two
+lightness steps off the page. Because that band is no longer dark in both modes,
+the tokens that colour it are `--band-*`, not `--on-dark-*`, and the modal's
+status pill uses the themed tag classes rather than the hardcoded light-on-dark
+hexes it used to carry.
+
+Both modes are generated perceptually in OKLCH and every pair is checked: body
 and secondary text, accent and status colours on both grounds, ink on the accent
 fill, each tag chip against its own label *and* against the card beneath it, and
 a real lightness step between every two surfaces that share an edge. **Change one
@@ -79,6 +95,35 @@ value and re-check the set** — the numbers hold each other up. The full token
 block with its reasoning is at the top of `styles.css`; `dashboard.html` carries
 the same scale plus its own chart palette, which is validated separately against
 the surface it sits on.
+
+## Phone layout
+
+Everything outside a media query targets a phone; 480, 700, 900 and 1100px add
+to it. The rule the layout is tuned against is simple: **a visitor on a phone
+should reach an actual program without scrolling past a page about programs.**
+
+The first build did not. The hero, a three-line notice and three stacked control
+rows put the first card 629px down a 664px viewport, so the opening screen held
+no results at all. What comes off on a phone, and comes back at 480 or 700px:
+
+| | Phone | Wider |
+|---|---|---|
+| Hero eyebrow | hidden | shown from 480px |
+| Subtitle | clamped to 2 lines | full from 480px |
+| Hero stats | 2 of 4 (the other two are quick chips) | all 4 from 480px |
+| Expected-date notice | one short sentence | the full wording from 700px |
+| Card description | clamped to 2 lines | 3 lines from 700px |
+| Card meta cells | Deadline + Dates | all four from 700px |
+
+Three cuts apply at every width, because they were not density problems but
+duplication: the card's subject chips cap at two plus a `+N` (the full list is
+in the modal), the per-grade chips are gone entirely (the Grades cell sits
+directly beneath them), and the selectivity rating shows only its filled stars
+instead of five glyphs of which some carry no information.
+
+Together that is 629px → 416px before the first card, and 399px → 298px per
+card. Nothing is removed from the site — everything trimmed here is either one
+tap away or in the detail modal.
 
 ## Filters
 

@@ -10,7 +10,7 @@
 <meta property="og:description" content="Every prestigious summer program, hackathon, and competition for 9th–12th graders in one place.">
 <meta property="og:type" content="website">
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#252220">
+<meta name="theme-color" content="#152324">
 <link rel="canonical" href="https://summerscope.vercel.app/">
 
 <!-- Dark is the default, so the saved theme has to be on <html> before the
@@ -21,7 +21,7 @@
     if (localStorage.getItem('_ss_theme') === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
       var m = document.querySelector('meta[name="theme-color"]');
-      if (m) m.setAttribute('content', '#0D1926');
+      if (m) m.setAttribute('content', '#DBEEEE');
     }
   } catch (e) {}
 </script>
@@ -61,6 +61,8 @@
 <!-- ══ PROGRAMS ══════════════════════════════════════════════════════════ -->
 <div id="page-programs" class="page" role="tabpanel" aria-label="Programs">
   <header class="hero">
+    <!-- The eyebrow repeats what the h1 and the stat row already say, so it is
+         hidden on a phone rather than spending a line there. -->
     <p class="heyebrow">The complete database</p>
     <h1>Find your <em>perfect</em> summer program</h1>
     <p class="hsub">Every top summer program for high schoolers — deadlines, real costs and direct apply links, with expected dates clearly marked as expected.</p>
@@ -80,7 +82,11 @@
   <div class="notice">
     <div class="notice-left">
       <span class="ndot" aria-hidden="true"></span>
-      <span>Deadlines shown <em style="font-style:normal;border-bottom:1px dashed currentColor">like this</em> are expected dates carried forward from last cycle. Always confirm on the official site before applying.</span>
+      <!-- Two wordings, one per breakpoint. The full sentence is three lines on
+           a phone, directly above the results, and pushed the first card off
+           the screen; the short one says the same thing in one. -->
+      <span class="nshort">Dashed deadlines are <em style="font-style:normal;border-bottom:1px dashed currentColor">expected</em>, not confirmed.</span>
+      <span class="nlong">Deadlines shown <em style="font-style:normal;border-bottom:1px dashed currentColor">like this</em> are expected dates carried forward from last cycle. Always confirm on the official site before applying.</span>
     </div>
     <span class="notice-date" id="notice-date"></span>
   </div>

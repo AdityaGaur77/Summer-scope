@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SummerScope — Analytics</title>
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#252220">
+<meta name="theme-color" content="#152324">
 <!-- Same key as the site, applied before first paint for the same reason. -->
 <script>
   try { if (localStorage.getItem('_ss_theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
@@ -20,11 +20,16 @@
    both run through the dataviz validator against the surface they actually sit
    on. Dark is the default here, as it is on the site.
 
-   DARK, categorical, surface #2A2725 — the same eight hues stepped for a dark
-   ground: lightness band PASS · chroma floor PASS · CVD separation PASS (worst
-   adjacent #c98500↔#199e70 ΔE 8.4 protan) · normal-vision floor PASS (worst
-   19.3) · contrast PASS (all eight ≥ 3:1). Re-validated when the surface moved
-   from navy to warm neutral; the eight series colours needed no change.
+   The neutrals now match styles.css: hue 197° at chroma 0.004, which is
+   neutral enough that no cast is visible, with the identity carried by a
+   single teal accent. See the palette note at the top of styles.css for why
+   two earlier scales (navy, then warm beige) were replaced.
+
+   DARK, categorical, surface #222525 — lightness band PASS · chroma floor PASS
+   · CVD separation PASS (worst adjacent #c98500↔#199e70 ΔE 8.4 protan) ·
+   normal-vision floor PASS (worst 19.3) · contrast PASS (all eight ≥ 3:1).
+   Re-validated when the surface moved again; the eight series colours needed
+   no change, because the surface only got darker.
 
    LIGHT, categorical, surface #ffffff — unchanged: CVD PASS (worst adjacent
    ΔE 9.1 protan) · normal-vision PASS (19.6) · contrast WARN on aqua, yellow
@@ -33,71 +38,89 @@
 
    The ordinal ramp is one blue hue in both modes, running light→dark on the
    light surface and dark→light on the dark one, each validated with --ordinal
-   (nearest-step contrast 2.11:1 light, 2.75:1 dark).
+   (nearest-step contrast 2.11:1 light, 2.86:1 dark).
 
    Slot ORDER is the CVD-safety mechanism, so the dark steps keep the light
    ordering exactly — the same hue stays --s1 in both modes, which is what
-   stops a series changing colour when the theme does.
+   stops a series changing colour when the theme does. The series colours are
+   therefore NOT the brand teal; --accent is, and it is what the logo dot and
+   the focus ring use.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{
   color-scheme:dark;
-  /* Warm neutral, matching the site — see the palette note at the top of
-     styles.css for why the navy scale went. */
-  --surface:#2A2725; --bg:#1B1916; --navy:#252220; --raised:#33312E;
-  --ink:#DCDAD8; --ink-2:#AAA7A4; --ink-3:#84817E;
-  --line:#423F3C; --grid:#332F2C;
+  --surface:#222525; --bg:#151818; --raised:#2F3232;
+  --ink:#D6DADA; --ink-2:#A3A7A7; --ink-3:#868989;
+  --line:#3B3E3E; --grid:#2A2D2D;
+  --accent:#5CC2C4;
+
+  /* The band: nav and the lifetime slab. A tinted panel in both modes rather
+     than a dark slab in both, so the light theme is actually light. */
+  --band:#152324;
+  --band-ink:#D6DADA; --band-muted:#A3A7A7; --band-faint:#868989;
+  --band-line:rgba(255,255,255,.07);
+  --band-fill:rgba(255,255,255,.06); --band-fill-2:rgba(255,255,255,.13);
+
+  /* Chart.js draws tooltip text white and offers no token for it, so the
+     tooltip ground stays dark in both modes. */
+  --tip:#0E1B1C;
 
   --s1:#d95926; --s2:#3987e5; --s3:#199e70; --s4:#c98500;
   --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
 
-  /* Ordinal ramp — one hue, dark→light on a dark ground. Re-stepped when the
-     surface lightened: the old dark end (#184f95) fell to 1.83:1 against it,
-     under the 2:1 floor an ordinal ramp's nearest step has to clear. */
+  /* Ordinal ramp — one hue, dark→light on a dark ground. */
   --o1:#256abf; --o2:#3987e5; --o3:#6da7ec; --o4:#9ec5f4;
 
-  --banner-bg:#3A3220; --banner-bd:#54492F; --banner-fg:#DEC48A;
+  --banner-bg:#34291A; --banner-bd:#504330; --banner-fg:#E1BC88;
   --gutter:1rem;
 }
 :root[data-theme="light"]{
   color-scheme:light;
-  --surface:#ffffff; --bg:#F5F4F0; --navy:#0D1926; --raised:#F5F4F0;
-  --ink:#111827; --ink-2:#52514E; --ink-3:#6B7280;
-  --line:#E2DFD8; --grid:#F1EFEA;
+  --surface:#ffffff; --bg:#F1F5F5; --raised:#EFF3F3;
+  --ink:#1D2020; --ink-2:#5A5D5D; --ink-3:#717474;
+  --line:#D9DDDD; --grid:#E9EDED;
+  --accent:#007679;
+
+  --band:#DBEEEE;
+  --band-ink:#1D2020; --band-muted:#5A5D5D; --band-faint:#6C6F6F;
+  --band-line:rgba(0,0,0,.10);
+  --band-fill:rgba(0,0,0,.055); --band-fill-2:rgba(0,0,0,.12);
+
+  --tip:#0E1B1C;
 
   --s1:#eb6834; --s2:#2a78d6; --s3:#1baf7a; --s4:#eda100;
   --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
 
   --o1:#86b6ef; --o2:#5598e7; --o3:#2a78d6; --o4:#184f95;
 
-  --banner-bg:#FFFBEB; --banner-bd:#FDE68A; --banner-fg:#92400E;
+  --banner-bg:#FFF2E2; --banner-bd:#EBD6B9; --banner-fg:#704500;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;
   min-height:100dvh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 button,input,select{font-family:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--s1);outline-offset:2px;border-radius:4px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 
 /* NAV */
-nav{background:var(--navy);min-height:58px;display:flex;align-items:center;justify-content:space-between;
+nav{background:var(--band);min-height:58px;display:flex;align-items:center;justify-content:space-between;
   padding:.5rem var(--gutter);padding-top:calc(.5rem + env(safe-area-inset-top));
-  position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06);gap:.6rem;flex-wrap:wrap}
-.logo{font-family:'Lora',serif;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:.4rem}
-.ldot{width:7px;height:7px;background:var(--s1);border-radius:50%}
+  position:sticky;top:0;z-index:50;border-bottom:1px solid var(--band-line);gap:.6rem;flex-wrap:wrap}
+.logo{font-family:'Lora',serif;font-size:1.2rem;color:var(--band-ink);display:flex;align-items:center;gap:.4rem}
+.ldot{width:7px;height:7px;background:var(--accent);border-radius:50%}
 /* On a phone the controls take their own full-width row under the logo; from
    700px they sit back beside it. */
 .nav-right{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;width:100%;justify-content:space-between}
 @media(min-width:700px){.nav-right{width:auto;justify-content:flex-end;gap:.9rem}}
-.range-tabs{display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px;
+.range-tabs{display:flex;gap:2px;background:var(--band-fill);border-radius:8px;padding:3px;
   overflow-x:auto;scrollbar-width:none;max-width:100%}
 .range-tabs::-webkit-scrollbar{display:none}
-.rtab{flex-shrink:0;min-height:34px;padding:.3rem .7rem;border-radius:6px;border:none;background:none;color:rgba(255,255,255,.55);font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
-.rtab:hover{color:#fff}
-.rtab.active{background:rgba(255,255,255,.18);color:#fff}
-.refresh-btn,.theme-btn{min-height:34px;padding:.3rem .9rem;border-radius:7px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.65);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s}
-.refresh-btn:hover,.theme-btn:hover{border-color:rgba(255,255,255,.35);color:#fff}
+.rtab{flex-shrink:0;min-height:34px;padding:.3rem .7rem;border-radius:6px;border:none;background:none;color:var(--band-muted);font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.rtab:hover{color:var(--band-ink)}
+.rtab.active{background:var(--band-fill-2);color:var(--band-ink)}
+.refresh-btn,.theme-btn{min-height:34px;padding:.3rem .9rem;border-radius:7px;border:1px solid var(--band-line);background:var(--band-fill);color:var(--band-muted);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s}
+.refresh-btn:hover,.theme-btn:hover{background:var(--band-fill-2);color:var(--band-ink)}
 .theme-btn{padding:.3rem .7rem}
-.updated{font-size:.7rem;color:rgba(255,255,255,.35)}
+.updated{font-size:.7rem;color:var(--band-faint)}
 
 main{max-width:1200px;margin:0 auto;padding:1.1rem var(--gutter) 3rem}
 /* Refetch holds the previous render at reduced opacity — no skeleton flash. */
@@ -111,19 +134,19 @@ main{max-width:1200px;margin:0 auto;padding:1.1rem var(--gutter) 3rem}
 .empty-sub{font-size:.82rem;color:var(--ink-3);max-width:380px;line-height:1.5}
 
 /* ── LIFETIME BAND ───────────────────────────────────────────────────────── */
-.life{background:var(--navy);border:1px solid var(--line);border-radius:14px;padding:1.2rem var(--gutter);margin-bottom:1.4rem;color:#fff}
+.life{background:var(--band);border:1px solid var(--band-line);border-radius:14px;padding:1.2rem var(--gutter);margin-bottom:1.4rem;color:var(--band-ink)}
 .life-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
-.life-title{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)}
-.life-since{font-size:.7rem;color:rgba(255,255,255,.35)}
+.life-title{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--band-muted)}
+.life-since{font-size:.7rem;color:var(--band-faint)}
 .life-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
 @media(min-width:760px){.life-grid{grid-template-columns:1.5fr 1fr 1fr 1fr;gap:1.5rem}}
-.life-item .ll{font-size:.68rem;color:rgba(255,255,255,.45);margin-bottom:.28rem}
+.life-item .ll{font-size:.68rem;color:var(--band-muted);margin-bottom:.28rem}
 /* Hero figure: same sans as everything else, proportional figures. */
 .life-hero{font-size:2.4rem;font-weight:600;line-height:1;letter-spacing:-.02em}
 @media(min-width:760px){.life-hero{font-size:2.9rem}}
 .life-val{font-size:1.5rem;font-weight:600;line-height:1;letter-spacing:-.01em}
-.life-sub{font-size:.68rem;color:rgba(255,255,255,.35);margin-top:.3rem}
-.life-note{margin-top:.9rem;font-size:.68rem;color:rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.09);padding-top:.7rem}
+.life-sub{font-size:.68rem;color:var(--band-faint);margin-top:.3rem}
+.life-note{margin-top:.9rem;font-size:.68rem;color:var(--band-faint);border-top:1px solid var(--band-line);padding-top:.7rem}
 
 /* ── STAT TILES ──────────────────────────────────────────────────────────── */
 .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.1rem}
@@ -185,7 +208,7 @@ main{max-width:1200px;margin:0 auto;padding:1.1rem var(--gutter) 3rem}
 <body>
 
 <nav>
-  <div class="logo"><div class="ldot"></div>SummerScope <span style="font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:400;color:rgba(255,255,255,.35);margin-left:.3rem">Analytics</span></div>
+  <div class="logo"><div class="ldot"></div>SummerScope <span style="font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:400;color:var(--band-faint);margin-left:.3rem">Analytics</span></div>
   <div class="nav-right">
     <!-- One filter row, above everything it scopes. -->
     <div class="range-tabs" id="range-tabs">
@@ -340,7 +363,7 @@ const axes = () => ({
        beginAtZero: true },
 });
 const tooltip = () => ({
-  backgroundColor: c('--navy') || '#0D1926', borderColor: c('--line'), borderWidth: 1,
+  backgroundColor: c('--tip') || '#0E1B1C', borderColor: c('--line'), borderWidth: 1,
   padding: 10, cornerRadius: 8, displayColors: false,
   titleFont: { weight: '600', size: 12 }, bodyFont: { size: 12 },
 });
@@ -620,7 +643,7 @@ function applyTheme(theme) {
   btn.textContent = light ? '☾' : '☀';
   btn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', light ? '#0D1926' : '#252220');
+  if (meta) meta.setAttribute('content', light ? '#DBEEEE' : '#152324');
 }
 function currentTheme() {
   try { return localStorage.getItem('_ss_theme') === 'light' ? 'light' : 'dark'; } catch (_) { return 'dark'; }
