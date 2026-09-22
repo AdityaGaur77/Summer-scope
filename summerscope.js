@@ -46,14 +46,19 @@ function inFilterBucket(s, v) {
   return v === 'inactive' ? (s === 'discontinued' || s === 'uncertain') : s === v;
 }
 
-/** Status pill for the dark modal header — needs light-on-dark colors. */
+/**
+ * Status pill for the modal header. These used to be inline light-on-dark
+ * hexes, which was fine only while the header band was dark in BOTH themes.
+ * It is a soft tinted panel in light mode now, so they carry the same themed
+ * tag classes the cards use and follow whatever the active theme says.
+ */
 const MSTATUS_TAG = {
-  open:         '<span class="mtag" style="background:rgba(52,211,153,.2);color:#6EE7B7">Accepting now</span>',
-  upcoming:     '<span class="mtag" style="background:rgba(251,191,36,.2);color:#FCD34D">Opens later</span>',
-  rolling:      '<span class="mtag" style="background:rgba(56,189,248,.2);color:#7DD3FC">Rolling admissions</span>',
-  closed:       '<span class="mtag" style="background:rgba(239,68,68,.2);color:#FCA5A5">Deadline passed</span>',
-  discontinued: '<span class="mtag" style="background:rgba(156,163,175,.25);color:#D1D5DB">Discontinued</span>',
-  uncertain:    '<span class="mtag" style="background:rgba(249,115,22,.2);color:#FDBA74">Unconfirmed</span>',
+  open:         '<span class="mtag tf">Accepting now</span>',
+  upcoming:     '<span class="mtag tup">Opens later</span>',
+  rolling:      '<span class="mtag trl">Rolling admissions</span>',
+  closed:       '<span class="mtag tcl">Deadline passed</span>',
+  discontinued: '<span class="mtag tdc">Discontinued</span>',
+  uncertain:    '<span class="mtag tun">Unconfirmed</span>',
 };
 
 /** Rank used when sorting "still open first". */

@@ -65,7 +65,7 @@
     var light = theme === 'light';
     document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', light ? '#0D1926' : '#252220');
+    if (meta) meta.setAttribute('content', light ? '#DBEEEE' : '#152324');
     var btn = $('theme-btn');
     if (btn) {
       btn.textContent = light ? '☾' : '☀';
@@ -601,8 +601,10 @@
           + '<div style="flex:1;min-width:0">'
             + '<div class="ctitle">' + esc(p.name) + '</div>'
             + '<div class="chost">' + esc(p.host) + '</div>'
+            // Filled stars only. The five hollow ones carried no information
+            // and were five more glyphs on every card in the list.
             + '<span class="cstars" aria-label="Selectivity ' + p.prestige + ' of 5">'
-              + '★'.repeat(p.prestige) + '☆'.repeat(5 - p.prestige) + '</span>'
+              + '★'.repeat(p.prestige) + '</span>'
           + '</div>'
           + '<div class="cbadges">'
             + '<span class="tag ' + meta.tag + '" title="' + esc(meta.blurb) + '">' + esc(meta.label) + '</span>'
@@ -610,10 +612,17 @@
           + '</div>'
         + '</div>'
         + '<p class="cdesc">' + esc(p.desc.length > 130 ? p.desc.slice(0, 130) + '…' : p.desc) + '</p>'
+        // A card used to carry up to eight chips: every subject, the format,
+        // and one per eligible grade. The grade chips duplicated the Grades
+        // cell right below them, and a program tagged with four subjects
+        // wrapped the row onto three lines. Two subjects plus a +N, then the
+        // format: three chips, one line, and the full list is in the modal.
         + '<div class="tags">'
-          + p.cat.map(function (c) { return '<span class="tag tc">' + esc(c) + '</span>'; }).join('')
+          + p.cat.slice(0, 2).map(function (c) { return '<span class="tag tc">' + esc(c) + '</span>'; }).join('')
+          + (p.cat.length > 2
+              ? '<span class="tag tdc" title="' + esc(p.cat.join(', ')) + '">+' + (p.cat.length - 2) + '</span>'
+              : '')
           + '<span class="tag ' + fmtClass + '">' + esc(p.fmt) + '</span>'
-          + p.grades.map(function (x) { return '<span class="tag tg">Gr ' + esc(x) + '</span>'; }).join('')
         + '</div>'
         + '<div class="cmeta">'
           + '<div class="mi"><div class="ml">Deadline</div><div class="' + dl.cls + '">' + dl.text + '</div></div>'
@@ -721,10 +730,10 @@
             + '<div class="mstars">' + '★'.repeat(p.prestige) + '☆'.repeat(5 - p.prestige) + '</div></div>'
         + '</div>'
         + '<div class="mtags2">'
-          + p.cat.map(function (c) { return '<span class="mtag">' + esc(c) + '</span>'; }).join('')
-          + '<span class="mtag">' + esc(p.fmt) + '</span>'
-          + '<span class="mtag">Grades ' + p.grades.join(', ') + '</span>'
-          + (p.isNew ? '<span class="mtag">New</span>' : '')
+          + p.cat.map(function (c) { return '<span class="mtag mtag-plain">' + esc(c) + '</span>'; }).join('')
+          + '<span class="mtag mtag-plain">' + esc(p.fmt) + '</span>'
+          + '<span class="mtag mtag-plain">Grades ' + p.grades.join(', ') + '</span>'
+          + (p.isNew ? '<span class="mtag mtag-plain">New</span>' : '')
           + MSTATUS_TAG[st]
         + '</div>'
       + '</div>'

@@ -19,83 +19,88 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── THE DARK PALETTE ─────────────────────────────────────────────────────────
-   Rebuilt after the first attempt read as a generic dark dashboard and was
-   tiring to read. Two measured faults, both fixed here:
+/* ── THE PALETTE ──────────────────────────────────────────────────────────────
+   Third pass, and the first two failed for the same underlying reason: the
+   GREYSCALE was carrying the brand hue. Navy-tinted greys read as a stock AI
+   dashboard; warm-beige greys under a terracotta accent read as somebody
+   else's product. Either way the neutrals were doing identity work, which is
+   the one job they are bad at.
 
-   1. NEAR-WHITE ON NEAR-BLACK. #E9EEF6 on #0A111B is 16.3:1. Well past the
-      point where extra contrast stops helping, and far enough past it that
-      light text haloes against the ground — the specific thing that aches
-      after a few minutes. Body text now lands 9–12.6:1 on every surface it
-      actually sits on: still crisp, no glare.
+   So the greys here are genuinely neutral — hue 197°, chroma 0.004, which is
+   below the level where a cast is visible on any calibrated screen — and a
+   single accent carries the whole identity.
 
-   2. IT WAS NOT GREY, IT WAS NAVY. Every "neutral" ran hue 257° at chroma up
-      to 0.051 — a blue scale wearing grey's name, which is most of why it
-      looked machine-made. The greys are now chroma 0.006 at hue 70°: a warm
-      neutral that belongs with the light theme's cream and terracotta, and
-      reads like a dimmed room rather than a console.
+   That accent is deep teal at 197°: far from the navy of the first attempt
+   (257°) and far from the terracotta of the second (46°). It also leaves the
+   semantic green at 155° free to mean "free / open" without competing with the
+   button colour — 42° of separation between "this is interactive" and "this
+   program costs nothing".
 
-   Everything below is generated perceptually in OKLCH, then verified: body and
-   secondary text contrast, accent and status colours on both grounds, ink on
-   the accent fill, every tag chip against its own label AND against the card
-   it sits on, and a real ΔL step between every pair of surfaces that share an
-   edge. Adjust a value and re-check the whole set — these numbers hold each
-   other up.
+   Both modes are generated perceptually in OKLCH, then verified as a set: body
+   text lands 9–13:1 on dark and 13–17:1 on light (crisp, but short of the
+   ~16:1-on-black point where light text starts to halo), secondary text clears
+   4.5:1, every accent and status colour clears 4.5:1 on every ground it sits
+   on, ink clears 4.5:1 on the accent fill, each of the ten tag chips clears
+   4.5:1 against its own label AND stays visible against the card beneath it,
+   and every pair of surfaces that share an edge is at least 2.5 ΔL apart.
+   Change one value and re-check the whole set — these numbers hold each other
+   up.
    ───────────────────────────────────────────────────────────────────────── */
 :root{
   color-scheme:dark;
 
-  --bg:#1B1916;            /* page ground — lifted off black to kill the halo */
-  --bg-2:#252220;          /* nav + hero + footer band */
-  --card:#2A2725;
-  --card-2:#33312E;        /* raised surface inside a card */
-  --text:#DCDAD8;          /* deliberately not #fff: 12.6:1 on the page, not 16 */
-  --muted:#AAA7A4;
-  --faint:#84817E;
-  --accent:#DD8E68;        /* the brand terracotta, chroma dropped so it sits
-                              on the ground instead of buzzing against it */
-  --accent-2:#EDA885;
-  --accent-ink:#21120A;    /* text on an accent fill — 7.0:1 */
-  --border:#423F3C;
-  --border-2:#575552;      /* hover / focus border */
-  --tag-bg:#3F3A35;
-  --green:#6FC193;
+  --bg:#151818;            /* page ground — lifted off black to kill the halo */
+  --bg-2:#152324;          /* nav + hero + footer band, the one tinted surface */
+  --card:#222525;
+  --card-2:#2F3232;        /* raised surface inside a card */
+  --text:#D6DADA;          /* deliberately not #fff: 12.7:1 on the page, not 16 */
+  --muted:#A3A7A7;
+  --faint:#868989;
+  --accent:#5CC2C4;        /* teal — the only thing in the file with real chroma */
+  --accent-2:#83D5D6;
+  --accent-ink:#031A1B;    /* text on an accent fill — 8.5:1 */
+  --border:#3B3E3E;
+  --border-2:#505353;      /* hover / focus border */
+  --tag-bg:#2F3232;
+  --green:#76C392;
   --amber:#E5B46E;
-  --red:#DD817A;
+  --red:#D8847D;
   --shadow:0 6px 24px rgba(0,0,0,.45);
   --shadow-lg:0 20px 50px rgba(0,0,0,.55);
-  --scrim:rgba(10,9,8,.72);
+  --scrim:rgba(8,10,10,.72);
 
-  /* On dark, hero/nav sit just above the page ground rather than below it. */
-  --on-dark:var(--text);
-  --on-dark-muted:#AAA7A4;
-  --on-dark-faint:#84817E;
-  --on-dark-line:rgba(255,255,255,.07);
-  --on-dark-fill:rgba(255,255,255,.05);
-  --on-dark-fill-2:rgba(255,255,255,.10);
+  /* The band: nav, hero and footer. On dark it sits just above the page
+     ground; on light it is a soft teal panel rather than a dark slab, so these
+     are "ink on the band", not "ink on dark". */
+  --band-ink:var(--text);
+  --band-muted:#A3A7A7;
+  --band-faint:#868989;
+  --band-line:rgba(255,255,255,.07);
+  --band-fill:rgba(255,255,255,.05);
+  --band-fill-2:rgba(255,255,255,.10);
 
-  /* Tag palette. Ten saturated pills on a dark ground is its own kind of
-     noise, so each hue keeps its identity at a fraction of the chroma: the
-     chip reads as a tinted grey and its label carries the colour. */
-  --t-indigo-bg:#343A50;  --t-indigo-fg:#ADBBF2;
-  --t-emerald-bg:#294233; --t-emerald-fg:#92CEAA;
-  --t-blue-bg:#293D4F;    --t-blue-fg:#92C4EE;
-  --t-violet-bg:#3E364D;  --t-violet-fg:#C5B3EA;
-  --t-yellow-bg:#433A22;  --t-yellow-fg:#D2BC82;
-  --t-red-bg:#4E3330;     --t-red-fg:#EDAAA4;
-  --t-fuchsia-bg:#473345; --t-fuchsia-fg:#DCABD6;
-  --t-orange-bg:#4C3627;  --t-orange-fg:#E7B18C;
-  --t-slate-bg:#3F3A35;   --t-slate-fg:#C2BDB7;
-  --t-sky-bg:#23404B;     --t-sky-fg:#84C9E5;
+  /* Tag palette. Ten saturated pills on one card is its own kind of noise, so
+     each hue keeps its identity at a fraction of the chroma: the chip reads as
+     a tinted grey and its label carries the colour. */
+  --t-indigo-bg:#33384C;  --t-indigo-fg:#AEBBEF;
+  --t-emerald-bg:#2A3F31; --t-emerald-fg:#97CDA9;
+  --t-blue-bg:#293B4B;    --t-blue-fg:#95C3EB;
+  --t-violet-bg:#3C3549;  --t-violet-fg:#C5B3E8;
+  --t-yellow-bg:#403923;  --t-yellow-fg:#D0BC86;
+  --t-red-bg:#4A3230;     --t-red-fg:#EAABA5;
+  --t-fuchsia-bg:#443342; --t-fuchsia-fg:#DAADD5;
+  --t-orange-bg:#483427;  --t-orange-fg:#E4B290;
+  --t-slate-bg:#353B3B;   --t-slate-fg:#B7C0C0;
+  --t-sky-bg:#243D47;     --t-sky-fg:#88C9E2;
 
-  --bar-upcoming:#8A6A3A;
-  --bar-rolling:#3E6B80;
-  --bar-inactive:#4A4744;
+  --bar-upcoming:#8C7A44;
+  --bar-rolling:#3F6E75;
+  --bar-inactive:#444848;
 
-  --notice-bg:#3A3220;    --notice-bd:#54492F;  --notice-fg:#DEC48A;
-  --alert-bg:#42302D;     --alert-bd:#5E4340;   --alert-fg:#E8A8A2;
-  --warn-bg:#40332A;      --warn-bd:#5C4838;    --warn-fg:#E2B091;
-  --good-bg:#26382E;      --good-bd:#375046;    --good-fg:#8FC9A8;
+  --notice-bg:#34291A;    --notice-bd:#504330;  --notice-fg:#E1BC88;
+  --alert-bg:#392624;     --alert-bd:#563E3C;   --alert-fg:#F2AFA9;
+  --warn-bg:#37271D;      --warn-bd:#544033;    --warn-fg:#ECB591;
+  --good-bg:#1F3025;      --good-bd:#364B3D;    --good-fg:#99D2AC;
 
   --sw:238px;              /* sidebar width */
   --nh:56px;               /* nav height */
@@ -105,55 +110,61 @@
   --tap:44px;              /* minimum touch target */
 }
 
+/* Light is the same construction inverted: the same neutral grey scale read
+   from the other end, the same teal at the lightness that clears 4.5:1 on
+   white. The old light theme dropped a near-black navy slab behind the nav and
+   hero; that slab was the single loudest thing on the page and it belonged to
+   a palette that no longer exists. It is now a soft teal panel two steps off
+   the page, which is enough to separate it without shouting. */
 :root[data-theme="light"]{
   color-scheme:light;
 
-  --bg:#F5F4F0;
-  --bg-2:#0D1926;
+  --bg:#F1F5F5;
+  --bg-2:#DBEEEE;
   --card:#FFFFFF;
-  --card-2:#F5F4F0;
-  --text:#111827;
-  --muted:#5A6472;
-  --faint:#8A93A0;
-  --accent:#C2410C;
-  --accent-2:#9A3412;
-  --accent-ink:#FFFFFF;
-  --border:#E2DFD8;
-  --border-2:#C9C5BB;
-  --tag-bg:#EDEBE4;
-  --green:#047857;
-  --amber:#B45309;
-  --red:#DC2626;
-  --shadow:0 3px 16px rgba(0,0,0,.07);
-  --shadow-lg:0 20px 48px rgba(0,0,0,.18);
-  --scrim:rgba(15,23,42,.5);
+  --card-2:#EFF3F3;
+  --text:#1D2020;
+  --muted:#5A5D5D;
+  --faint:#717474;
+  --accent:#007679;
+  --accent-2:#005F63;
+  --accent-ink:#FAFEFE;
+  --border:#D9DDDD;
+  --border-2:#C1C5C5;
+  --tag-bg:#E7EFEF;
+  --green:#117342;
+  --amber:#976500;
+  --red:#A14B46;
+  --shadow:0 3px 16px rgba(20,32,32,.07);
+  --shadow-lg:0 20px 48px rgba(20,32,32,.18);
+  --scrim:rgba(18,28,28,.5);
 
-  --on-dark:#FFFFFF;
-  --on-dark-muted:rgba(255,255,255,.62);
-  --on-dark-faint:rgba(255,255,255,.4);
-  --on-dark-line:rgba(255,255,255,.08);
-  --on-dark-fill:rgba(255,255,255,.08);
-  --on-dark-fill-2:rgba(255,255,255,.16);
+  --band-ink:var(--text);
+  --band-muted:#5A5D5D;
+  --band-faint:#6C6F6F;
+  --band-line:rgba(0,0,0,.10);
+  --band-fill:rgba(0,0,0,.045);
+  --band-fill-2:rgba(0,0,0,.09);
 
-  --t-indigo-bg:#EEF2FF;  --t-indigo-fg:#3730A3;
-  --t-emerald-bg:#ECFDF5; --t-emerald-fg:#065F46;
-  --t-blue-bg:#EFF6FF;    --t-blue-fg:#1D4ED8;
-  --t-violet-bg:#F5F3FF;  --t-violet-fg:#5B21B6;
-  --t-yellow-bg:#FEF9C3;  --t-yellow-fg:#713F12;
-  --t-red-bg:#FEE2E2;     --t-red-fg:#991B1B;
-  --t-fuchsia-bg:#FDF4FF; --t-fuchsia-fg:#7E22CE;
-  --t-orange-bg:#FFEDD5;  --t-orange-fg:#9A3412;
-  --t-slate-bg:#F3F4F6;   --t-slate-fg:#4B5563;
-  --t-sky-bg:#E0F2FE;     --t-sky-fg:#075985;
+  --t-indigo-bg:#E6ECFF;  --t-indigo-fg:#3F4989;
+  --t-emerald-bg:#DEF3E4; --t-emerald-fg:#036035;
+  --t-blue-bg:#DDF0FF;    --t-blue-fg:#075485;
+  --t-violet-bg:#F0E9FF;  --t-violet-fg:#594080;
+  --t-yellow-bg:#F5ECD7;  --t-yellow-fg:#664C00;
+  --t-red-bg:#FFE6E3;     --t-red-fg:#803531;
+  --t-fuchsia-bg:#F9E6F7; --t-fuchsia-fg:#6F386B;
+  --t-orange-bg:#FEE8DA;  --t-orange-fg:#7A3D02;
+  --t-slate-bg:#E7EFEF;   --t-slate-fg:#4A5252;
+  --t-sky-bg:#D9F2FC;     --t-sky-fg:#005A7B;
 
-  --bar-upcoming:linear-gradient(90deg,#F59E0B,#FBBF24);
-  --bar-rolling:linear-gradient(90deg,#0EA5E9,#38BDF8);
-  --bar-inactive:linear-gradient(90deg,#64748B,#94A3B8);
+  --bar-upcoming:#B08A2E;
+  --bar-rolling:#3C8792;
+  --bar-inactive:#B4BCBC;
 
-  --notice-bg:#FFFBEB;    --notice-bd:#FDE68A;  --notice-fg:#92400E;
-  --alert-bg:#FEF2F2;     --alert-bd:#FECACA;   --alert-fg:#991B1B;
-  --warn-bg:#FFF7ED;      --warn-bd:#FED7AA;    --warn-fg:#9A3412;
-  --good-bg:#ECFDF5;      --good-bd:#A7F3D0;    --good-fg:#065F46;
+  --notice-bg:#FFF2E2;    --notice-bd:#EBD6B9;  --notice-fg:#704500;
+  --alert-bg:#FFEEEC;     --alert-bd:#F6CECA;   --alert-fg:#803531;
+  --warn-bg:#FFF0E4;      --warn-bd:#F2D2BE;    --warn-fg:#7A3D02;
+  --good-bg:#E8FAED;      --good-bd:#C3E2CC;    --good-fg:#036035;
 }
 
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
@@ -212,27 +223,27 @@ nav:not(.mobnav){
   display:flex;align-items:center;gap:.5rem;
   padding:.4rem var(--gutter);padding-top:calc(.4rem + env(safe-area-inset-top));
   position:sticky;top:0;z-index:100;
-  border-bottom:1px solid var(--on-dark-line);
+  border-bottom:1px solid var(--band-line);
 }
-.logo{font-family:'Lora',serif;font-size:1.18rem;color:var(--on-dark);letter-spacing:-.01em;
+.logo{font-family:'Lora',serif;font-size:1.18rem;color:var(--band-ink);letter-spacing:-.01em;
   display:flex;align-items:center;gap:.45rem;cursor:pointer;flex-shrink:0;user-select:none;
   min-height:var(--tap);padding-right:.25rem}
 .ldot{width:7px;height:7px;background:var(--accent);border-radius:50%;flex-shrink:0}
 /* Desktop gets the tab row in the nav; on a phone the bottom bar has it. */
 .nav-tabs{display:none;gap:2px;margin-left:1rem}
-.ntab{color:var(--on-dark-muted);padding:.4rem .85rem;border-radius:8px;cursor:pointer;
+.ntab{color:var(--band-muted);padding:.4rem .85rem;border-radius:8px;cursor:pointer;
   font-size:.82rem;font-weight:500;border:none;background:none;transition:background .15s,color .15s}
-.ntab:hover{color:var(--on-dark);background:var(--on-dark-fill)}
-.ntab.active{color:var(--on-dark);background:var(--on-dark-fill-2)}
+.ntab:hover{color:var(--band-ink);background:var(--band-fill)}
+.ntab.active{color:var(--band-ink);background:var(--band-fill-2)}
 .nbadge{background:var(--accent);color:var(--accent-ink);font-size:.62rem;font-weight:700;
   padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;display:inline-block}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:.5rem;flex-shrink:0}
-.nav-updated{display:none;font-size:.72rem;color:var(--on-dark-faint);align-items:center;gap:.4rem}
+.nav-updated{display:none;font-size:.72rem;color:var(--band-faint);align-items:center;gap:.4rem}
 .update-dot{width:5px;height:5px;background:var(--green);border-radius:50%;flex-shrink:0}
 .icon-btn{width:var(--tap);height:var(--tap);display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--on-dark-line);background:var(--on-dark-fill);border-radius:10px;
-  color:var(--on-dark);cursor:pointer;font-size:1rem;line-height:1;transition:background .15s,border-color .15s}
-.icon-btn:hover{background:var(--on-dark-fill-2);border-color:var(--on-dark-fill-2)}
+  border:1px solid var(--band-line);background:var(--band-fill);border-radius:10px;
+  color:var(--band-ink);cursor:pointer;font-size:1rem;line-height:1;transition:background .15s,border-color .15s}
+.icon-btn:hover{background:var(--band-fill-2);border-color:var(--band-fill-2)}
 
 /* ── LOADING / EMPTY ─────────────────────────────────────────────────────── */
 .loading-screen{display:flex;align-items:center;justify-content:center;min-height:55vh;
@@ -242,40 +253,48 @@ nav:not(.mobnav){
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── HERO ────────────────────────────────────────────────────────────────── */
-.hero{background:var(--bg-2);padding:1.5rem var(--gutter) 1.35rem;color:var(--on-dark)}
-.heyebrow{font-size:.65rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+.hero{background:var(--bg-2);padding:1.05rem var(--gutter) 1rem;color:var(--band-ink)}
+/* On a phone the eyebrow, the third line of the subtitle and two of the four
+   stat tiles are the difference between landing on a page of programs and
+   landing on a page about a page of programs. They all come back at 480px. */
+.heyebrow{display:none;font-size:.65rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
   text-transform:uppercase;margin-bottom:.5rem}
-.hero h1{font-family:'Lora',serif;font-size:1.75rem;line-height:1.12;letter-spacing:-.025em;
-  margin-bottom:.5rem;max-width:20ch}
+.hero h1{font-family:'Lora',serif;font-size:1.45rem;line-height:1.14;letter-spacing:-.025em;
+  margin-bottom:.4rem;max-width:20ch}
 .hero h1 em{font-style:italic;color:var(--accent)}
-.hsub{color:var(--on-dark-muted);font-size:.88rem;margin-bottom:1.1rem;max-width:52ch}
+.hsub{color:var(--band-muted);font-size:.84rem;margin-bottom:.85rem;max-width:52ch;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .sbar{display:flex;position:relative;max-width:540px}
-.sbar input{flex:1;min-width:0;padding:.7rem 2.4rem .7rem 1rem;border-radius:10px;
-  border:1.5px solid var(--on-dark-line);background:var(--on-dark-fill);color:var(--on-dark);
+.sbar input{flex:1;min-width:0;padding:.6rem 2.4rem .6rem .9rem;border-radius:10px;
+  border:1.5px solid var(--band-line);background:var(--band-fill);color:var(--band-ink);
   outline:none;transition:border-color .15s,background .15s}
 /* type=search draws its own clear button in Safari; .sclear is ours and works
    in every browser, so suppress the native one rather than showing two. */
 .sbar input::-webkit-search-cancel-button,
 .sbar input::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
 .sbar input{-webkit-appearance:none;appearance:none}
-.sbar input::placeholder{color:var(--on-dark-faint)}
-.sbar input:focus{border-color:var(--accent);background:var(--on-dark-fill-2)}
+.sbar input::placeholder{color:var(--band-faint)}
+.sbar input:focus{border-color:var(--accent);background:var(--band-fill-2)}
 .sclear{position:absolute;right:.35rem;top:50%;transform:translateY(-50%);
-  width:32px;height:32px;border:none;background:none;color:var(--on-dark-faint);
+  width:32px;height:32px;border:none;background:none;color:var(--band-faint);
   cursor:pointer;font-size:1.1rem;border-radius:8px;display:none}
 .sbar.has-value .sclear{display:block}
-.sclear:hover{color:var(--on-dark);background:var(--on-dark-fill)}
-.hstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem 1rem;margin-top:1.15rem;max-width:420px}
-.hs{font-size:.72rem;color:var(--on-dark-faint)}
-.hs strong{display:block;font-size:1.15rem;font-weight:600;color:var(--on-dark);line-height:1.2;margin-bottom:1px}
+.sclear:hover{color:var(--band-ink);background:var(--band-fill)}
+.hstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem 1rem;margin-top:.85rem;max-width:420px}
+/* Programs and Accepting now. "Free programs" and "Subject areas" are one tap
+   away as quick chips, so on a phone they cost a row they do not earn. */
+.hstats .hs:nth-child(2),.hstats .hs:nth-child(4){display:none}
+.hs{font-size:.72rem;color:var(--band-faint);display:flex;align-items:baseline;gap:.4rem}
+.hs strong{font-size:1.05rem;font-weight:600;color:var(--band-ink);line-height:1.2}
 
 /* ── NOTICE BAR ──────────────────────────────────────────────────────────── */
 .notice{background:var(--card);border-bottom:1px solid var(--border);
-  padding:.55rem var(--gutter);display:flex;align-items:flex-start;gap:.5rem;
+  padding:.45rem var(--gutter);display:flex;align-items:flex-start;gap:.5rem;
   font-size:.74rem;color:var(--muted);line-height:1.5}
 .notice-left{display:flex;align-items:flex-start;gap:.55rem;flex:1}
 .ndot{width:5px;height:5px;background:var(--green);border-radius:50%;flex-shrink:0;margin-top:.45rem}
 .notice-date{display:none;font-size:.7rem;color:var(--faint);flex-shrink:0}
+.nlong{display:none}
 
 /* ── PAGES ───────────────────────────────────────────────────────────────── */
 .page{display:none}
@@ -341,15 +360,15 @@ nav:not(.mobnav){
 .fhint{font-size:.7rem;color:var(--faint);line-height:1.45;padding:.1rem .1rem .55rem}
 
 /* ── MAIN COLUMN ─────────────────────────────────────────────────────────── */
-.main{min-width:0;padding:.85rem var(--gutter) 1.5rem}
+.main{min-width:0;padding:.55rem var(--gutter) 1.5rem}
 
 /* Quick chips: the six filters worth one tap, scrollable on a phone. */
 .quick{display:flex;gap:.45rem;overflow-x:auto;scrollbar-width:none;
-  padding:.15rem .1rem .7rem;margin:0 calc(var(--gutter) * -1);
+  padding:.1rem .1rem .55rem;margin:0 calc(var(--gutter) * -1);
   padding-left:var(--gutter);padding-right:var(--gutter);
   scroll-snap-type:x proximity;overscroll-behavior-x:contain}
 .quick::-webkit-scrollbar{display:none}
-.qchip{flex-shrink:0;scroll-snap-align:start;min-height:36px;padding:.3rem .8rem;
+.qchip{flex-shrink:0;scroll-snap-align:start;min-height:34px;padding:.25rem .75rem;
   border-radius:20px;border:1px solid var(--border);background:var(--card);
   color:var(--muted);font-size:.8rem;font-weight:500;cursor:pointer;white-space:nowrap;
   transition:background .13s,border-color .13s,color .13s}
@@ -357,7 +376,7 @@ nav:not(.mobnav){
 .qchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 
 /* Active filters, each individually removable. */
-.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.55rem}
 .chips:empty{display:none}
 .chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.76rem;font-weight:500;
   background:var(--tag-bg);color:var(--text);border:1px solid var(--border);
@@ -368,10 +387,13 @@ nav:not(.mobnav){
 .chip-clear{font-size:.76rem;font-weight:600;color:var(--accent);background:none;border:none;
   cursor:pointer;padding:.25rem .4rem;min-height:30px}
 
-.rbar{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem}
-.rc{font-size:.8rem;color:var(--muted);min-width:0}
+.rbar{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
+/* The count is short and fixed; the sort select is the one that should give
+   up width, or "All 125 programs" wraps onto two lines and the whole row
+   grows for nothing. */
+.rc{font-size:.8rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 .rc strong{color:var(--text);font-weight:600}
-.ssel{margin-left:auto;flex-shrink:0;max-width:52vw;font-size:.8rem;padding:.42rem .55rem;
+.ssel{margin-left:auto;min-width:0;max-width:44vw;font-size:.8rem;padding:.38rem .5rem;
   border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);
   cursor:pointer;outline:none;min-height:38px}
 .filter-btn{display:flex;align-items:center;gap:.4rem;flex-shrink:0;min-height:38px;
@@ -386,7 +408,7 @@ nav:not(.mobnav){
 /* ── PROGRAM GRID + CARDS ────────────────────────────────────────────────── */
 .grid{display:grid;grid-template-columns:1fr;gap:.75rem}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:1rem;cursor:pointer;display:flex;flex-direction:column;gap:.6rem;
+  padding:.8rem;cursor:pointer;display:flex;flex-direction:column;gap:.5rem;
   position:relative;overflow:hidden;text-align:left;width:100%;
   transition:border-color .15s,box-shadow .15s,transform .12s}
 .card:hover{border-color:var(--border-2);box-shadow:var(--shadow)}
@@ -402,14 +424,17 @@ nav:not(.mobnav){
 .cbar-rolling{background:var(--bar-rolling)}
 .cbar-inactive{background:var(--bar-inactive)}
 .ctop{display:flex;gap:.6rem;align-items:flex-start}
-.clog{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+.clog{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:.8rem;color:#fff;flex-shrink:0;letter-spacing:-.02em;
   text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .ctitle{font-weight:600;font-size:.92rem;line-height:1.3}
 .chost{font-size:.74rem;color:var(--muted);margin-top:1px}
 .cstars{font-size:10px;color:var(--amber);display:block;margin-top:2px;letter-spacing:1px}
 .cbadges{display:flex;flex-direction:column;gap:3px;align-items:flex-end;flex-shrink:0;margin-top:2px}
-.cdesc{font-size:.81rem;color:var(--muted);line-height:1.5}
+/* Two lines on a phone, three from 700px. Clamping beats a shorter slice:
+   the same text serves both, and nothing is lost — the modal has it in full. */
+.cdesc{font-size:.8rem;color:var(--muted);line-height:1.45;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .tags{display:flex;flex-wrap:wrap;gap:.3rem}
 .tag{font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:.02em}
 .tc{background:var(--t-indigo-bg);color:var(--t-indigo-fg)}
@@ -426,7 +451,10 @@ nav:not(.mobnav){
 .tun{background:var(--t-orange-bg);color:var(--t-orange-fg)}
 /* "expected date, not confirmed" marker */
 .exp{border-bottom:1px dashed currentColor;cursor:help}
-.cmeta{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+/* Deadline and Dates on a phone; Location and Grades join them at 700px.
+   All four are always in the modal. */
+.cmeta{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.cmeta .mi:nth-child(n+3){display:none}
 .mi{font-size:.78rem;min-width:0}
 .ml{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
   color:var(--faint);margin-bottom:1px}
@@ -434,7 +462,7 @@ nav:not(.mobnav){
 .urgent{color:var(--red)}
 .soon{color:var(--amber)}
 .closed-t{color:var(--faint)}
-.cfoot{padding-top:.6rem;border-top:1px solid var(--border);display:flex;align-items:center;
+.cfoot{padding-top:.5rem;border-top:1px solid var(--border);display:flex;align-items:center;
   justify-content:space-between;gap:.6rem}
 .cv{font-size:.82rem;font-weight:600}
 .cvf{color:var(--green)}
@@ -448,12 +476,16 @@ nav:not(.mobnav){
   border-radius:10px;background:var(--accent);color:var(--accent-ink);font-weight:700;cursor:pointer}
 
 /* ── EVENTS ──────────────────────────────────────────────────────────────── */
-.ehero{background:var(--bg-2);padding:1.4rem var(--gutter) 1.2rem;color:var(--on-dark);
-  border-bottom:1px solid var(--on-dark-line)}
-.ehero h2{font-family:'Lora',serif;font-size:1.55rem;letter-spacing:-.02em;margin-bottom:.35rem}
-.ehero p{color:var(--on-dark-muted);font-size:.85rem;max-width:60ch}
+/* Same treatment as the programs hero: on a phone this page is a list of
+   events, not an essay about events. */
+.ehero{background:var(--bg-2);padding:1rem var(--gutter) .9rem;color:var(--band-ink);
+  border-bottom:1px solid var(--band-line)}
+.ehero h2{font-family:'Lora',serif;font-size:1.3rem;letter-spacing:-.02em;margin-bottom:.3rem;
+  line-height:1.18}
+.ehero p{color:var(--band-muted);font-size:.82rem;max-width:60ch;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .ebar{background:var(--card);border-bottom:1px solid var(--border);
-  padding:.65rem var(--gutter);display:flex;gap:.45rem;align-items:center;
+  padding:.5rem var(--gutter);display:flex;gap:.45rem;align-items:center;
   overflow-x:auto;scrollbar-width:none}
 .ebar::-webkit-scrollbar{display:none}
 .elabel{font-size:.72rem;color:var(--faint);font-weight:600;flex-shrink:0}
@@ -462,26 +494,27 @@ nav:not(.mobnav){
   cursor:pointer;white-space:nowrap;transition:background .13s,border-color .13s,color .13s}
 .efbtn:hover{border-color:var(--border-2);color:var(--text)}
 .efbtn.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
-.ebody{padding:1rem var(--gutter) 1.5rem}
-.esec{margin-bottom:1.6rem}
+.ebody{padding:.75rem var(--gutter) 1.5rem}
+.esec{margin-bottom:1.3rem}
 .eslabel{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:var(--muted);margin-bottom:.7rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
 .egrid{display:grid;grid-template-columns:1fr;gap:.75rem}
 .ecard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:1rem;cursor:pointer;text-align:left;width:100%;
+  padding:.8rem;cursor:pointer;text-align:left;width:100%;
   transition:border-color .15s,box-shadow .15s,transform .12s}
 .ecard:hover{border-color:var(--border-2);box-shadow:var(--shadow)}
 @media(hover:hover){.ecard:hover{transform:translateY(-1px)}}
 .etype{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:.6rem}
+  padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:.5rem}
 .eh{background:var(--t-indigo-bg);color:var(--t-indigo-fg)}
 .ec{background:var(--t-orange-bg);color:var(--t-orange-fg)}
 .ea{background:var(--t-fuchsia-bg);color:var(--t-fuchsia-fg)}
 .ef2{background:var(--t-sky-bg);color:var(--t-sky-fg)}
 .etitle{font-weight:600;font-size:.92rem;margin-bottom:.18rem;line-height:1.3}
 .eorg{font-size:.76rem;color:var(--muted);margin-bottom:.55rem}
-.edesc{font-size:.81rem;color:var(--muted);line-height:1.5;margin-bottom:.8rem}
-.emeta{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.edesc{font-size:.8rem;color:var(--muted);line-height:1.45;margin-bottom:.65rem;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.emeta{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
 .emi{font-size:.78rem;min-width:0}
 .eml{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
   color:var(--faint);margin-bottom:1px}
@@ -508,14 +541,19 @@ nav:not(.mobnav){
 .mhtop{display:flex;align-items:flex-start;gap:.8rem;margin-bottom:.8rem;padding-right:2.5rem}
 .mlog{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:1rem;color:#fff;flex-shrink:0;text-shadow:0 1px 2px rgba(0,0,0,.35)}
-.mtitle{font-family:'Lora',serif;font-size:1.25rem;letter-spacing:-.02em;line-height:1.22;color:var(--on-dark)}
-.mhost{color:var(--on-dark-muted);font-size:.79rem;margin-top:.18rem}
+.mtitle{font-family:'Lora',serif;font-size:1.25rem;letter-spacing:-.02em;line-height:1.22;color:var(--band-ink)}
+.mhost{color:var(--band-muted);font-size:.79rem;margin-top:.18rem}
 .mstars{color:var(--amber);font-size:.82rem;margin-top:.15rem}
 .mtags2{display:flex;gap:.35rem;flex-wrap:wrap}
-.mtag{background:var(--on-dark-fill-2);color:var(--on-dark);font-size:.69rem;font-weight:500;
-  padding:2px 9px;border-radius:20px}
+/* .mtag is layout only. The subject and format pills add .mtag-plain for the
+   neutral band fill; the status pill adds one of the themed .t* classes
+   instead, the same ones the cards use. Keeping the colours off .mtag is what
+   lets a .t* class win — they are declared earlier in this file, so on equal
+   specificity .mtag would otherwise take it. */
+.mtag{font-size:.69rem;font-weight:500;padding:2px 9px;border-radius:20px}
+.mtag-plain{background:var(--band-fill-2);color:var(--band-ink)}
 .mx{position:absolute;top:.85rem;right:.75rem;width:36px;height:36px;border:none;border-radius:50%;
-  background:var(--on-dark-fill-2);color:var(--on-dark);font-size:1.1rem;cursor:pointer;
+  background:var(--band-fill-2);color:var(--band-ink);font-size:1.1rem;cursor:pointer;
   display:grid;place-items:center;line-height:1}
 .mb{padding:1.1rem var(--gutter);overflow-y:auto;overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;flex:1}
@@ -552,11 +590,11 @@ nav:not(.mobnav){
 
 /* ── MOBILE BOTTOM BAR ───────────────────────────────────────────────────── */
 .mobnav{position:fixed;top:auto;left:0;right:0;bottom:0;z-index:500;display:flex;
-  background:var(--bg-2);border:none;border-top:1px solid var(--on-dark-line);
+  background:var(--bg-2);border:none;border-top:1px solid var(--band-line);
   min-height:0;padding:0;padding-bottom:env(safe-area-inset-bottom)}
 .mobnav button{flex:1;min-height:var(--mnh);display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:2px;border:none;background:none;
-  color:var(--on-dark-faint);font-size:.66rem;font-weight:600;cursor:pointer;padding:.3rem}
+  color:var(--band-faint);font-size:.66rem;font-weight:600;cursor:pointer;padding:.3rem}
 .mobnav button .mn-ico{font-size:1.05rem;line-height:1.1}
 .mobnav button.active{color:var(--accent)}
 .mn-count{font-size:.6rem;font-weight:700;background:var(--accent);color:var(--accent-ink);
@@ -572,13 +610,18 @@ nav:not(.mobnav){
 
 /* ── FOOTER ──────────────────────────────────────────────────────────────── */
 footer{background:var(--bg-2);padding:1.4rem var(--gutter);margin-top:1.5rem;
-  color:var(--on-dark-faint);font-size:.75rem;border-top:1px solid var(--on-dark-line);line-height:1.6}
+  color:var(--band-faint);font-size:.75rem;border-top:1px solid var(--band-line);line-height:1.6}
 footer p{margin-bottom:.3rem}
-footer strong{color:var(--on-dark-muted)}
+footer strong{color:var(--band-muted)}
 
 /* ═══ 480px — two-up stat and card grids ═══════════════════════════════════ */
 @media(min-width:480px){
-  .hstats{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none}
+  .heyebrow{display:block}
+  .hstats{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none;gap:.75rem 1rem;margin-top:1.1rem}
+  .hs,.hstats .hs:nth-child(2),.hstats .hs:nth-child(4){display:block}
+  .hs strong{display:block;font-size:1.15rem;margin-bottom:1px}
+  .hsub,.ehero p{-webkit-line-clamp:none;display:block;overflow:visible}
+  .ehero h2{font-size:1.55rem}
   .grid,.egrid{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
 }
 
@@ -587,6 +630,16 @@ footer strong{color:var(--on-dark-muted)}
   :root{--gutter:1.5rem}
   .hero{padding:2.2rem var(--gutter) 1.9rem}
   .hero h1{font-size:2.3rem}
+  .hsub{font-size:.88rem;margin-bottom:1.1rem}
+  .nshort{display:none}
+  .nlong{display:inline}
+  .card{padding:1rem;gap:.6rem}
+  .clog{width:38px;height:38px}
+  .cdesc{font-size:.81rem;line-height:1.5;-webkit-line-clamp:3}
+  .cmeta .mi:nth-child(n+3){display:block}
+  .ehero{padding:1.4rem var(--gutter) 1.2rem}
+  .ecard{padding:1rem}
+  .edesc{font-size:.81rem;line-height:1.5;-webkit-line-clamp:4}
   .mbg{align-items:flex-start;padding:2.5rem 1rem 2rem;overflow-y:auto}
   .modal{border-radius:14px;max-height:none}
   .mb{overflow:visible}
@@ -620,6 +673,7 @@ footer strong{color:var(--on-dark-muted)}
   .sb-apply{display:none}
   .sb-reset{flex:1}
   .fo{font-size:.83rem;min-height:34px;padding:.32rem .2rem}
+  .ssel{flex-shrink:0}
   .grid,.egrid{grid-template-columns:repeat(auto-fill,minmax(296px,1fr))}
   .ssel{max-width:none}
 }
