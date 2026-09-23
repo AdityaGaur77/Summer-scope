@@ -17,6 +17,11 @@ summerscope/
 ├── dashboard.html             ← private analytics dashboard
 ├── ss-insights.js             ← client-side visit tracker
 ├── data.json                  ← all program and event data
+├── favicon.svg                ← the icon; the PNGs and .ico are built from it
+├── favicon.ico                ← 16/32/48, for the bare /favicon.ico request
+├── apple-touch-icon.png       ← 180, iOS home screen
+├── icon-192.png · icon-512.png · icon-maskable.png
+├── site.webmanifest           ← name, theme colours, install icons
 ├── api/
 │   ├── track.js               ← POST endpoint: browser → Supabase (served at /api/collect)
 │   ├── analytics.js           ← GET endpoint: aggregated stats + lifetime totals
@@ -25,6 +30,7 @@ summerscope/
 │   └── schema.sql             ← durable lifetime storage (run once — see below)
 ├── scripts/
 │   ├── roll-cycle.mjs         ← rolls the database to a new application cycle
+│   ├── build-icons.mjs        ← regenerates the icon set from favicon.svg
 │   └── cycle-2027-updates.json← curated facts for the 2027 cycle
 └── vercel.json
 ```
@@ -124,6 +130,33 @@ instead of five glyphs of which some carry no information.
 Together that is 629px → 416px before the first card, and 399px → 298px per
 card. Nothing is removed from the site — everything trimmed here is either one
 tap away or in the detail modal.
+
+## Icons
+
+`favicon.svg` is both the icon browsers get and the source every other size is
+built from:
+
+- **`npm run build-icons`** re-renders `favicon.ico` (16/32/48),
+  `apple-touch-icon.png` (180), and the 192/512/maskable PNGs.
+- Playwright is **not** in `package.json` — the mark changes about once a year
+  and the outputs are committed, so nobody running the site should have to pull
+  a browser. The npm script fetches it with `npx`; set `CHROMIUM_PATH` if you
+  already have a binary.
+- Rounded corners for browser tabs and the manifest's `any` slot; square and
+  full-bleed where the platform applies its own mask (iOS home screen, Android
+  maskable), which would otherwise round the corners twice.
+
+The mark is an aperture: the ring is the accent token, the centre is accent-2 —
+the same pair a button and its hover use — and the centre dot is the one in the
+wordmark. It stays geometric because the smallest place it is ever seen is a
+16px browser tab.
+
+> One trap worth knowing, because it cost a round here: **`--` is illegal inside
+> an XML comment.** Writing a CSS custom property name in a comment in
+> `favicon.svg` makes the file invalid XML, so browsers refuse to render it as
+> an image — while every PNG built from it still comes out perfect, because
+> Chromium parses those through lenient HTML. `build-icons.mjs` now fails the
+> build on it rather than letting it ship silently.
 
 ## Filters
 
