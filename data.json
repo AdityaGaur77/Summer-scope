@@ -1,10 +1,10 @@
 {
   "meta": {
-    "lastUpdated": "2026-09-10",
-    "version": "3.1.0",
+    "lastUpdated": "2026-09-23",
+    "version": "3.2.0",
     "programCount": 125,
     "eventCount": 20,
-    "changelog": "v3.1.0 (2026-09-10): data corrections, no cycle roll — still the 2027 cycle. 15 paid programs banded \"Varies\" carried costN: 0 and were being shown as \"Free / Full Aid\"; their cost is now recorded as unknown rather than zero, which also corrects the \"free programs\" count from 60 to 45. 13 programs still described a 2026 run under \"Duration\" because the cycle roll bumps the year in dates, desc, note and startDate but not duration. Five Smith College programs had their application-opening date buried in the deadline string; it now lives in opensOn/opensOnText. Program 72’s name was truncated at a comma by the import. 67 descriptions ended in a machine-generated repeat of program type, duration and location, and 67 notes began with the spreadsheet row number — both removed; every value survives in the field the site renders it from. meta.statusCounts and meta.activeProgramCount are gone: they froze a value that changes with the clock.",
+    "changelog": "v3.2.0 (2026-09-23): freshness pass, no cycle roll — still the 2027 cycle. SSP and YYGS applications opened on 2026-09-01; both notes still described that in the future tense. TASS claimed Telluride Association had not announced anything about 2027, which is no longer true — the entry now points at the Association’s own statement rather than summarising one it could not read. The WAICY event still advertised a June 2026 deadline that had passed. The 115 programs marked \"projected\" were NOT re-verified in this pass: their official sites were unreachable from the environment it ran in, and a projected date is only ever promoted to verified against the program’s own materials. v3.1.0 (2026-09-10): data corrections, no cycle roll — still the 2027 cycle. 15 paid programs banded \"Varies\" carried costN: 0 and were being shown as \"Free / Full Aid\"; their cost is now recorded as unknown rather than zero, which also corrects the \"free programs\" count from 60 to 45. 13 programs still described a 2026 run under \"Duration\" because the cycle roll bumps the year in dates, desc, note and startDate but not duration. Five Smith College programs had their application-opening date buried in the deadline string; it now lives in opensOn/opensOnText. Program 72’s name was truncated at a comma by the import. 67 descriptions ended in a machine-generated repeat of program type, duration and location, and 67 notes began with the spreadsheet row number — both removed; every value survives in the field the site renders it from. meta.statusCounts and meta.activeProgramCount are gone: they froze a value that changes with the clock.",
     "cycle": 2027,
     "statusLegend": {
       "open": "Accepting applications now.",
@@ -275,7 +275,7 @@
       "isNew": false,
       "desc": "One of the most selective humanities programs in the US. ~30 students per program attend 5-week college-level seminars in Critical Black Studies (CBS) or Anti-Oppressive Studies (AOS). Tuition, books, room, board, field trips, and travel all covered. Open to sophomores and juniors (ages 15–17). Acceptance rate ~3–5%.",
       "link": "https://tellurideassociation.org/tass/",
-      "note": "The Ithaca TASS 2026 seminar closed on July 3, 2026 — roughly three weeks early — after residential staff departures. Telluride Association has not yet announced whether TASS will run in 2027.",
+      "note": "The Ithaca TASS 2026 seminar closed on July 3, 2026 — roughly three weeks early — after residential staff departures. Telluride Association has since posted a statement about TASS 2027 on its own site; read it there before planning around this program, because its contents could not be confirmed for this entry.",
       "history": [
         {
           "cycle": 2026,
@@ -293,8 +293,8 @@
       "cycle": 2027,
       "lastVerified": "2026-08-12",
       "status": "uncertain",
-      "uncertainReason": "The Ithaca TASS 2026 seminar closed on July 3, 2026 — roughly three weeks early — after residential staff departures. Telluride Association has not yet announced whether TASS will run in 2027.",
-      "uncertainSource": "The Cornell Daily Sun, July 2026"
+      "uncertainReason": "The Ithaca TASS 2026 seminar closed on July 3, 2026 — roughly three weeks early — after residential staff departures. Telluride Association has since posted a statement about TASS 2027 on its own site; read it there before planning around this program, because its contents could not be confirmed for this entry.",
+      "uncertainSource": "The Cornell Daily Sun, July 2026 · Telluride Association, tellurideassociation.org"
     },
     {
       "id": 7,
@@ -367,7 +367,7 @@
       "isNew": false,
       "desc": "One of the oldest and most prestigious STEM programs in the US (since 1959). Rising seniors spend 5 weeks doing authentic research in Astrophysics, Biochemistry, Bacterial Genomics, or Cell Biology. Teams of 3, ~700 total spots. Need-blind admissions with generous financial aid — many attend free. Alumni network of 4,300+ scientists and engineers.",
       "link": "https://ssp.org",
-      "note": "SSP 2027 applications open in September 2026 and close in February 2027. Open to students graduating high school in 2028.",
+      "note": "SSP 2027 applications are open — they opened in September 2026 and close in February 2027. Open to students graduating high school in 2028.",
       "history": [
         {
           "cycle": 2026,
@@ -732,7 +732,7 @@
       "isNew": false,
       "desc": "Academically intensive 2-week program in 8 interdisciplinary tracks including Applied Science, Biological Science, Frontiers of Medicine, International Affairs & Security, Law & Politics, and Sustainability. 1,600+ students from 120+ countries per year. Strong need-based aid.",
       "link": "https://globalscholars.yale.edu",
-      "note": "The YYGS application opens in September 2026. Applications that include the need-based financial aid portion must be complete by January 6, 2027; the general deadline shown here is last cycle's, rolled forward. Early Action applicants are either admitted or deferred into the Regular Decision pool.",
+      "note": "The YYGS application is open — it opened in September 2026. Applications that include the need-based financial aid portion must be complete by January 6, 2027; the general deadline shown here is last cycle’s, rolled forward. Early Action applicants are either admitted or deferred into the Regular Decision pool.",
       "history": [
         {
           "cycle": 2026,
@@ -6174,8 +6174,8 @@
       "badge": "ec",
       "name": "WAICY — World AI Competition for Youth",
       "org": "WAICY",
-      "dates": "2026 season",
-      "dl": "June 2026",
+      "dates": "2027 season — not yet announced",
+      "dl": "Expected autumn 2026 (last cycle: register by Oct, submit by Nov)",
       "fmt": "Online + global finals",
       "cost": "Free",
       "prize": "Cash prizes + global recognition",

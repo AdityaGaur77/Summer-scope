@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "npx serve .",
-    "roll-cycle": "node scripts/roll-cycle.mjs"
+    "roll-cycle": "node scripts/roll-cycle.mjs",
+    "build-icons": "npx --yes playwright@1 node scripts/build-icons.mjs"
   },
   "devDependencies": {
     "serve": "^14.2.0"
