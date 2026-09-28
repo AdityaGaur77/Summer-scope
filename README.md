@@ -158,6 +158,27 @@ wordmark. It stays geometric because the smallest place it is ever seen is a
 > Chromium parses those through lenient HTML. `build-icons.mjs` now fails the
 > build on it rather than letting it ship silently.
 
+## The hero's second column
+
+From 900px the hero is two columns. The right one holds the "also built by us"
+panel; below 900px it collapses to a single scrollable row of pills.
+
+- It sits where a **third-party ad card** used to be. Removing that ad left the
+  whole right half of the hero empty on a desktop — which is also why the stat
+  row used to stretch across 1216px with "Subject areas" stranded by the
+  scrollbar. `.hero-main` is now capped at 640px and the stats sit inside it.
+- The links are real `<a href>` elements, so `ss-insights.js` counts them
+  without any extra wiring. They get their own `partner_link` event rather than
+  falling through to the generic outbound branch — otherwise they would land in
+  the dashboard mixed in with every program's "Visit Site", which is the one
+  thing they need to be separable from to know whether the panel earns its
+  space. Add or change one in `index.html`; `data-promo` is the label the
+  dashboard shows.
+- On a phone the panel costs **about 37px**. The label is inline with the pills
+  there because stacking it cost a 26px row of its own, and both pills still fit
+  beside the shorter wording. Keeping that number small matters — see
+  **Phone layout** for why the hero is as short as it is.
+
 ## Filters
 
 Every facet is derived from fields `data.json` already carries. None of them is

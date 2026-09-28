@@ -65,22 +65,58 @@
 <!-- ══ PROGRAMS ══════════════════════════════════════════════════════════ -->
 <div id="page-programs" class="page" role="tabpanel" aria-label="Programs">
   <header class="hero">
-    <!-- The eyebrow repeats what the h1 and the stat row already say, so it is
-         hidden on a phone rather than spending a line there. -->
-    <p class="heyebrow">The complete database</p>
-    <h1>Find your <em>perfect</em> summer program</h1>
-    <p class="hsub">Every top summer program for high schoolers — deadlines, real costs and direct apply links, with expected dates clearly marked as expected.</p>
-    <div class="sbar">
-      <label class="sr-only" for="si">Search programs</label>
-      <input type="search" id="si" placeholder="Search programs, universities, subjects…" autocomplete="off" enterkeyhint="search">
-      <button class="sclear" id="sclear" type="button" aria-label="Clear search">×</button>
+    <!-- Two columns from 900px. The right one is where the old third-party ad
+         card used to sit; removing it left the whole right half of the hero
+         empty on a desktop, which is why the stats row used to sprawl across
+         1216px with "Subject areas" stranded near the scrollbar. -->
+    <div class="hero-main">
+      <!-- The eyebrow repeats what the h1 and the stat row already say, so it is
+           hidden on a phone rather than spending a line there. -->
+      <p class="heyebrow">The complete database</p>
+      <h1>Find your <em>perfect</em> summer program</h1>
+      <p class="hsub">Every top summer program for high schoolers — deadlines, real costs and direct apply links, with expected dates clearly marked as expected.</p>
+      <div class="sbar">
+        <label class="sr-only" for="si">Search programs</label>
+        <input type="search" id="si" placeholder="Search programs, universities, subjects…" autocomplete="off" enterkeyhint="search">
+        <button class="sclear" id="sclear" type="button" aria-label="Clear search">×</button>
+      </div>
+      <div class="hstats">
+        <div class="hs"><strong id="tc">—</strong>Programs</div>
+        <div class="hs"><strong id="free-count">—</strong>Free programs</div>
+        <div class="hs"><strong id="oc">—</strong><span id="oc-label">Accepting now</span></div>
+        <div class="hs"><strong id="subject-count">—</strong>Subject areas</div>
+      </div>
     </div>
-    <div class="hstats">
-      <div class="hs"><strong id="tc">—</strong>Programs</div>
-      <div class="hs"><strong id="free-count">—</strong>Free programs</div>
-      <div class="hs"><strong id="oc">—</strong><span id="oc-label">Accepting now</span></div>
-      <div class="hs"><strong id="subject-count">—</strong>Subject areas</div>
-    </div>
+
+    <!-- Real anchors, so ss-insights.js already counts the clicks as outbound
+         and the dashboard can tell whether this panel is worth its space.
+         A card on a desktop; two compact pills on a phone, because the hero
+         there is deliberately short. -->
+    <aside class="hpromo" aria-labelledby="hpromo-label">
+      <p class="hpromo-label" id="hpromo-label">
+        <span class="hpromo-short">Also by us</span><span class="hpromo-long">Also built by us</span>
+      </p>
+      <div class="hpromo-list">
+        <a class="hpromo-item" href="https://peer-2-peer.vercel.app/#/"
+           target="_blank" rel="noopener noreferrer" data-promo="Peer2Peer">
+          <span class="hpromo-top">
+            <span class="hpromo-name">Peer2Peer</span>
+            <span class="hpromo-go" aria-hidden="true">→</span>
+          </span>
+          <span class="hpromo-desc">Students helping students — free peer tutoring and study help.</span>
+          <span class="hpromo-host">peer-2-peer.vercel.app</span>
+        </a>
+        <a class="hpromo-item" href="https://www.shuttle.website/"
+           target="_blank" rel="noopener noreferrer" data-promo="Shuttle">
+          <span class="hpromo-top">
+            <span class="hpromo-name">Shuttle</span>
+            <span class="hpromo-go" aria-hidden="true">→</span>
+          </span>
+          <span class="hpromo-desc">Built for badminton players and the coaches who train them.</span>
+          <span class="hpromo-host">shuttle.website</span>
+        </a>
+      </div>
+    </aside>
   </header>
 
   <div class="notice">

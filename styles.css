@@ -287,6 +287,33 @@ nav:not(.mobnav){
 .hs{font-size:.72rem;color:var(--band-faint);display:flex;align-items:baseline;gap:.4rem}
 .hs strong{font-size:1.05rem;font-weight:600;color:var(--band-ink);line-height:1.2}
 
+/* ── THE "ALSO BUILT BY US" PANEL ────────────────────────────────────────────
+   Sits in the hero's second column from 900px — the space the old ad card
+   occupied. On a phone that column would undo the work of shortening the hero,
+   so it collapses to a single scrollable row of two pills: about 50px, not the
+   150px the card costs.
+   ───────────────────────────────────────────────────────────────────────── */
+/* On a phone the label sits on the same line as the pills. Stacking it cost a
+   whole 26px row, and both pills still fit beside the shorter wording. */
+.hpromo{margin-top:.9rem;display:flex;align-items:center;gap:.55rem}
+.hpromo-label{flex-shrink:0;font-size:.6rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--band-faint)}
+.hpromo-long{display:none}
+.hpromo-list{flex:1;min-width:0;display:flex;gap:.45rem;overflow-x:auto;scrollbar-width:none;
+  margin-right:calc(var(--gutter) * -1);padding:.1rem var(--gutter) .1rem 0;
+  scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+.hpromo-list::-webkit-scrollbar{display:none}
+.hpromo-item{flex-shrink:0;scroll-snap-align:start;min-height:34px;
+  display:flex;align-items:center;gap:.4rem;padding:.3rem .75rem;border-radius:20px;
+  border:1px solid var(--band-line);background:var(--band-fill);color:var(--band-ink);
+  text-decoration:none;font-size:.8rem;transition:background .13s,border-color .13s}
+.hpromo-item:hover{background:var(--band-fill-2);border-color:var(--band-fill-2)}
+.hpromo-top{display:flex;align-items:center;gap:.35rem}
+.hpromo-name{font-weight:600;white-space:nowrap}
+.hpromo-go{color:var(--accent);font-weight:700}
+/* The blurb and the domain are the card's content; a pill has room for neither. */
+.hpromo-desc,.hpromo-host{display:none}
+
 /* ── NOTICE BAR ──────────────────────────────────────────────────────────── */
 .notice{background:var(--card);border-bottom:1px solid var(--border);
   padding:.45rem var(--gutter);display:flex;align-items:flex-start;gap:.5rem;
@@ -651,7 +678,11 @@ footer strong{color:var(--band-muted)}
 @media(min-width:900px){
   body{padding-bottom:0}
   .nav-tabs{display:flex}
+  /* From here the nav carries the "Updated" date, so the copy of it on the
+     right of the notice bar is a duplicate. It stays for 700-899px, where the
+     nav version is still hidden. */
   .nav-updated{display:flex}
+  .notice-date{display:none}
   .mobnav{display:none}
   .totop{bottom:1.25rem}
   /* No bottom bar up here, so only the sticky nav needs clearance. */
@@ -659,6 +690,30 @@ footer strong{color:var(--band-muted)}
 
   .layout{display:flex;align-items:flex-start;min-height:60vh}
   .main{flex:1;padding:1.1rem 1.25rem 2rem}
+
+  /* The hero's two columns. hero-main is capped so the four stat tiles stay a
+     readable row instead of stretching the full page width. */
+  .hero{display:flex;align-items:flex-start;justify-content:space-between;gap:2.5rem}
+  .hero-main{flex:1;min-width:0;max-width:640px}
+  .hstats{max-width:560px}
+
+  .hpromo{width:300px;flex-shrink:0;margin-top:.35rem;display:block;
+    border:1px solid var(--band-line);background:var(--band-fill);
+    border-radius:var(--r);padding:.9rem .95rem}
+  .hpromo-label{margin-bottom:.6rem}
+  .hpromo-short{display:none}
+  .hpromo-long{display:inline}
+  .hpromo-list{display:block;overflow:visible;margin:0;padding:0}
+  .hpromo-item{display:flex;flex-direction:column;align-items:stretch;gap:.15rem;
+    width:100%;min-height:0;border-radius:10px;padding:.6rem .7rem;
+    background:var(--band-fill);border-color:var(--band-line)}
+  .hpromo-item + .hpromo-item{margin-top:.45rem}
+  .hpromo-top{justify-content:space-between}
+  .hpromo-name{font-size:.88rem}
+  .hpromo-go{transition:transform .15s}
+  .hpromo-item:hover .hpromo-go{transform:translateX(3px)}
+  .hpromo-desc{display:block;font-size:.75rem;line-height:1.45;color:var(--band-muted)}
+  .hpromo-host{display:block;font-size:.66rem;color:var(--band-faint);margin-top:.15rem}
 
   .sidebar{
     position:sticky;top:var(--nh);left:auto;right:auto;bottom:auto;
@@ -674,6 +729,12 @@ footer strong{color:var(--band-muted)}
   .sb-reset{flex:1}
   .fo{font-size:.83rem;min-height:34px;padding:.32rem .2rem}
   .ssel{flex-shrink:0}
+  /* .quick bleeds to the screen edge with a -1rem margin so the chip strip can
+     scroll edge to edge on a phone. Here .main's padding is 1.25rem, not the
+     1rem gutter the bleed is calculated from, so it overhung by 4px a side and
+     gave the desktop page a horizontal scrollbar. The chips all fit up here
+     anyway, so drop the bleed rather than re-deriving it. */
+  .quick{margin:0;padding-left:0;padding-right:0}
   .grid,.egrid{grid-template-columns:repeat(auto-fill,minmax(296px,1fr))}
   .ssel{max-width:none}
 }
@@ -681,4 +742,5 @@ footer strong{color:var(--band-muted)}
 @media(min-width:1100px){
   .hero{padding:2.6rem 2rem 2.2rem}
   .hero h1{font-size:2.5rem}
+  .hpromo{width:330px}
 }
