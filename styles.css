@@ -420,10 +420,15 @@ nav:not(.mobnav){
    grows for nothing. */
 .rc{font-size:.8rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 .rc strong{color:var(--text);font-weight:600}
-.ssel{margin-left:auto;min-width:0;max-width:44vw;font-size:.8rem;padding:.38rem .5rem;
+.ssel{margin-left:auto;min-width:0;max-width:56vw;font-size:.8rem;padding:.38rem .5rem;
   border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);
   cursor:pointer;outline:none;min-height:38px}
-.filter-btn{display:flex;align-items:center;gap:.4rem;flex-shrink:0;min-height:38px;
+/* Hidden at every width, and the markup is kept only because the sheet's
+   click handler already covers both buttons. Below 900px the bottom bar
+   carries a "Filters" button with the same badge, twenty pixels away; at 900px
+   and up the panel is docked and neither is needed. Two buttons for one sheet
+   were squeezing the sort select down to "Most pr…" on a phone. */
+.filter-btn{display:none;align-items:center;gap:.4rem;flex-shrink:0;min-height:38px;
   padding:.35rem .8rem;border:1px solid var(--border);border-radius:9px;background:var(--card);
   color:var(--text);font-size:.8rem;font-weight:600;cursor:pointer}
 .filter-btn .fs-on{background:var(--accent);color:var(--accent-ink);border-radius:20px;
@@ -431,6 +436,51 @@ nav:not(.mobnav){
 
 .unknown-note{background:var(--notice-bg);border:1px solid var(--notice-bd);color:var(--notice-fg);
   border-radius:10px;padding:.55rem .8rem;font-size:.76rem;line-height:1.5;margin-bottom:.8rem}
+
+/* ── LAYOUT TOGGLE + SHOW MORE ───────────────────────────────────────────────
+   The list used to draw all 125 programs at once — 58 screens of scrolling on
+   a phone, and every one of them a full card. Two things fix that: only the
+   first page is in the DOM, and a row layout for when the job is scanning
+   names rather than reading each one.
+   ───────────────────────────────────────────────────────────────────────── */
+.vtog{display:flex;flex-shrink:0;gap:2px;padding:2px;border-radius:9px;
+  border:1px solid var(--border);background:var(--card)}
+.vbtn{min-width:32px;min-height:32px;border:none;border-radius:7px;background:none;
+  color:var(--faint);font-size:.85rem;cursor:pointer;line-height:1;
+  display:grid;place-items:center;transition:background .13s,color .13s}
+.vbtn:hover{color:var(--text)}
+.vbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+.more{margin-top:1rem;text-align:center}
+.more-btn{min-height:var(--tap);padding:.55rem 1.4rem;border-radius:10px;
+  border:1px solid var(--border);background:var(--card);color:var(--text);
+  font-size:.85rem;font-weight:600;cursor:pointer;
+  transition:border-color .13s,background .13s}
+.more-btn:hover{border-color:var(--accent);background:var(--card-2)}
+.more-note{font-size:.75rem;color:var(--faint);margin-top:.5rem}
+
+/* ── LIST VIEW ───────────────────────────────────────────────────────────── */
+.grid[data-view="list"]{display:block;border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;background:var(--card)}
+.row{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;
+  padding:.55rem .7rem;cursor:pointer;border-bottom:1px solid var(--border);
+  transition:background .12s}
+.grid[data-view="list"] .row:last-child{border-bottom:none}
+.row:hover{background:var(--card-2)}
+.rlog{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+  font-weight:700;font-size:.6rem;color:#fff;flex-shrink:0;letter-spacing:-.02em;
+  text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.rmain{flex:1;min-width:0;display:flex;flex-direction:column}
+.rname{font-weight:600;font-size:.84rem;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rhost{font-size:.7rem;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rdl{font-size:.75rem;font-weight:500;flex-shrink:0;text-align:right;line-height:1.25}
+.rlbl{display:block;font-size:.58rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--faint)}
+/* On a phone the row carries the name, the host and the deadline; cost and
+   the status pill would push the name down to an ellipsis. */
+.rcost,.rtag{display:none}
 
 /* ── PROGRAM GRID + CARDS ────────────────────────────────────────────────── */
 .grid{display:grid;grid-template-columns:1fr;gap:.75rem}
@@ -635,11 +685,38 @@ nav:not(.mobnav){
   font-size:1.05rem;opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s}
 .totop.show{opacity:1;visibility:visible}
 
+/* ── THE NO-JAVASCRIPT INDEX ─────────────────────────────────────────────────
+   Only ever rendered when scripting is off, so it is plain on purpose: the
+   job is that the database is readable at all, not that it is pretty.
+   ───────────────────────────────────────────────────────────────────────── */
+.ns{max-width:70ch;margin:0 auto;padding:1.5rem var(--gutter) 2.5rem}
+.ns h2{font-family:'Lora',serif;font-size:1.3rem;margin:1.6rem 0 .5rem}
+.ns p{color:var(--muted);font-size:.85rem;margin-bottom:1rem}
+.ns ul{padding-left:1.1rem}
+.ns li{font-size:.85rem;line-height:1.6;margin-bottom:.5rem;color:var(--muted)}
+.ns a{color:var(--accent);font-weight:600}
+
 /* ── FOOTER ──────────────────────────────────────────────────────────────── */
 footer{background:var(--bg-2);padding:1.4rem var(--gutter);margin-top:1.5rem;
   color:var(--band-faint);font-size:.75rem;border-top:1px solid var(--band-line);line-height:1.6}
 footer p{margin-bottom:.3rem}
 footer strong{color:var(--band-muted)}
+.fcontact{margin-top:.55rem}
+footer a{color:var(--accent);font-weight:600}
+
+/* The advertising panel. It sits above the boilerplate because it is the one
+   thing in the footer anybody is meant to act on. */
+.fad{border:1px solid var(--band-line);background:var(--band-fill);
+  border-radius:var(--r);padding:.9rem 1rem;margin-bottom:1.1rem;max-width:46rem}
+.fad-title{font-size:.86rem;font-weight:600;color:var(--band-ink);margin-bottom:.25rem}
+.fad-body{font-size:.78rem;color:var(--band-muted);line-height:1.55;max-width:52ch}
+.fad-mail{display:inline-flex;align-items:center;margin-top:.7rem;min-height:var(--tap);
+  padding:.45rem .9rem;border-radius:9px;background:var(--accent);color:var(--accent-ink);
+  font-size:.82rem;font-weight:700;text-decoration:none;letter-spacing:.01em}
+.fad-mail:hover{background:var(--accent-2);color:var(--accent-ink)}
+/* The @ lives here, not in the markup, so the address is never one scrapable
+   string in the HTML. The href still spells it out in full. */
+.fad-user::after{content:'@'}
 
 /* ═══ 480px — two-up stat and card grids ═══════════════════════════════════ */
 @media(min-width:480px){
@@ -664,6 +741,16 @@ footer strong{color:var(--band-muted)}
   .clog{width:38px;height:38px}
   .cdesc{font-size:.81rem;line-height:1.5;-webkit-line-clamp:3}
   .cmeta .mi:nth-child(n+3){display:block}
+  .row{padding:.6rem .85rem;gap:.85rem}
+  .rlog{width:30px;height:30px;font-size:.65rem}
+  .rname{font-size:.88rem}
+  /* The columns line up from here, so the per-row "DEADLINE" caption is 50
+     repetitions of something the layout already says. It stays on a phone,
+     where the rows are not aligned into columns. */
+  .rdl{width:9.5rem}
+  .rlbl{display:none}
+  .rcost{display:block;width:7rem;flex-shrink:0;font-size:.78rem;font-weight:600;text-align:right}
+  .rtag{display:inline-block;flex-shrink:0;width:6.2rem;text-align:center}
   .ehero{padding:1.4rem var(--gutter) 1.2rem}
   .ecard{padding:1rem}
   .edesc{font-size:.81rem;line-height:1.5;-webkit-line-clamp:4}
@@ -721,7 +808,7 @@ footer strong{color:var(--band-muted)}
     transform:none;visibility:visible;border-radius:0;box-shadow:none;
     border-top:none;border-right:1px solid var(--border);
   }
-  .sb-backdrop,.sb-grip,.sb-close,.filter-btn{display:none}
+  .sb-backdrop,.sb-grip,.sb-close{display:none}
   .sb-head{padding:1rem 1rem .7rem}
   .sb-body{padding:.4rem 1rem 1rem}
   .sb-foot{padding:.7rem 1rem;border-top:1px solid var(--border)}

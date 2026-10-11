@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Password-gated, and nothing on it belongs in an index.
+Disallow: /dashboard.html
+Disallow: /api/
+
+Sitemap: https://summerscope.vercel.app/sitemap.xml

@@ -452,6 +452,10 @@
   }
 
   // ── RENDER ───────────────────────────────────────────────────────────────
+  /** Re-render with paging reset — for anything that changes which
+      programs are in the list, as opposed to how many of them are drawn. */
+  function fromTop() { shown = 0; render(); }
+
   function render() {
     if (!P.length) return;
     var now = new Date();
@@ -576,6 +580,76 @@
     return { cls: cls, text: text, bar: bar };
   }
 
+  /* ── HOW MUCH TO SHOW ──────────────────────────────────────────────────────
+     The list used to render all 125 programs on every keystroke: 4,372 DOM
+     nodes and 58 screens of scrolling on a phone. Nothing below the first
+     page is built until someone asks for it.
+
+     Two layouts, because "show me everything" and "help me choose" are
+     different jobs. Cards carry the detail; rows are for running an eye down
+     125 names, so a row page is bigger — the whole point of the view is
+     seeing a lot at once. */
+  var VIEW_KEY = '_ss_view';
+  var PAGE = { cards: 24, list: 50 };
+  var shown = 0;
+
+  function readView() {
+    try { return localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'cards'; }
+    catch (_) { return 'cards'; }
+  }
+
+  function setView(v) {
+    try { localStorage.setItem(VIEW_KEY, v); } catch (_) {}
+    var g = $('cg');
+    if (g) g.setAttribute('data-view', v);
+    $$('.vbtn').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === v));
+    });
+    shown = 0;
+    render();
+  }
+
+  /** One scannable row: logo, name, host, status, deadline, cost. */
+  function rowHtml(p, now) {
+    var st = statusOf(p, now);
+    var meta = STATUS[st];
+    var dl = deadlineCell(p, st, now);
+    return '<article class="row" role="button" tabindex="0" data-id="' + p.id + '"'
+      + ' aria-label="' + esc(p.name) + ' — ' + esc(meta.label) + '">'
+      + '<span class="rlog" style="background:' + esc(p.color) + '" aria-hidden="true">' + esc(p.logo) + '</span>'
+      + '<span class="rmain">'
+        + '<span class="rname">' + esc(p.name) + '</span>'
+        + '<span class="rhost">' + esc(p.host) + '</span>'
+      + '</span>'
+      + '<span class="rdl ' + dl.cls + '"><span class="rlbl">Deadline</span>' + dl.text + '</span>'
+      + '<span class="rcost' + (p.costB === 'Free' ? ' cvf' : '') + '">'
+        + (p.costB === 'Free' ? 'Free' : esc(p.cost)) + '</span>'
+      + '<span class="tag ' + meta.tag + ' rtag">' + esc(meta.label) + '</span>'
+      + '</article>';
+  }
+
+  function renderMore(total, now) {
+    var box = $('more');
+    var btn = $('more-btn');
+    var note = $('more-note');
+    if (!box || !btn || !note) return;
+    if (shown >= total) {
+      box.hidden = true;
+      // Only worth saying once the list was actually long enough to page.
+      if (total > PAGE[readView()]) {
+        box.hidden = false;
+        btn.hidden = true;
+        note.textContent = 'That is all ' + total + ' of them.';
+      }
+      return;
+    }
+    box.hidden = false;
+    btn.hidden = false;
+    var step = Math.min(PAGE[readView()], total - shown);
+    btn.textContent = 'Show ' + step + ' more';
+    note.textContent = 'Showing ' + shown + ' of ' + total;
+  }
+
   function renderCards(results, now) {
     var g = $('cg');
     if (!g) return;
@@ -583,10 +657,23 @@
       g.innerHTML = '<div class="nores"><h3>No programs match these filters</h3>'
         + '<p>Try removing one, or clear them all to start again.</p>'
         + '<button type="button" data-clear="all">Clear all filters</button></div>';
+      renderMore(0, now);
       return;
     }
 
-    g.innerHTML = results.map(function (p) {
+    var view = readView();
+    g.setAttribute('data-view', view);
+    if (!shown) shown = Math.min(PAGE[view], results.length);
+    else shown = Math.min(shown, results.length);
+    var page = results.slice(0, shown);
+    renderMore(results.length, now);
+
+    if (view === 'list') {
+      g.innerHTML = page.map(function (p) { return rowHtml(p, now); }).join('');
+      return;
+    }
+
+    g.innerHTML = page.map(function (p) {
       var st = statusOf(p, now);
       var meta = STATUS[st];
       var dl = deadlineCell(p, st, now);
@@ -875,7 +962,7 @@
   function clearAll() {
     $$('#sb-body input[type=checkbox]').forEach(function (el) { el.checked = false; });
     if ($('si')) { $('si').value = ''; syncSearchUI(); }
-    render();
+    fromTop();
   }
 
   function toggleFilter(group, value) {
@@ -884,7 +971,7 @@
     box.checked = !box.checked;
     var d = document.querySelector('.fs[data-group="' + group + '"]');
     if (d && box.checked) d.open = true;
-    render();
+    fromTop();
   }
 
   function syncSearchUI() {
@@ -900,21 +987,42 @@
       si.addEventListener('input', function () {
         syncSearchUI();
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(render, 140);
+        searchTimer = setTimeout(fromTop, 140);
       });
-      si.addEventListener('search', render);
+      si.addEventListener('search', fromTop);
     }
     var sclear = $('sclear');
     if (sclear) {
       sclear.addEventListener('click', function () {
-        si.value = ''; syncSearchUI(); si.focus(); render();
+        si.value = ''; syncSearchUI(); si.focus(); fromTop();
       });
     }
 
-    // Any checkbox in the panel, and the sort select.
+    // Any checkbox in the panel, and the sort select. Both change which
+    // programs are in the list, so paging starts over.
     var body = $('sb-body');
-    if (body) body.addEventListener('change', render);
+    if (body) body.addEventListener('change', fromTop);
+    // Sorting reorders the same set, so it keeps however far they have paged.
     if ($('ss')) $('ss').addEventListener('change', render);
+
+    // Show more, and the card/list toggle.
+    var more = $('more-btn');
+    if (more) {
+      more.addEventListener('click', function () {
+        shown += PAGE[readView()];
+        render();
+        // Land on the first newly added item rather than at the page bottom.
+        var first = $('cg').children[shown - PAGE[readView()]];
+        if (first && first.scrollIntoView) first.scrollIntoView({ block: 'center' });
+      });
+    }
+    var vtog = document.querySelector('.vtog');
+    if (vtog) {
+      vtog.addEventListener('click', function (e) {
+        var b = e.target.closest('.vbtn');
+        if (b) setView(b.getAttribute('data-view'));
+      });
+    }
 
     // Quick chips.
     var quick = $('quick');
@@ -931,10 +1039,10 @@
       if (chipBtn && (chipBtn.closest('#chips') || chipBtn.closest('.nores'))) {
         var what = chipBtn.getAttribute('data-clear');
         if (what === 'all') { clearAll(); return; }
-        if (what === 'q') { $('si').value = ''; syncSearchUI(); render(); return; }
+        if (what === 'q') { $('si').value = ''; syncSearchUI(); fromTop(); return; }
         var box = document.querySelector('input[name="' + chipBtn.getAttribute('data-group')
           + '"][value="' + chipBtn.getAttribute('data-value') + '"]');
-        if (box) { box.checked = false; render(); }
+        if (box) { box.checked = false; fromTop(); }
         return;
       }
 
@@ -949,7 +1057,7 @@
       if (e.target.closest('[data-close-modal]')) { closeModal(); return; }
       if (e.target.id === 'modal') { closeModal(); return; }
 
-      var card = e.target.closest('.card[data-id]');
+      var card = e.target.closest('.card[data-id],.row[data-id]');
       if (card) { openModal(parseInt(card.getAttribute('data-id'), 10)); return; }
 
       var tab = e.target.closest('[data-page]');
@@ -979,7 +1087,7 @@
         return;
       }
       if (e.key !== 'Enter' && e.key !== ' ') return;
-      var card = e.target.closest('.card[data-id]');
+      var card = e.target.closest('.card[data-id],.row[data-id]');
       if (card) { e.preventDefault(); openModal(parseInt(card.getAttribute('data-id'), 10)); return; }
       var ecard = e.target.closest('.ecard[data-visit]');
       if (ecard) { e.preventDefault(); window.open(ecard.getAttribute('data-visit'), '_blank', 'noopener'); }
@@ -1028,6 +1136,17 @@
 
   // ── INIT ─────────────────────────────────────────────────────────────────
   applyTheme(readTheme());
+  // Stamp the saved layout before the first render so the toggle and the grid
+  // agree from the start; setView() itself re-renders, which there is nothing
+  // to do yet.
+  (function () {
+    var v = readView();
+    var g = $('cg');
+    if (g) g.setAttribute('data-view', v);
+    $$('.vbtn').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === v));
+    });
+  }());
   buildPanel();
   wire();
   syncSearchUI();
