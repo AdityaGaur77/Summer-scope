@@ -453,6 +453,20 @@
       return;
     }
 
+    // The hero's "also built by us" panel. These would fall through to the
+    // generic outbound branch below and land in the dashboard mixed in with
+    // every program's "Visit Site", which is the one comparison that panel
+    // needs to be separable from to know whether it earns its space.
+    var promo = t.closest('[data-promo]');
+    if (promo) {
+      send({
+        event_type: 'click', element: 'partner_link',
+        element_label: promo.getAttribute('data-promo'),
+        metadata: { href: (promo.getAttribute('href') || '').slice(0, 200) },
+      });
+      return;
+    }
+
     // Any remaining outbound anchor.
     var a = t.closest('a[href]');
     if (a && a.hostname && a.hostname !== window.location.hostname) {

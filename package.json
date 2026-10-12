@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "npx serve .",
     "roll-cycle": "node scripts/roll-cycle.mjs",
-    "build-icons": "npx --yes playwright@1 node scripts/build-icons.mjs"
+    "build-icons": "npx --yes playwright@1 node scripts/build-icons.mjs",
+    "build-seo": "node scripts/build-seo.mjs",
+    "build-og": "npx --yes playwright@1 node scripts/build-og.mjs",
+    "test": "npx --yes playwright@1 node tests/run.mjs"
   },
   "devDependencies": {
     "serve": "^14.2.0"
