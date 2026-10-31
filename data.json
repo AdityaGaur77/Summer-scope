@@ -1,10 +1,10 @@
 {
   "meta": {
-    "lastUpdated": "2026-10-11",
-    "version": "3.3.0",
-    "programCount": 127,
+    "lastUpdated": "2026-10-31",
+    "version": "3.4.0",
+    "programCount": 128,
     "eventCount": 20,
-    "changelog": "v3.3.0 (2026-10-11): freshness pass plus two additions, no cycle roll — still the 2027 cycle. RSI and Bank of America Student Leaders opened their applications on 2026-10-01; both notes still described that as something that would happen. Three events had run their 2026 cycle and were still advertising it: NASA Space Apps (Oct 3–5), PennApps and the Breakthrough Junior Challenge. Added LEDA Aspects of Leadership and the UCSB Research Mentorship Program, both well known and both missing; their dates come from third-party trackers, not the programs’ own pages, so both are marked projected and say so in the note. The programs still marked \"projected\" were not re-verified in this pass: their official sites are unreachable from the environment it ran in. v3.2.0 (2026-09-23): freshness pass, no cycle roll — still the 2027 cycle. SSP and YYGS applications opened on 2026-09-01; both notes still described that in the future tense. TASS claimed Telluride Association had not announced anything about 2027, which is no longer true — the entry now points at the Association’s own statement rather than summarising one it could not read. The WAICY event still advertised a June 2026 deadline that had passed. The 115 programs marked \"projected\" were NOT re-verified in this pass: their official sites were unreachable from the environment it ran in, and a projected date is only ever promoted to verified against the program’s own materials. v3.1.0 (2026-09-10): data corrections, no cycle roll — still the 2027 cycle. 15 paid programs banded \"Varies\" carried costN: 0 and were being shown as \"Free / Full Aid\"; their cost is now recorded as unknown rather than zero, which also corrects the \"free programs\" count from 60 to 45. 13 programs still described a 2026 run under \"Duration\" because the cycle roll bumps the year in dates, desc, note and startDate but not duration. Five Smith College programs had their application-opening date buried in the deadline string; it now lives in opensOn/opensOnText. Program 72’s name was truncated at a comma by the import. 67 descriptions ended in a machine-generated repeat of program type, duration and location, and 67 notes began with the spreadsheet row number — both removed; every value survives in the field the site renders it from. meta.statusCounts and meta.activeProgramCount are gone: they froze a value that changes with the clock.",
+    "changelog": "v3.4.0 (2026-10-31): added Sonder Fellows, a six-week remote AI team fellowship, at the organiser’s request. Listed the way every other commercial cohort programme here is listed — prestige 3, cost recorded as unknown, rolling admissions — because it publishes neither a price nor an application deadline, and the entry says so rather than leaving the gaps silent. Nothing about it has been independently verified: sonderfellows.com is unreachable from the environment this ran in, so the details come from the organiser and one third-party listing. v3.3.0 (2026-10-11): freshness pass plus two additions, no cycle roll — still the 2027 cycle. RSI and Bank of America Student Leaders opened their applications on 2026-10-01; both notes still described that as something that would happen. Three events had run their 2026 cycle and were still advertising it: NASA Space Apps (Oct 3–5), PennApps and the Breakthrough Junior Challenge. Added LEDA Aspects of Leadership and the UCSB Research Mentorship Program, both well known and both missing; their dates come from third-party trackers, not the programs’ own pages, so both are marked projected and say so in the note. The programs still marked \"projected\" were not re-verified in this pass: their official sites are unreachable from the environment it ran in. v3.2.0 (2026-09-23): freshness pass, no cycle roll — still the 2027 cycle. SSP and YYGS applications opened on 2026-09-01; both notes still described that in the future tense. TASS claimed Telluride Association had not announced anything about 2027, which is no longer true — the entry now points at the Association’s own statement rather than summarising one it could not read. The WAICY event still advertised a June 2026 deadline that had passed. The 115 programs marked \"projected\" were NOT re-verified in this pass: their official sites were unreachable from the environment it ran in, and a projected date is only ever promoted to verified against the program’s own materials. v3.1.0 (2026-09-10): data corrections, no cycle roll — still the 2027 cycle. 15 paid programs banded \"Varies\" carried costN: 0 and were being shown as \"Free / Full Aid\"; their cost is now recorded as unknown rather than zero, which also corrects the \"free programs\" count from 60 to 45. 13 programs still described a 2026 run under \"Duration\" because the cycle roll bumps the year in dates, desc, note and startDate but not duration. Five Smith College programs had their application-opening date buried in the deadline string; it now lives in opensOn/opensOnText. Program 72’s name was truncated at a comma by the import. 67 descriptions ended in a machine-generated repeat of program type, duration and location, and 67 notes began with the spreadsheet row number — both removed; every value survives in the field the site renders it from. meta.statusCounts and meta.activeProgramCount are gone: they froze a value that changes with the clock.",
     "cycle": 2027,
     "statusLegend": {
       "open": "Accepting applications now.",
@@ -16,7 +16,7 @@
     },
     "verificationLegend": {
       "verified": "Checked against the program's own materials on 2026-08-12.",
-      "projected": "Date carried forward from the previous cycle — expected, not confirmed. Verify on the official site."
+      "projected": "Expected, not confirmed — carried forward from the previous cycle where there is one on file, otherwise an estimate. Verify on the official site."
     },
     "statusNote": "Status is derived from the dates at render time and is never stored here. See statusLegend for what each derived status means."
   },
@@ -6117,6 +6117,47 @@
       "duration": "6 weeks",
       "acceptsInternational": true,
       "status": "upcoming"
+    },
+    {
+      "id": 128,
+      "name": "Sonder Fellows",
+      "host": "Sonder Fellows (Bluejay Labs)",
+      "logo": "SF",
+      "color": "#3B4A8C",
+      "cat": [
+        "CS",
+        "Business"
+      ],
+      "fmt": "Online",
+      "loc": "Online",
+      "grades": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "cost": "Not published",
+      "costN": null,
+      "costB": "Varies",
+      "dates": "Summer 2027 — several cohorts starting June and July (6 weeks)",
+      "dl": "Multiple cohorts",
+      "dlt": "2027-12-31",
+      "closed": false,
+      "prestige": 3,
+      "isNew": true,
+      "desc": "A six-week remote fellowship in which teams of three to five students take on an AI brief for a real company or nonprofit — product research, prototyping, evaluation, market research or content strategy — with weekly mentor sessions. Cohorts are capped around 20 students, the time commitment is roughly six hours a week, and no prior AI or coding experience is required.",
+      "link": "https://sonderfellows.com",
+      "note": "Added in October 2026 at the program’s own request. Two things it does not publish: there is no price anywhere on the site and none was supplied, and there is no stated application deadline — cohorts appear to fill on a rolling basis. Ask about both before applying. Operated by Bluejay Labs LLC. The programme details here come from the organiser and a third-party listing, not from anything independently checked.",
+      "duration": "6 weeks",
+      "startDate": "June and July 2027",
+      "programType": "Remote team fellowship",
+      "subject": "Artificial intelligence, product and business research",
+      "acceptsInternational": null,
+      "admissions": "rolling",
+      "status": "rolling",
+      "verification": "projected",
+      "cycle": 2027,
+      "addedOn": "2026-10-31"
     }
   ],
   "events": [
