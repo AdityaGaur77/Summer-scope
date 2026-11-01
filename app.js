@@ -764,9 +764,17 @@
       notices += '<div class="mnote">🔓 Applications open ' + esc(opensLabel(p)) + '.</div>';
     }
     if (p.verification === 'projected' && st !== 'discontinued' && st !== 'uncertain') {
+      // "Carried forward from the 2026 cycle" is only true when there IS a
+      // 2026 record. 27 programs had none — newly added ones, and imports that
+      // never got a history — and were being told a provenance that did not
+      // exist. An unconfirmed date with no past cycle behind it is a weaker
+      // claim, not the same one, so it says so.
+      var carried = p.history && p.history.length;
       notices += '<div class="mnote">📅 The ' + esc(cycle) + ' date below is <strong>expected, not '
-        + 'confirmed</strong> — carried forward from the ' + esc(cycle - 1) + ' cycle. Verify on the '
-        + 'official site before planning around it.</div>';
+        + 'confirmed</strong> — ' + (carried
+            ? 'carried forward from the ' + esc(cycle - 1) + ' cycle.'
+            : 'this program has no earlier cycle on file here, so it is an estimate.')
+        + ' Verify on the official site before planning around it.</div>';
     }
     if (p.verification === 'verified' && p.lastVerified && st !== 'discontinued' && st !== 'uncertain') {
       notices += '<div class="mgood">✅ Confirmed against the program’s own materials on '
