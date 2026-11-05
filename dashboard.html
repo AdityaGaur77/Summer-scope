@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SummerScope — Analytics</title>
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#152324">
+<meta name="theme-color" content="#271B23">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -51,21 +51,21 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{
   color-scheme:dark;
-  --surface:#222525; --bg:#151818; --raised:#2F3232;
-  --ink:#D6DADA; --ink-2:#A3A7A7; --ink-3:#868989;
-  --line:#3B3E3E; --grid:#2A2D2D;
-  --accent:#5CC2C4;
+  --surface:#292628; --bg:#191618; --raised:#373436;
+  --ink:#D7D4D6; --ink-2:#A09D9F; --ink-3:#827F81;
+  --line:#464245; --grid:#302D2F;
+  --accent:#D891C0;
 
   /* The band: nav and the lifetime slab. A tinted panel in both modes rather
      than a dark slab in both, so the light theme is actually light. */
-  --band:#152324;
-  --band-ink:#D6DADA; --band-muted:#A3A7A7; --band-faint:#868989;
+  --band:#271B23;
+  --band-ink:#D7D4D6; --band-muted:#A09D9F; --band-faint:#827F81;
   --band-line:rgba(255,255,255,.07);
   --band-fill:rgba(255,255,255,.06); --band-fill-2:rgba(255,255,255,.13);
 
   /* Chart.js draws tooltip text white and offers no token for it, so the
      tooltip ground stays dark in both modes. */
-  --tip:#0E1B1C;
+  --tip:#1F0A19;
 
   --s1:#d95926; --s2:#3987e5; --s3:#199e70; --s4:#c98500;
   --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
@@ -73,22 +73,22 @@
   /* Ordinal ramp — one hue, dark→light on a dark ground. */
   --o1:#256abf; --o2:#3987e5; --o3:#6da7ec; --o4:#9ec5f4;
 
-  --banner-bg:#34291A; --banner-bd:#504330; --banner-fg:#E1BC88;
+  --banner-bg:#2D200C; --banner-bd:#45351C; --banner-fg:#E6BD7C;
   --gutter:1rem;
 }
 :root[data-theme="light"]{
   color-scheme:light;
-  --surface:#ffffff; --bg:#F1F5F5; --raised:#EFF3F3;
-  --ink:#1D2020; --ink-2:#5A5D5D; --ink-3:#717474;
-  --line:#D9DDDD; --grid:#E9EDED;
-  --accent:#007679;
+  --surface:#ffffff; --bg:#F9F5F7; --raised:#F1EBEF;
+  --ink:#1E1A1D; --ink-2:#5E595C; --ink-3:#736E71;
+  --line:#DDD7DB; --grid:#EDE7EB;
+  --accent:#952279;
 
-  --band:#DBEEEE;
-  --band-ink:#1D2020; --band-muted:#5A5D5D; --band-faint:#6C6F6F;
+  --band:#F3E2EC;
+  --band-ink:#1E1A1D; --band-muted:#5E595C; --band-faint:#736E71;
   --band-line:rgba(0,0,0,.10);
   --band-fill:rgba(0,0,0,.055); --band-fill-2:rgba(0,0,0,.12);
 
-  --tip:#0E1B1C;
+  --tip:#1F0A19;
 
   --s1:#eb6834; --s2:#2a78d6; --s3:#1baf7a; --s4:#eda100;
   --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
@@ -646,7 +646,7 @@ function applyTheme(theme) {
   btn.textContent = light ? '☾' : '☀';
   btn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', light ? '#DBEEEE' : '#152324');
+  if (meta) meta.setAttribute('content', light ? '#F3E2EC' : '#271B23');
 }
 function currentTheme() {
   try { return localStorage.getItem('_ss_theme') === 'light' ? 'light' : 'dark'; } catch (_) { return 'dark'; }

@@ -1,11 +1,11 @@
 /** Icons, the manifest, and the hero's "also built by us" panel. */
-import { chromium, devices } from 'playwright';
+import { launch, devices } from '../scripts/playwright.mjs';
 
 const BASE = process.env.BASE_URL || BASE;
 let bad = 0;
 const ok = m => console.log('  ✓ ' + m);
 const no = m => { bad++; console.log('  ✗ ' + m); };
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const b = await launch();
 
 console.log('\n=== icons + manifest ===');
 {

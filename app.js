@@ -65,7 +65,7 @@
     var light = theme === 'light';
     document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', light ? '#DBEEEE' : '#152324');
+    if (meta) meta.setAttribute('content', light ? '#F3E2EC' : '#271B23');
     var btn = $('theme-btn');
     if (btn) {
       btn.textContent = light ? '☾' : '☀';
@@ -483,7 +483,7 @@
         : '<strong>' + results.length + '</strong> of ' + P.length + ' programs';
     }
 
-    renderCards(results, now);
+    renderCards(results, now, state);
     writeUrl();
   }
 
@@ -650,7 +650,123 @@
     note.textContent = 'Showing ' + shown + ' of ' + total;
   }
 
-  function renderCards(results, now) {
+  /* ── SECTIONS ────────────────────────────────────────────────────────────
+     125 programs in one undifferentiated column is the thing that makes this
+     page feel like a wall, and paging alone does not fix it: 24 cards with no
+     structure is still 24 cards with no structure.
+
+     So the list is cut into labelled sections — and the cut follows whatever
+     the sort is, because the sort is already the reader's statement about what
+     they care about. Sorting by deadline and seeing "Closing within 30 days ·
+     8" is a different page from sorting by deadline and seeing 125 cards.
+
+     A section function returns [key, label, note]. It is only safe to use if
+     its keys come out CONTIGUOUS under the active sort — otherwise the same
+     header appears twice — so that is checked at run time rather than
+     reasoned about here, and sectioning is dropped for any sort where it does
+     not hold. See sectionsFor().
+     ──────────────────────────────────────────────────────────────────────── */
+  var SECTION_OF = {
+    prestige: function (p) {
+      return p.prestige >= 5 ? ['p5', 'Top tier', 'Single-digit acceptance rates. Apply early and have a backup.']
+        : p.prestige === 4 ? ['p4', 'Highly selective', 'Hard to get into, but not lottery-hard.']
+        : p.prestige === 3 ? ['p3', 'Competitive', 'A strong application has a real chance here.']
+        : ['p2', 'Open to most applicants', 'Selection is light or first-come.'];
+    },
+    open: function (p, now) {
+      var st = statusOf(p, now);
+      return st === 'open' ? ['open', 'Accepting applications now', 'You can apply today.']
+        : st === 'rolling' ? ['roll', 'Rolling — apply any time', 'No single deadline; places go as they fill.']
+        : st === 'upcoming' ? ['up', 'Not open yet', 'Dates are published but the form is not live.']
+        : st === 'closed' ? ['cl', 'Deadline passed', 'Listed so you can plan for the next cycle.']
+        : ['un', 'Unconfirmed or discontinued', 'Next cycle not announced, or no longer offered.'];
+    },
+    deadline: function (p, now) {
+      var st = statusOf(p, now);
+      if (st === 'rolling') return ['roll', 'Rolling — apply any time', 'No single deadline; places go as they fill.'];
+      if (st === 'upcoming') return ['up', 'Not open yet', 'Dates are published but the form is not live.'];
+      if (st === 'closed') return ['cl', 'Deadline passed', 'Listed so you can plan for the next cycle.'];
+      if (st !== 'open') return ['un', 'Unconfirmed or discontinued', 'Next cycle not announced, or no longer offered.'];
+      var d = daysUntil(p.dlt, now);
+      if (d == null) return ['nod', 'Open, no deadline published', 'Apply when you are ready — but check the site.'];
+      return d <= 30 ? ['d30', 'Closing within 30 days', 'If any of these are on your list, start now.']
+        : d <= 90 ? ['d90', 'Closing in one to three months', 'Enough time to write something good.']
+        : ['dfar', 'Closing later this cycle', 'Worth bookmarking rather than starting today.'];
+    },
+    cost: function (p) {
+      // Banded off costN, not costB: two programs in different cost BANDS can
+      // share a boundary figure, which would split a section in two.
+      var c = p.costN;
+      return c == null ? ['cv', 'Cost varies or is not published', 'Ask the program directly before you budget.']
+        : c === 0 ? ['c0', 'Free, or free with full aid', 'No tuition, or aid that covers all of it.']
+        : c < 3000 ? ['c3', 'Under $3,000', '']
+        : c < 8000 ? ['c8', '$3,000 to $8,000', '']
+        : ['cx', 'Over $8,000', 'Check what the fee includes — some cover travel and housing.'];
+    },
+    newest: function (p) {
+      return p.isNew ? ['new', 'New this cycle', 'Added since the last update of this page.']
+        : ['old', 'Already on the list', ''];
+    },
+    az: function (p) {
+      var c = (p.name[0] || '#').toUpperCase();
+      return /[A-Z]/.test(c) ? [c, c, ''] : ['#', '0–9', ''];
+    },
+  };
+  var SECTION_FOR_SORT = {
+    prestige: 'prestige', open: 'open',
+    deadline: 'deadline', 'deadline-desc': 'deadline',
+    'cost-asc': 'cost', 'cost-desc': 'cost',
+    newest: 'newest', az: 'az',
+  };
+
+  /** Below this many results a header every two cards is noise, not structure. */
+  var SECTION_MIN = 8;
+
+  /**
+   * Section descriptors for the whole result set, in order:
+   * [{ key, label, note, total, firstIndex }]. Returns null when the list
+   * should not be sectioned at all — too short, a search is running, or the
+   * active sort does not produce contiguous keys.
+   */
+  function sectionsFor(results, state, now) {
+    if (results.length < SECTION_MIN) return null;
+    // A search result is already a short, relevance-ordered answer. Cutting it
+    // into "Competitive" and "Top tier" buries the match the reader came for.
+    if (state.q) return null;
+    var fn = SECTION_OF[SECTION_FOR_SORT[state.sort]];
+    if (!fn) return null;
+
+    var out = [], seen = {}, prev = null;
+    for (var i = 0; i < results.length; i++) {
+      var d = fn(results[i], now);
+      if (d[0] === prev) { out[out.length - 1].total++; continue; }
+      // The same key coming back after a different one means this sort does
+      // not keep the sections together, and a second "Top tier" header further
+      // down the page would be a bug the reader has to decode. Drop sectioning
+      // rather than show it wrong.
+      if (seen[d[0]]) return null;
+      seen[d[0]] = 1;
+      prev = d[0];
+      out.push({ key: d[0], label: d[1], note: d[2], total: 1, firstIndex: i });
+    }
+    // One section covering everything is just a header nobody needed.
+    return out.length > 1 ? out : null;
+  }
+
+  function sectionHtml(sec, drawn) {
+    // `drawn` is how many of this section are actually on the page. While the
+    // reader is still paging in, saying "12" above three cards is a lie by
+    // omission, so the header says both numbers.
+    var count = drawn < sec.total
+      ? '<span class="sec-n">' + drawn + ' of ' + sec.total + '</span>'
+      : '<span class="sec-n">' + sec.total + '</span>';
+    return '<div class="sec" role="presentation">'
+      + '<h3 class="sec-h">' + esc(sec.label) + count + '</h3>'
+      + (sec.note ? '<p class="sec-note">' + esc(sec.note) + '</p>' : '')
+      + '</div>';
+  }
+
+  function renderCards(results, now, state) {
     var g = $('cg');
     if (!g) return;
     if (!results.length) {
@@ -668,8 +784,23 @@
     var page = results.slice(0, shown);
     renderMore(results.length, now);
 
+    // Headers are keyed on the index of each section's first program, so the
+    // same map works for cards and rows and neither renderer has to know the
+    // sections exist beyond asking "does one start here?".
+    var sections = sectionsFor(results, state || readState(), now);
+    var headAt = {};
+    if (sections) {
+      sections.forEach(function (sec) {
+        if (sec.firstIndex >= shown) return;
+        var next = sec.firstIndex + sec.total;
+        headAt[sec.firstIndex] = sectionHtml(sec, Math.min(next, shown) - sec.firstIndex);
+      });
+    }
+    g.setAttribute('data-sectioned', sections ? 'yes' : 'no');
+    var head = function (i) { return headAt[i] || ''; };
+
     if (view === 'list') {
-      g.innerHTML = page.map(function (p) { return rowHtml(p, now); }).join('');
+      g.innerHTML = page.map(function (p, i) { return head(i) + rowHtml(p, now); }).join('');
       return;
     }
 
@@ -725,7 +856,7 @@
           + (link ? '<button type="button" class="abtn" data-visit="' + esc(link) + '">Visit Site →</button>' : '')
         + '</div>'
         + '</article>';
-    }).join('');
+    }).map(function (html, i) { return head(i) + html; }).join('');
   }
 
   // ── MODAL ────────────────────────────────────────────────────────────────
@@ -1017,10 +1148,13 @@
     var more = $('more-btn');
     if (more) {
       more.addEventListener('click', function () {
+        var was = shown;
         shown += PAGE[readView()];
         render();
         // Land on the first newly added item rather than at the page bottom.
-        var first = $('cg').children[shown - PAGE[readView()]];
+        // Counting children no longer works now that section headers share the
+        // grid with the cards, so the cards are counted on their own.
+        var first = $('cg').querySelectorAll('.card,.row')[was];
         if (first && first.scrollIntoView) first.scrollIntoView({ block: 'center' });
       });
     }
@@ -1155,9 +1289,74 @@
       b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === v));
     });
   }());
+  /* ── SCROLL ──────────────────────────────────────────────────────────────
+     Two effects, both strictly optional and both set up from here rather than
+     from the stylesheet.
+
+     THE REVEAL. html.anim is what turns the hidden state on, and this is the
+     only place that sets it. If this script never runs, or throws before this
+     point, or the browser has no IntersectionObserver, the class is never
+     added and every .reveal block renders as ordinary visible content. A
+     reveal animation that can hide the page when it fails is not worth having.
+
+     THE PROGRESS RULE. A 2px line under the nav. It is driven on scroll, so it
+     has to be cheap: one rAF-throttled read and one transform write, with no
+     layout reads in the handler beyond those.
+     ──────────────────────────────────────────────────────────────────────── */
+  function initScroll() {
+    var reduced = false;
+    try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) {}
+    if (reduced) return;
+
+    if ('IntersectionObserver' in window) {
+      document.documentElement.classList.add('anim');
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          e.target.classList.add('in');
+          io.unobserve(e.target);   // one way only: nothing re-hides on the way back up
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+      $$('.reveal').forEach(function (el) { io.observe(el); });
+
+      // Anything still unrevealed after two seconds is shown anyway. An
+      // element inside a hidden ancestor never intersects, and the honest
+      // failure mode for a decoration is "it did not animate", never "the
+      // content is gone".
+      setTimeout(function () {
+        $$('.reveal:not(.in)').forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight * 1.2) el.classList.add('in');
+        });
+      }, 2000);
+    }
+
+    var bar = document.createElement('div');
+    bar.className = 'sprog';
+    document.body.appendChild(bar);
+    var ticking = false;
+    function paint() {
+      ticking = false;
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      // A page barely taller than the viewport has no progress worth
+      // reporting, and dividing by a few pixels of it would peg the bar full.
+      if (h < 240) { bar.classList.remove('on'); return; }
+      var y = window.scrollY || window.pageYOffset || 0;
+      bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, y / h)) + ')';
+      bar.classList.toggle('on', y > 40);
+    }
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(paint);
+    }, { passive: true });
+    paint();
+  }
+
   buildPanel();
   wire();
   syncSearchUI();
+  initScroll();
   loadData().catch(function (err) {
     console.error('Failed to load data:', err);
     var loading = $('loading-screen');
