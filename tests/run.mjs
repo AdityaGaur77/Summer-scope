@@ -43,7 +43,7 @@ const server = createServer(async (req, res) => {
 await new Promise((r) => server.listen(PORT, r));
 console.log(`serving ${ROOT} on :${PORT}`);
 
-const SUITES = ['sitecheck', 'viewcheck', 'seocheck', 'assetcheck'];
+const SUITES = ['sitecheck', 'viewcheck', 'uicheck', 'seocheck', 'assetcheck'];
 let failed = 0;
 for (const s of SUITES) {
   console.log(`\n${'─'.repeat(64)}\n  ${s}\n${'─'.repeat(64)}`);

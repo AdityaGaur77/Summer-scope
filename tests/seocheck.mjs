@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { launch } from '../scripts/playwright.mjs';
 import { readFileSync } from 'fs';
 
 const BASE = process.env.BASE_URL || BASE;
@@ -50,7 +50,7 @@ const sm = readFileSync(R + '/sitemap.xml', 'utf8');
 sm.includes(`<lastmod>${data.meta.lastUpdated}</lastmod>`) ? ok(`sitemap lastmod tracks the data (${data.meta.lastUpdated})`) : no('lastmod stale');
 
 console.log('\n=== served + rendered ===');
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const b = await launch();
 const p = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
 for (const [path, type] of [['/robots.txt','text/plain'],['/sitemap.xml','application/xml'],['/og.png','image/png']]) {
   const r = await p.request.get(BASE + path);

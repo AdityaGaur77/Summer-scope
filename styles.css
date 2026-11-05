@@ -20,87 +20,103 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 /* ── THE PALETTE ──────────────────────────────────────────────────────────────
-   Third pass, and the first two failed for the same underlying reason: the
-   GREYSCALE was carrying the brand hue. Navy-tinted greys read as a stock AI
-   dashboard; warm-beige greys under a terracotta accent read as somebody
-   else's product. Either way the neutrals were doing identity work, which is
-   the one job they are bad at.
+   Fourth pass. The three before it each failed for a reason worth keeping:
 
-   So the greys here are genuinely neutral — hue 197°, chroma 0.004, which is
-   below the level where a cast is visible on any calibrated screen — and a
-   single accent carries the whole identity.
+     1. Navy greys + a navy accent read as a stock AI dashboard.
+     2. Warm-charcoal greys + a terracotta accent read as Claude's own theme.
+     3. Dead-neutral greys + a teal accent was correct and dull — teal is the
+        default "safe" accent of every dev-tool landing page in existence.
 
-   That accent is deep teal at 197°: far from the navy of the first attempt
-   (257°) and far from the terracotta of the second (46°). It also leaves the
-   semantic green at 155° free to mean "free / open" without competing with the
-   button colour — 42° of separation between "this is interactive" and "this
-   program costs nothing".
+   The lesson from 1 and 2 is still in force: THE GREYSCALE MUST NOT CARRY THE
+   IDENTITY. The neutrals here sit at hue 340, chroma 0.004–0.006, which is
+   below the level where a cast is visible on any calibrated screen. They are
+   grey, and they do nothing but be grey.
 
-   Both modes are generated perceptually in OKLCH, then verified as a set: body
-   text lands 9–13:1 on dark and 13–17:1 on light (crisp, but short of the
-   ~16:1-on-black point where light text starts to halo), secondary text clears
-   4.5:1, every accent and status colour clears 4.5:1 on every ground it sits
-   on, ink clears 4.5:1 on the accent fill, each of the ten tag chips clears
-   4.5:1 against its own label AND stays visible against the card beneath it,
-   and every pair of surfaces that share an edge is at least 2.5 ΔL apart.
-   Change one value and re-check the whole set — these numbers hold each other
-   up.
+   What changed is the accent and the band. The accent is MULBERRY at 340° — a
+   dusty rose where it has to be light enough to read on near-black, a deep
+   mulberry where it has to be dark enough to read on paper. It sits 143° from
+   the teal it replaces, 78° from the navy, 69° from the terracotta, and, more
+   usefully, 45° from the alert red and 103° from the amber it has to coexist
+   with. That last pair is the real constraint: the accent is the only thing on
+   the page that means "you can click this", and it must never be mistaken for
+   "this program closed".
+
+   The band — nav, hero, footer — carries a 0.024 chroma of the same hue. That
+   is the one surface allowed a visible tint, and it is what makes the page
+   read as this palette rather than a grey page with a pink link in it.
+
+   Light mode is not the inverse; it is the same construction read from the
+   other end. The page is warm paper rather than cool grey, and the band is a
+   pale blush panel two steps off it.
+
+   Verified as a SET, not colour by colour, by scripts/check-palette.mjs:
+   body text lands 12.2:1 on dark (crisp, but below the ~13.5:1 point where
+   light text starts to halo on a dark ground) and 15.9:1 on light; secondary
+   text clears 4.5:1 and tertiary 3:1 on every ground each appears on; the
+   accent and all three status colours clear 4.5:1 on page, card, raised card
+   and band; ink clears 4.5:1 on both accent fills; all ten tag chips clear
+   4.5:1 against their own label and stay visible against the card beneath;
+   each of the four panel borders is visible against a card; and every pair of
+   surfaces that SHARES AN EDGE is at least 2.5 ΔL apart.
+
+   Change one value and run `npm run check-palette` — these numbers hold each
+   other up.
    ───────────────────────────────────────────────────────────────────────── */
 :root{
   color-scheme:dark;
 
-  --bg:#151818;            /* page ground — lifted off black to kill the halo */
-  --bg-2:#152324;          /* nav + hero + footer band, the one tinted surface */
-  --card:#222525;
-  --card-2:#2F3232;        /* raised surface inside a card */
-  --text:#D6DADA;          /* deliberately not #fff: 12.7:1 on the page, not 16 */
-  --muted:#A3A7A7;
-  --faint:#868989;
-  --accent:#5CC2C4;        /* teal — the only thing in the file with real chroma */
-  --accent-2:#83D5D6;
-  --accent-ink:#031A1B;    /* text on an accent fill — 8.5:1 */
-  --border:#3B3E3E;
-  --border-2:#505353;      /* hover / focus border */
-  --tag-bg:#2F3232;
-  --green:#76C392;
-  --amber:#E5B46E;
-  --red:#D8847D;
+  --bg:#191618;            /* page ground — lifted off black to kill the halo */
+  --bg-2:#271B23;          /* nav + hero + footer band, the one tinted surface */
+  --card:#292628;
+  --card-2:#373436;        /* raised surface inside a card */
+  --text:#D7D4D6;          /* deliberately not #fff: 12.2:1 on the page, not 16 */
+  --muted:#A09D9F;
+  --faint:#827F81;
+  --accent:#D891C0;        /* mulberry — the only thing here with real chroma */
+  --accent-2:#EBB1D7;
+  --accent-ink:#1F0A19;    /* text on an accent fill — 7.9:1 */
+  --border:#464245;
+  --border-2:#5E595C;      /* hover / focus border */
+  --tag-bg:#373436;
+  --green:#7CC58C;
+  --amber:#E0B26A;
+  --red:#EC877F;
   --shadow:0 6px 24px rgba(0,0,0,.45);
   --shadow-lg:0 20px 50px rgba(0,0,0,.55);
-  --scrim:rgba(8,10,10,.72);
+  --scrim:rgba(10,8,9,.74);
 
   /* The band: nav, hero and footer. On dark it sits just above the page
-     ground; on light it is a soft teal panel rather than a dark slab, so these
+     ground; on light it is a soft blush panel rather than a dark slab, so these
      are "ink on the band", not "ink on dark". */
   --band-ink:var(--text);
-  --band-muted:#A3A7A7;
-  --band-faint:#868989;
-  --band-line:rgba(255,255,255,.07);
+  --band-muted:#A09D9F;
+  --band-faint:#827F81;
+  --band-line:rgba(255,255,255,.08);
   --band-fill:rgba(255,255,255,.05);
   --band-fill-2:rgba(255,255,255,.10);
 
   /* Tag palette. Ten saturated pills on one card is its own kind of noise, so
      each hue keeps its identity at a fraction of the chroma: the chip reads as
      a tinted grey and its label carries the colour. */
-  --t-indigo-bg:#33384C;  --t-indigo-fg:#AEBBEF;
-  --t-emerald-bg:#2A3F31; --t-emerald-fg:#97CDA9;
-  --t-blue-bg:#293B4B;    --t-blue-fg:#95C3EB;
-  --t-violet-bg:#3C3549;  --t-violet-fg:#C5B3E8;
-  --t-yellow-bg:#403923;  --t-yellow-fg:#D0BC86;
-  --t-red-bg:#4A3230;     --t-red-fg:#EAABA5;
-  --t-fuchsia-bg:#443342; --t-fuchsia-fg:#DAADD5;
-  --t-orange-bg:#483427;  --t-orange-fg:#E4B290;
-  --t-slate-bg:#353B3B;   --t-slate-fg:#B7C0C0;
-  --t-sky-bg:#243D47;     --t-sky-fg:#88C9E2;
+  --t-indigo-bg:#2D344A;  --t-indigo-fg:#A8BCF5;
+  --t-emerald-bg:#243C2C; --t-emerald-fg:#91CEA6;
+  --t-blue-bg:#233849;    --t-blue-fg:#8FC4F1;
+  --t-violet-bg:#383147;  --t-violet-fg:#C6B2ED;
+  --t-yellow-bg:#3F341D;  --t-yellow-fg:#D7BA7D;
+  --t-red-bg:#482D2B;     --t-red-fg:#F0A9A2;
+  --t-fuchsia-bg:#412E3F; --t-fuchsia-fg:#DEAAD8;
+  --t-orange-bg:#463021;  --t-orange-fg:#E9B089;
+  --t-slate-bg:#253749;   --t-slate-fg:#94C2F3;
+  --t-sky-bg:#1D3A45;     --t-sky-fg:#7FCAE7;
 
-  --bar-upcoming:#8C7A44;
-  --bar-rolling:#3F6E75;
-  --bar-inactive:#444848;
+  --bar-upcoming:#8D6F3F;
+  --bar-rolling:#916481;
+  --bar-inactive:#474446;
 
-  --notice-bg:#34291A;    --notice-bd:#504330;  --notice-fg:#E1BC88;
-  --alert-bg:#392624;     --alert-bd:#563E3C;   --alert-fg:#F2AFA9;
-  --warn-bg:#37271D;      --warn-bd:#544033;    --warn-fg:#ECB591;
-  --good-bg:#1F3025;      --good-bd:#364B3D;    --good-fg:#99D2AC;
+  --notice-bg:#2D200C;    --notice-bd:#45351C;  --notice-fg:#E6BD7C;
+  --alert-bg:#331B19;     --alert-bd:#4D2F2C;   --alert-fg:#FCACA5;
+  --warn-bg:#321D12;      --warn-bd:#4B3122;    --warn-fg:#F7B28C;
+  --good-bg:#152819;      --good-bd:#263F2B;    --good-fg:#97D6A4;
 
   --sw:238px;              /* sidebar width */
   --nh:56px;               /* nav height */
@@ -110,61 +126,59 @@
   --tap:44px;              /* minimum touch target */
 }
 
-/* Light is the same construction inverted: the same neutral grey scale read
-   from the other end, the same teal at the lightness that clears 4.5:1 on
-   white. The old light theme dropped a near-black navy slab behind the nav and
-   hero; that slab was the single loudest thing on the page and it belonged to
-   a palette that no longer exists. It is now a soft teal panel two steps off
-   the page, which is enough to separate it without shouting. */
+/* Light is the same construction read from the other end: the same neutral grey
+   scale from the light end, the same mulberry at the lightness that clears
+   4.5:1 on paper. The page ground is warm paper rather than the cool grey it
+   used to be, and the band is a pale blush panel two steps off it. */
 :root[data-theme="light"]{
   color-scheme:light;
 
-  --bg:#F1F5F5;
-  --bg-2:#DBEEEE;
+  --bg:#F9F5F7;
+  --bg-2:#F3E2EC;
   --card:#FFFFFF;
-  --card-2:#EFF3F3;
-  --text:#1D2020;
-  --muted:#5A5D5D;
-  --faint:#717474;
-  --accent:#007679;
-  --accent-2:#005F63;
-  --accent-ink:#FAFEFE;
-  --border:#D9DDDD;
-  --border-2:#C1C5C5;
-  --tag-bg:#E7EFEF;
-  --green:#117342;
-  --amber:#976500;
-  --red:#A14B46;
-  --shadow:0 3px 16px rgba(20,32,32,.07);
-  --shadow-lg:0 20px 48px rgba(20,32,32,.18);
-  --scrim:rgba(18,28,28,.5);
+  --card-2:#F1EBEF;
+  --text:#1E1A1D;
+  --muted:#5E595C;
+  --faint:#736E71;
+  --accent:#952279;
+  --accent-2:#770C5F;
+  --accent-ink:#FFFCFE;
+  --border:#DDD7DB;
+  --border-2:#C4BDC1;
+  --tag-bg:#F1EBEE;
+  --green:#146D34;
+  --amber:#8A5E00;
+  --red:#9E2C2C;
+  --shadow:0 3px 16px rgba(32,20,27,.07);
+  --shadow-lg:0 20px 48px rgba(32,20,27,.18);
+  --scrim:rgba(28,18,24,.5);
 
   --band-ink:var(--text);
-  --band-muted:#5A5D5D;
-  --band-faint:#6C6F6F;
+  --band-muted:#5E595C;
+  --band-faint:#736E71;
   --band-line:rgba(0,0,0,.10);
   --band-fill:rgba(0,0,0,.045);
   --band-fill-2:rgba(0,0,0,.09);
 
-  --t-indigo-bg:#E6ECFF;  --t-indigo-fg:#3F4989;
-  --t-emerald-bg:#DEF3E4; --t-emerald-fg:#036035;
-  --t-blue-bg:#DDF0FF;    --t-blue-fg:#075485;
-  --t-violet-bg:#F0E9FF;  --t-violet-fg:#594080;
-  --t-yellow-bg:#F5ECD7;  --t-yellow-fg:#664C00;
-  --t-red-bg:#FFE6E3;     --t-red-fg:#803531;
-  --t-fuchsia-bg:#F9E6F7; --t-fuchsia-fg:#6F386B;
-  --t-orange-bg:#FEE8DA;  --t-orange-fg:#7A3D02;
-  --t-slate-bg:#E7EFEF;   --t-slate-fg:#4A5252;
-  --t-sky-bg:#D9F2FC;     --t-sky-fg:#005A7B;
+  --t-indigo-bg:#E4EEFF;  --t-indigo-fg:#3E5092;
+  --t-emerald-bg:#DBF7E4; --t-emerald-fg:#036639;
+  --t-blue-bg:#DAF2FF;    --t-blue-fg:#075A8E;
+  --t-violet-bg:#F2E9FF;  --t-violet-fg:#5F4589;
+  --t-yellow-bg:#FAEDD2;  --t-yellow-fg:#714F00;
+  --t-red-bg:#FFE5E2;     --t-red-fg:#883835;
+  --t-fuchsia-bg:#FEE6FB; --t-fuchsia-fg:#763C72;
+  --t-orange-bg:#FFE8D7;  --t-orange-fg:#824103;
+  --t-slate-bg:#DCF1FF;   --t-slate-fg:#1A588F;
+  --t-sky-bg:#D5F5FF;     --t-sky-fg:#006083;
 
-  --bar-upcoming:#B08A2E;
-  --bar-rolling:#3C8792;
-  --bar-inactive:#B4BCBC;
+  --bar-upcoming:#CFA25A;
+  --bar-rolling:#C980B1;
+  --bar-inactive:#CAC6C8;
 
-  --notice-bg:#FFF2E2;    --notice-bd:#EBD6B9;  --notice-fg:#704500;
-  --alert-bg:#FFEEEC;     --alert-bd:#F6CECA;   --alert-fg:#803531;
-  --warn-bg:#FFF0E4;      --warn-bd:#F2D2BE;    --warn-fg:#7A3D02;
-  --good-bg:#E8FAED;      --good-bd:#C3E2CC;    --good-fg:#036035;
+  --notice-bg:#FEF1DD;    --notice-bd:#EFD7B3;  --notice-fg:#774B00;
+  --alert-bg:#FFEBE8;     --alert-bd:#FDCDC9;   --alert-fg:#8A3633;
+  --warn-bg:#FFEDE1;      --warn-bd:#FAD1BB;    --warn-fg:#863E07;
+  --good-bg:#E5F9E8;      --good-bd:#C2E6C8;    --good-fg:#126630;
 }
 
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
@@ -193,9 +207,11 @@ a{color:var(--accent)}
 
 /* The nav is sticky at the top and the bar is fixed at the bottom, so anything
    the browser scrolls to on its own — a Tab through the cards, a focused chip,
-   an in-page anchor — lands underneath one of them. scroll-margin reserves the
-   clearance so a focused control is always actually on screen. */
-a,button,input,select,summary,[tabindex],.card,.ecard{
+   an in-page anchor such as the sponsor strip's jump to #advertise — lands
+   underneath one of them. scroll-margin reserves the
+   clearance so a focused control, or the top of a linked section, is always
+   actually on screen. */
+a,button,input,select,summary,[tabindex],.card,.ecard,section[id],[id]:target{
   scroll-margin-top:calc(var(--nh) + .5rem);
   scroll-margin-bottom:calc(var(--mnh) + .75rem);
 }
@@ -482,6 +498,74 @@ nav:not(.mobnav){
    the status pill would push the name down to an ellipsis. */
 .rcost,.rtag{display:none}
 
+/* ── RESULT SECTIONS ─────────────────────────────────────────────────────────
+   A header between groups of results. Which groups appear is decided in
+   app.js and follows the active sort; all this does is make a header read as
+   a header rather than as a very strange card.
+
+   In card view the grid is a grid, so the header has to span every column. In
+   list view the grid is one bordered box, so the header is a band inside it —
+   closer to a table's group row, which is the right shape for that view.
+   ───────────────────────────────────────────────────────────────────────── */
+.sec{grid-column:1/-1;padding:.9rem 0 .15rem}
+.grid > .sec:first-child{padding-top:.15rem}
+.sec-h{display:flex;align-items:baseline;gap:.5rem;font-family:'Lora',serif;
+  font-size:1rem;font-weight:600;letter-spacing:-.01em;line-height:1.25}
+.sec-n{font-family:'DM Sans',sans-serif;font-size:.64rem;font-weight:700;
+  letter-spacing:.04em;color:var(--accent);background:var(--band-fill);
+  border:1px solid var(--border);border-radius:20px;padding:1px 7px;
+  white-space:nowrap;flex-shrink:0}
+.sec-note{font-size:.74rem;color:var(--faint);margin-top:.15rem;max-width:56ch}
+
+.grid[data-view="list"] .sec{padding:.5rem .7rem .45rem;background:var(--card-2);
+  border-bottom:1px solid var(--border)}
+.grid[data-view="list"] .sec-h{font-size:.82rem}
+/* The blurb earns its line above a block of cards. Above a row it is the
+   tallest thing in a view whose whole point is density. */
+.grid[data-view="list"] .sec-note{display:none}
+
+/* ── SCROLL REVEAL ───────────────────────────────────────────────────────────
+   The hidden state is gated behind html.anim, which app.js sets only once it
+   has an IntersectionObserver to turn it off again. Put opacity:0 in the base
+   sheet instead and any reader whose JavaScript fails — or whose observer
+   never fires because the element was already on screen — gets a blank page.
+   Failing open is not optional here.
+
+   prefers-reduced-motion is handled twice over: the global rule near the top
+   of this file collapses the transition, and app.js skips the observer
+   entirely so nothing ever carries the hidden class.
+   ───────────────────────────────────────────────────────────────────────── */
+/* Only the static blocks carry .reveal — the marketing sections and the two
+   page headers. The result cards deliberately do not: they are re-rendered on
+   every keystroke of the search box, and 24 cards fading in each time would
+   turn a working tool into a slideshow. */
+html.anim .reveal{opacity:0;transform:translateY(14px)}
+.reveal{transition:opacity .5s cubic-bezier(.22,.61,.36,1),transform .5s cubic-bezier(.22,.61,.36,1)}
+html.anim .reveal.in{opacity:1;transform:none}
+/* Children of a revealed block come in just behind it, so a panel reads as one
+   movement rather than four. Six steps is as far as it stays a stagger and not
+   a queue. */
+html.anim .reveal.stagger > *{opacity:0;transform:translateY(10px);
+  transition:opacity .45s cubic-bezier(.22,.61,.36,1),transform .45s cubic-bezier(.22,.61,.36,1)}
+html.anim .reveal.stagger.in > *{opacity:1;transform:none}
+html.anim .reveal.stagger.in > *:nth-child(1){transition-delay:.04s}
+html.anim .reveal.stagger.in > *:nth-child(2){transition-delay:.10s}
+html.anim .reveal.stagger.in > *:nth-child(3){transition-delay:.16s}
+html.anim .reveal.stagger.in > *:nth-child(4){transition-delay:.22s}
+html.anim .reveal.stagger.in > *:nth-child(5){transition-delay:.28s}
+html.anim .reveal.stagger.in > *:nth-child(6){transition-delay:.34s}
+@media(prefers-reduced-motion:reduce){
+  html.anim .reveal,html.anim .reveal.stagger > *{opacity:1!important;transform:none!important}
+}
+
+/* Reading progress. A 2px rule under the sticky nav — it answers "how much of
+   this list is left" without taking a row of its own. */
+.sprog{position:fixed;top:0;left:0;height:2px;width:100%;transform:scaleX(0);
+  transform-origin:0 50%;background:var(--accent);z-index:101;pointer-events:none;
+  opacity:0;transition:opacity .25s}
+.sprog.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.sprog{display:none}}
+
 /* ── PROGRAM GRID + CARDS ────────────────────────────────────────────────── */
 .grid{display:grid;grid-template-columns:1fr;gap:.75rem}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
@@ -696,6 +780,95 @@ nav:not(.mobnav){
 .ns li{font-size:.85rem;line-height:1.6;margin-bottom:.5rem;color:var(--muted)}
 .ns a{color:var(--accent);font-weight:600}
 
+/* ── SPONSOR STRIP ───────────────────────────────────────────────────────────
+   One line, above everything. The constraint that makes this placement
+   acceptable is its height: it must never push the h1 below the fold on a
+   phone, so the label and the call to action share the line with the copy and
+   the copy is what gets dropped when there is no room for all three.
+   ───────────────────────────────────────────────────────────────────────── */
+.sponsor{background:var(--card);border-bottom:1px solid var(--border);
+  padding:.4rem var(--gutter);font-size:.75rem}
+.sponsor-in{display:flex;align-items:center;gap:.5rem;max-width:1216px;margin:0 auto}
+.sponsor-tag{flex-shrink:0;font-size:.56rem;font-weight:700;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--faint);
+  border:1px solid var(--border);border-radius:5px;padding:2px 5px}
+/* The sentence is the first thing to go: on a phone the label plus the link
+   already say "this space is for sale" without it. */
+.sponsor-txt{display:none;flex:1;min-width:0;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sponsor-cta{margin-left:auto;flex-shrink:0;font-weight:600;color:var(--accent);
+  text-decoration:none;padding:.25rem 0}
+.sponsor-cta:hover{color:var(--accent-2);text-decoration:underline}
+
+/* ── MORE FROM US ────────────────────────────────────────────────────────────
+   The long version of the two hero pills. One column on a phone, two from
+   700px. The card is a flex row — mark, then everything else — so the blurb
+   wraps against the text column rather than under the mark.
+   ───────────────────────────────────────────────────────────────────────── */
+.more-us{padding:2rem var(--gutter) .5rem;max-width:1216px;margin:0 auto}
+.mu-eyebrow,.adv-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:.4rem}
+.mu-head h2,.adv-head h2{font-family:'Lora',serif;font-size:1.3rem;line-height:1.2;
+  letter-spacing:-.02em;margin-bottom:.4rem;max-width:22ch}
+.mu-sub,.adv-sub{font-size:.84rem;color:var(--muted);max-width:60ch;line-height:1.6}
+.mu-grid{display:grid;grid-template-columns:1fr;gap:.75rem;margin-top:1.1rem}
+.mu-card{display:flex;gap:.8rem;padding:.9rem;border-radius:var(--r);
+  border:1px solid var(--border);background:var(--card);color:var(--text);
+  text-decoration:none;transition:border-color .15s,box-shadow .15s,transform .12s}
+.mu-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+@media(hover:hover){.mu-card:hover{transform:translateY(-2px)}}
+.mu-logo{width:38px;height:38px;flex-shrink:0;border-radius:10px;display:grid;
+  place-items:center;font-weight:700;font-size:.78rem;letter-spacing:-.02em;
+  background:var(--accent);color:var(--accent-ink)}
+.mu-logo-2{background:var(--card-2);color:var(--accent);border:1px solid var(--border-2)}
+.mu-body{display:flex;flex-direction:column;gap:.2rem;min-width:0}
+.mu-name{font-family:'Lora',serif;font-size:1.02rem;font-weight:600;display:flex;
+  align-items:center;gap:.35rem}
+.mu-go{color:var(--accent);font-family:'DM Sans',sans-serif;font-size:.85rem;
+  transition:transform .15s}
+.mu-card:hover .mu-go{transform:translateX(3px)}
+.mu-tag{font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--faint)}
+.mu-desc{font-size:.82rem;color:var(--muted);line-height:1.6;margin-top:.3rem}
+.mu-foot{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;margin-top:.55rem}
+.mu-pill{font-size:.64rem;font-weight:600;padding:2px 7px;border-radius:20px;
+  background:var(--tag-bg);color:var(--muted)}
+.mu-host{font-size:.68rem;color:var(--faint);margin-left:auto}
+
+/* ── ADVERTISING ─────────────────────────────────────────────────────────────
+   Two halves on purpose, and they must not look like one offer with two
+   prices: the paid box is accent-bordered, the free box is green-bordered,
+   and each says in its own words what the other one is not.
+   ───────────────────────────────────────────────────────────────────────── */
+.adv{padding:2rem var(--gutter) 1rem;max-width:1216px;margin:0 auto}
+.adv-grid{display:grid;grid-template-columns:1fr;gap:.6rem;margin-top:1.1rem}
+.adv-card{position:relative;padding:.85rem .9rem .85rem 2.6rem;border-radius:var(--r);
+  border:1px solid var(--border);background:var(--card)}
+.adv-n{position:absolute;left:.85rem;top:.8rem;font-family:'Lora',serif;
+  font-size:.92rem;font-weight:600;color:var(--accent);opacity:.75}
+.adv-card h3{font-size:.9rem;font-weight:600;margin-bottom:.2rem}
+.adv-card p{font-size:.79rem;color:var(--muted);line-height:1.55}
+
+.adv-split{display:grid;grid-template-columns:1fr;gap:.75rem;margin-top:.75rem}
+.adv-box{padding:1rem;border-radius:var(--r);border:1px solid var(--border);
+  background:var(--card)}
+.adv-paid{border-color:var(--accent);background:var(--card)}
+.adv-free{border-color:var(--good-bd);background:var(--good-bg)}
+.adv-box h3{font-family:'Lora',serif;font-size:1.05rem;font-weight:600;margin-bottom:.35rem}
+.adv-free h3{color:var(--good-fg)}
+.adv-box p{font-size:.82rem;color:var(--muted);line-height:1.6;max-width:50ch}
+.adv-free p{color:var(--text)}
+.adv-mail{display:inline-flex;align-items:center;margin-top:.8rem;min-height:var(--tap);
+  padding:.55rem 1rem;border-radius:10px;background:var(--accent);color:var(--accent-ink);
+  font-weight:600;font-size:.85rem;text-decoration:none;transition:background .15s}
+.adv-mail:hover{background:var(--accent-2)}
+.adv-mail-2{background:var(--good-fg);color:var(--good-bg)}
+.adv-mail-2:hover{background:var(--green);color:var(--card)}
+/* The @ lives here, not in the markup, so the address is never one scrapable
+   string. The href and the aria-label both carry it in full. */
+.adv-user::after{content:'@'}
+.adv-fine{font-size:.72rem;color:var(--faint);margin-top:.6rem;font-style:italic}
+
 /* ── FOOTER ──────────────────────────────────────────────────────────────── */
 footer{background:var(--bg-2);padding:1.4rem var(--gutter);margin-top:1.5rem;
   color:var(--band-faint);font-size:.75rem;border-top:1px solid var(--band-line);line-height:1.6}
@@ -714,6 +887,7 @@ footer a{color:var(--accent);font-weight:600}
   padding:.45rem .9rem;border-radius:9px;background:var(--accent);color:var(--accent-ink);
   font-size:.82rem;font-weight:700;text-decoration:none;letter-spacing:.01em}
 .fad-mail:hover{background:var(--accent-2);color:var(--accent-ink)}
+.fad-mail{text-decoration:none;gap:.35rem}
 /* The @ lives here, not in the markup, so the address is never one scrapable
    string in the HTML. The href still spells it out in full. */
 .fad-user::after{content:'@'}
@@ -727,6 +901,7 @@ footer a{color:var(--accent);font-weight:600}
   .hsub,.ehero p{-webkit-line-clamp:none;display:block;overflow:visible}
   .ehero h2{font-size:1.55rem}
   .grid,.egrid{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+  .sponsor-txt{display:block}
 }
 
 /* ═══ 700px — the modal becomes a centred dialog ═══════════════════════════ */
@@ -759,6 +934,18 @@ footer a{color:var(--accent);font-weight:600}
   .mb{overflow:visible}
   .notice-date{display:block}
   .notice{align-items:center;justify-content:space-between}
+
+  .sponsor{padding:.45rem var(--gutter)}
+  .more-us,.adv{padding-top:2.6rem}
+  .mu-head h2,.adv-head h2{font-size:1.6rem;max-width:26ch}
+  .mu-grid{grid-template-columns:1fr 1fr;gap:1rem}
+  .mu-card{padding:1.1rem;gap:.95rem}
+  .mu-logo{width:44px;height:44px;font-size:.86rem}
+  .adv-grid{grid-template-columns:repeat(3,1fr)}
+  .adv-split{grid-template-columns:1fr 1fr;gap:1rem}
+  .adv-box{padding:1.25rem}
+  .sec{padding:1.3rem 0 .3rem}
+  .sec-h{font-size:1.12rem}
 }
 
 /* ═══ 900px — filters dock, bottom bar retires ═════════════════════════════ */
@@ -824,10 +1011,13 @@ footer a{color:var(--accent);font-weight:600}
   .quick{margin:0;padding-left:0;padding-right:0}
   .grid,.egrid{grid-template-columns:repeat(auto-fill,minmax(296px,1fr))}
   .ssel{max-width:none}
+  .more-us,.adv{padding-left:1.25rem;padding-right:1.25rem}
 }
 
 @media(min-width:1100px){
   .hero{padding:2.6rem 2rem 2.2rem}
   .hero h1{font-size:2.5rem}
   .hpromo{width:330px}
+  .mu-head h2,.adv-head h2{font-size:1.8rem}
+  .more-us,.adv{padding-left:2rem;padding-right:2rem}
 }

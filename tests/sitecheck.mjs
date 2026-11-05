@@ -2,14 +2,14 @@
  * Core site behaviour, rebuilt after the container that held the original
  * suite was reclaimed. Phone and desktop.
  */
-import { chromium, devices } from 'playwright';
+import { launch, devices } from '../scripts/playwright.mjs';
 
 const BASE = process.env.BASE_URL || BASE;
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
 let bad = 0;
 const ok = m => console.log('  ✓ ' + m);
 const no = m => { bad++; console.log('  ✗ ' + m); };
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const b = await launch();
 
 // ── phone ───────────────────────────────────────────────────────────────────
 {

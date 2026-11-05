@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://summerscope.vercel.app/og.png">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#152324">
+<meta name="theme-color" content="#271B23">
 <link rel="canonical" href="https://summerscope.vercel.app/">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -37,7 +37,7 @@
     if (localStorage.getItem('_ss_theme') === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
       var m = document.querySelector('meta[name="theme-color"]');
-      if (m) m.setAttribute('content', '#DBEEEE');
+      if (m) m.setAttribute('content', '#F3E2EC');
     }
   } catch (e) {}
 </script>
@@ -68,6 +68,25 @@
     <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch to light mode" title="Switch to light mode">☀</button>
   </div>
 </nav>
+
+<!-- ══ SPONSOR STRIP ═════════════════════════════════════════════════════
+     The top placement, above every page. It is empty inventory right now and
+     it says so, rather than being dressed up as a sponsor who does not exist
+     — a fake logo here would be the fastest way to lose the trust the rest of
+     this page is built on.
+
+     TO SELL IT: replace everything inside .sponsor-in with the sponsor's own
+     line and link, and change data-promo to their name so ss-insights.js
+     counts the clicks separately. Keep the height — one line is the whole
+     reason this placement does not hurt the page.
+     ════════════════════════════════════════════════════════════════════ -->
+<aside class="sponsor" aria-label="Sponsor">
+  <div class="sponsor-in">
+    <span class="sponsor-tag">Ad slot</span>
+    <p class="sponsor-txt">This strip sits above every page of the database, and right now it is empty.</p>
+    <a class="sponsor-cta" href="#advertise" data-promo="SponsorStrip">Put something here <span aria-hidden="true">→</span></a>
+  </div>
+</aside>
 
 <div id="loading-screen" class="loading-screen">
   <div class="spinner" aria-hidden="true"></div>
@@ -191,7 +210,7 @@
 
 <!-- ══ EVENTS ════════════════════════════════════════════════════════════ -->
 <div id="page-events" class="page" role="tabpanel" aria-label="Events and competitions">
-  <header class="ehero">
+  <header class="ehero reveal">
     <h2>Events, Hackathons &amp; Competitions</h2>
     <p>The best hackathons, science olympiads, coding contests and awards for 9th–12th graders — all in one place.</p>
   </header>
@@ -213,22 +232,133 @@
 
 <button class="totop" id="totop" type="button" aria-label="Back to top">↑</button>
 
+<!-- ══ MORE FROM US ══════════════════════════════════════════════════════
+     Outside the two .page tabs on purpose: these sit below whichever tab is
+     open rather than belonging to one of them. The hero keeps its two compact
+     pills for anyone who never scrolls this far.
+     ════════════════════════════════════════════════════════════════════ -->
+<!-- The copy below deliberately describes WHO each one is for and WHY it exists
+     rather than listing features: neither site was reachable from here to check
+     a feature list against, and an invented one on the page that sells itself on
+     verified facts would be the wrong trade. Swap in specifics when you can. -->
+<section class="more-us reveal" id="more-from-us" aria-labelledby="more-us-h">
+  <div class="mu-head">
+    <p class="mu-eyebrow">More from us</p>
+    <h2 id="more-us-h">Two other things we built</h2>
+    <p class="mu-sub">SummerScope is not the only one. Both of these are free, both were
+      built for a problem we actually had, and neither of them will ask you for a card.</p>
+  </div>
+  <div class="mu-grid reveal stagger">
+    <a class="mu-card" href="https://peer-2-peer.vercel.app/#/"
+       target="_blank" rel="noopener noreferrer" data-promo="Peer2Peer">
+      <span class="mu-logo" aria-hidden="true">P2</span>
+      <span class="mu-body">
+        <span class="mu-name">Peer2Peer <span class="mu-go" aria-hidden="true">→</span></span>
+        <span class="mu-tag">Students helping students</span>
+        <span class="mu-desc">Free peer tutoring and study help. The person who finished the
+          unit last term is often the one who can explain it best, and there is no good reason
+          that should cost forty dollars an hour.</span>
+        <span class="mu-foot">
+          <span class="mu-pill">Free</span>
+          <span class="mu-pill">Peer tutoring</span>
+          <span class="mu-host">peer-2-peer.vercel.app</span>
+        </span>
+      </span>
+    </a>
+    <a class="mu-card" href="https://www.shuttle.website/"
+       target="_blank" rel="noopener noreferrer" data-promo="Shuttle">
+      <span class="mu-logo mu-logo-2" aria-hidden="true">SH</span>
+      <span class="mu-body">
+        <span class="mu-name">Shuttle <span class="mu-go" aria-hidden="true">→</span></span>
+        <span class="mu-tag">Built for badminton</span>
+        <span class="mu-desc">For badminton players and the coaches who train them. Badminton
+          gets a fraction of the tooling the bigger sports take for granted, and this is an
+          attempt at closing some of that gap.</span>
+        <span class="mu-foot">
+          <span class="mu-pill">Players</span>
+          <span class="mu-pill">Coaches</span>
+          <span class="mu-host">shuttle.website</span>
+        </span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<!-- ══ ADVERTISING ═══════════════════════════════════════════════════════
+     Two routes, deliberately kept apart. Getting a program LISTED is free and
+     always will be: the moment a listing can be bought, every listing on the
+     page is worth less, and the honest-deadlines pitch this whole site rests
+     on stops meaning anything. Paid placements are the boxes around the
+     database, never a row inside it.
+     ════════════════════════════════════════════════════════════════════ -->
+<section class="adv reveal" id="advertise" aria-labelledby="adv-h">
+  <div class="adv-head">
+    <p class="adv-eyebrow">Advertise</p>
+    <h2 id="adv-h">Put your program in front of people already looking for one</h2>
+    <p class="adv-sub">Everyone on this page arrived searching for a summer program, a
+      hackathon or a competition. That is the whole audience: students in grades 9–12 and
+      the parents and counsellors helping them decide, at the exact moment they are deciding.</p>
+  </div>
+
+  <div class="adv-grid reveal stagger">
+    <div class="adv-card">
+      <span class="adv-n" aria-hidden="true">01</span>
+      <h3>Top strip</h3>
+      <p>The single line above every page, seen before anything else on the site.
+        One sponsor at a time — it is never a rotation.</p>
+    </div>
+    <div class="adv-card">
+      <span class="adv-n" aria-hidden="true">02</span>
+      <h3>Hero panel</h3>
+      <p>The card beside the search box, on screen while someone is still deciding what
+        to type. Room for a name, a line of copy and a link.</p>
+    </div>
+    <div class="adv-card">
+      <span class="adv-n" aria-hidden="true">03</span>
+      <h3>Footer panel</h3>
+      <p>The last thing on the page, reached by people who read the whole way down —
+        a smaller audience, and a considerably more serious one.</p>
+    </div>
+  </div>
+
+  <div class="adv-split">
+    <div class="adv-box adv-paid">
+      <h3>Buying a placement</h3>
+      <p>Tell me what you have in mind and I will send back where it would sit, what it
+        would look like and what it would cost. If I do not think a placement will work
+        for you, I will say that instead of selling it to you.</p>
+      <a class="adv-mail" href="mailto:adityagaur12077@gmail.com?subject=SummerScope%20advertising"
+         aria-label="Email adityagaur12077@gmail.com about advertising on SummerScope">
+        <span class="adv-user">adityagaur12077</span><span class="adv-host">gmail.com</span>
+      </a>
+      <p class="adv-fine">Every paid placement is labelled as one.</p>
+    </div>
+    <div class="adv-box adv-free">
+      <h3>Getting listed is free</h3>
+      <p>If you run a summer program, a hackathon or a competition for high schoolers,
+        send it over and it goes in the database at no cost — the same as every other
+        entry, checked against your own published materials.</p>
+      <a class="adv-mail adv-mail-2" href="mailto:adityagaur12077@gmail.com?subject=SummerScope%20%E2%80%94%20program%20to%20add"
+         aria-label="Email adityagaur12077@gmail.com about adding a program">
+        <span class="adv-user">adityagaur12077</span><span class="adv-host">gmail.com</span>
+      </a>
+      <p class="adv-fine">A listing can never be bought, and a placement never buys one.</p>
+    </div>
+  </div>
+</section>
+
 <footer>
   <!-- A real mailto, spelled out in the href so it works with scripting off
        and for anyone who copies the address by hand. The visible text splits
        the address across two elements with the @ supplied by CSS, which stops
        the simplest address harvesters without affecting a reader, a screen
        reader (aria-label carries the whole thing) or copy-and-paste. -->
-  <div class="fad">
+  <div class="fad reveal">
     <p class="fad-title">Want your program or product in front of these readers?</p>
     <p class="fad-body">
-      Advertising space is available on this page. Tell me what you have in
-      mind and I will send back where it would sit and what it would cost.
+      Three placements are open, and getting a program listed in the database is free.
     </p>
-    <a class="fad-mail" href="mailto:adityagaur12077@gmail.com?subject=SummerScope%20advertising"
-       aria-label="Email adityagaur12077@gmail.com about advertising on SummerScope">
-      <span class="fad-user">adityagaur12077</span><span class="fad-host">gmail.com</span>
-    </a>
+    <a class="fad-mail" href="#advertise">See what is available <span aria-hidden="true">→</span></a>
   </div>
 
   <p><strong>SummerScope</strong> — a free, open resource for high school students exploring summer opportunities.</p>

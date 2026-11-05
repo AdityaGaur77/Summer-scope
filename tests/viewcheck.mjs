@@ -1,7 +1,7 @@
-import { chromium, devices } from 'playwright';
+import { launch, devices } from '../scripts/playwright.mjs';
 
 const BASE = process.env.BASE_URL || BASE;
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const b = await launch();
 let bad = 0;
 const ok = m => console.log('  ✓ ' + m);
 const no = m => { bad++; console.log('  ✗ ' + m); };

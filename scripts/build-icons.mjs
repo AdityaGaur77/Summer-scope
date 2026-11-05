@@ -16,7 +16,7 @@
  * a small directory followed by — in this case — PNG payloads, a form every
  * browser that still asks for /favicon.ico understands.
  */
-import { chromium } from 'playwright';
+import { launch } from './playwright.mjs';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -54,9 +54,7 @@ const OUT = [
 ];
 const ICO_SIZES = [16, 32, 48];
 
-const browser = await chromium.launch({
-  executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium',
-});
+const browser = await launch();
 
 async function raster(svg, size) {
   const page = await browser.newPage({
